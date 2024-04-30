@@ -44,6 +44,7 @@ declare module 'vue' {
     StorageBox: typeof import('./../components/StorageBox/index.vue')['default']
     SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']
     SystemInfo: typeof import('./../components/SystemInfo/index.vue')['default']
+    TableQuery: typeof import('./../components/tableQuery/index.vue')['default']
     Trend: typeof import('./../components/Trend/index.vue')['default']
   }
 }
