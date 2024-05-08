@@ -25,6 +25,15 @@ const routes: RouteRecordRaw = {
         i18n: $t('route.multimenu.page'),
       },
     },
+    {
+      path: 'setting',
+      name: 'setting',
+      component: () => import('@/views/setting/tenantMenu/index.vue'),
+      meta: {
+        title: '菜单',
+        i18n: $t('route.multimenu.page'),
+      },
+    },
   ],
 }
 // const routes: RouteRecordRaw = {
@@ -33,7 +42,7 @@ const routes: RouteRecordRaw = {
 //   redirect: '/multilevel_menu_example/page',
 //   name: 'multilevelMenuExample',
 //   meta: {
-//     title: 'a啊啊啊啊啊啊啊',
+//     title: '导航',
 //     i18n: $t('route.multimenu.root'),
 //     icon: 'i-heroicons-solid:menu-alt-3',
 //   },
