@@ -119,10 +119,5 @@
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
     "preserveUnused": true
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-git"
-    }
   }
 }
