@@ -42,7 +42,8 @@ api.interceptors.response.use(
      * 请求出错时 error 会返回错误信息
      */
     if (response.data.status === 1) {
-      if (response.data.error !== '') {
+      if (response.data.error !== 'success' && response.data.error !== '') {
+      // if (response.data.error !== '' ) {
         // 错误提示
         Message.error(response.data.error, {
           zIndex: 2000,
