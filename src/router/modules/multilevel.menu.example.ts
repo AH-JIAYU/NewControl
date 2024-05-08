@@ -6,23 +6,23 @@ function Layout() {
 }
 
 const routes: RouteRecordRaw = {
-  path: '/',
+  path: '/multilevel_menu_example',
   component: Layout,
-  redirect: '/homePage',
+  redirect: '/multilevel_menu_example/menu',
   name: 'multilevelMenuExample',
   meta: {
-    title: '首页',
-    i18n: $t('route.multimenu.root'),
+    title: '配置',
+    // i18n: $t('route.multimenu.root'),
     icon: 'i-heroicons-solid:menu-alt-3',
   },
   children: [
     {
-      path: '/homePage',
-      name: 'multilevelMenuExample1',
-      component: () => import('@/views/index/index/index.vue'),
+      path: 'menu',
+      name: 'menu',
+      component: () => import('@/views/setting/menu/list.vue'),
       meta: {
-        title: '数据中心',
-        i18n: $t('route.multimenu.page'),
+        title: '菜单管理',
+        // i18n: $t('route.multimenu.page'),
       },
     },
     {
