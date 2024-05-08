@@ -18,6 +18,7 @@ defineOptions({
 })
 
 const props = defineProps(['id', 'parentId'])
+const route = useRoute()
 const router = useRouter()
 const tabbar = useTabbar()
 
@@ -25,6 +26,8 @@ const settingsStore = useSettingsStore()
 
 const loading = ref(false)
 const formRef = ref<FormInstance>()
+const showParent = ref(false) // 是否显示父级id
+const list = ref(false) // 导航列表
 const form = ref({
   id: props.id ?? '',
   parentId: props.parentId ?? '',
@@ -70,6 +73,9 @@ const formRules = ref<FormRules>({
 })
 
 onMounted(() => {
+  apiMenu.list().then((res: any) => {
+    list.value = res.data
+  })
   if (form.value.id !== '') {
     getInfo()
   }
@@ -175,6 +181,8 @@ const authsTableRef = ref()
 const authsTableKey = ref(0)
 onMounted(() => {
   onAuthDarg()
+  // 第一次进入时id和parentid都为空时 显示父级id
+  showParent.value = !!(!form.value.id && !form.value.parentId)
 })
 function onAuthAdd() {
   form.value.meta.auths.push({
@@ -255,19 +263,19 @@ function goBack() {
     <div v-loading="loading" class="page-main">
       <ElForm ref="formRef" :model="form" :rules="formRules" label-position="top">
         <LayoutContainer right-side-width="500px" hide-right-side-toggle>
-          <PageHeader v-if="!!form.parentId" title="基础配置" content="标准路由配置，包含 path/redirect/name/component" />
-          <ElRow v-if="!!form.parentId" :gutter="30" style="padding: 20px;">
+          <PageHeader v-if="!!form.parentId || showParent" title="基础配置" content="标准路由配置，包含 path/redirect/name/component" />
+          <ElRow v-if="!!form.parentId || showParent" :gutter="30" style="padding: 20px;">
             <ElCol :xl="12" :lg="24">
-              <ElFormItem label="菜单等级" prop="">
-                <el-select v-model="form.grade" value-key="" placeholder="请选择菜单等级" clearable filterable>
+              <ElFormItem label="菜单等级">
+                <el-select v-model="form.grade" clear value-key="" placeholder="" clearable filterable>
                   <el-option v-for="item in 4" :key="item" :label="item" :value="item" />
                 </el-select>
               </ElFormItem>
             </ElCol>
             <ElCol :xl="12" :lg="24">
-              <ElFormItem label="父级导航" prop="redirect">
-                <el-select v-model="form.parentId" value-key="" placeholder="请选择父级导航" clearable filterable>
-                  <el-option v-for="item in 4" :key="item" :label="item" :value="item" />
+              <ElFormItem label="父级导航">
+                <el-select v-model="form.parentId" clear value-key="" placeholder="" clearable filterable>
+                  <el-option v-for="item in list" :key="item.id" :label="item.meta.title" :value="item.id" />
                 </el-select>
               </ElFormItem>
             </ElCol>
@@ -276,31 +284,32 @@ function goBack() {
                 <ElInput v-model="form.sort" clearable placeholder="请输入排序" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xl="12" :lg="24">
+            <ElCol v-if="!!form.parentId" :xl="12" :lg="24">
               <ElFormItem label="路由地址" prop="path">
                 <ElInput v-model="form.path" clearable placeholder="请输入路由地址" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xl="12" :lg="24">
+            <ElCol v-if="!!form.parentId" :xl="12" :lg="24">
               <ElFormItem label="重定向" prop="redirect">
                 <ElInput v-model="form.redirect" clearable placeholder="请输入重定向地址" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xl="12" :lg="24">
+            <ElCol v-if="!!form.parentId" :xl="12" :lg="24">
               <ElFormItem prop="name">
                 <template #label>
                   路由命名
-                  <span class="label-tip" style="color: #a8abb2;">即 name ，系统唯一</span>
+                  <span class="label-tip">即 name ，系统唯一</span>
                 </template>
                 <ElInput v-model="form.name" clearable placeholder="请输入路由命名" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xl="12" :lg="24">
+            <ElCol v-if="!!form.parentId" :xl="12" :lg="24">
               <ElFormItem prop="component">
                 <template #label>
                   组件路径
-                  <span style="color: #a8abb2;" class="label-tip">
-                    顶级路由请设置“<ElLink type="primary" :underline="false" @click.prevent="form.component = 'Layout'">Layout</ElLink>”，中间层级路由无需设置
+                  <span class="label-tip">
+                    顶级路由请设置“<ElLink type="primary" :underline="false" @click.prevent="form.component = 'Layout'">Layout
+                    </ElLink>”，中间层级路由无需设置
                   </span>
                 </template>
                 <ElInput v-model="form.component" clearable placeholder="请输入完整组件路径">
@@ -325,13 +334,14 @@ function goBack() {
             </template>
           </PageHeader>
           <ElRow :gutter="30" style="padding: 20px;">
-            <ElCol :xl="12" :lg="24">
+            <!-- 父级id -->
+            <!-- <ElCol v-if=" showParent" :xl="12" :lg="24">
               <ElFormItem label="父级id">
                 <el-select v-model="form.parentId" clear value-key="" placeholder="" clearable filterable>
                   <el-option v-for="item in 4" :key="item" :label="item" :value="item" />
                 </el-select>
               </ElFormItem>
-            </ElCol>
+            </ElCol> -->
             <ElCol :xl="12" :lg="24">
               <ElFormItem label="显示名称" prop="meta.title">
                 <ElInput v-model="form.meta.title" clearable placeholder="请输入显示名称" />

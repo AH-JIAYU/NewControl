@@ -71,16 +71,14 @@ const systemRoutes: RouteRecordRaw[] = [
 ]
 
 // 动态路由（异步路由、导航栏路由）
-const asyncRoutes: Route.recordMainRaw[] = [
+const asyncRoutes: any = [
   {
     meta: {
       title: '演示',
       i18n: 'route.demo',
       icon: 'i-uim:box',
     },
-    children: [
-      MultilevelMenuExample,
-    ],
+    children: MultilevelMenuExample,
   },
 ]
 

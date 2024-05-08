@@ -5,37 +5,52 @@ function Layout() {
   return import('@/layouts/index.vue')
 }
 
-const routes: RouteRecordRaw = {
-  path: '/multilevel_menu_example',
-  component: Layout,
-  redirect: '/multilevel_menu_example/menu',
-  name: 'multilevelMenuExample',
-  meta: {
-    title: '配置',
-    // i18n: $t('route.multimenu.root'),
-    icon: 'i-heroicons-solid:menu-alt-3',
-  },
-  children: [
-    {
-      path: 'menu',
-      name: 'menu',
-      component: () => import('@/views/setting/menu/list.vue'),
-      meta: {
-        title: '菜单管理',
+const routes: RouteRecordRaw = [
+  {
+    path: '/multilevel_menu_example',
+    component: Layout,
+    redirect: '/multilevel_menu_example/menu',
+    name: 'multilevelMenuExample',
+    meta: {
+      title: '配置',
+      // i18n: $t('route.multimenu.root'),
+      icon: 'i-heroicons-solid:menu-alt-3',
+    },
+    children: [
+      {
+        path: 'menu',
+        name: 'menu',
+        component: () => import('@/views/setting/menu/list.vue'),
+        meta: {
+          title: '菜单管理',
         // i18n: $t('route.multimenu.page'),
+        },
       },
+    ],
+  },
+  {
+    path: '/tenantMenu',
+    component: Layout,
+    redirect: '/tenantMenu',
+    name: 'tenantMenu',
+    meta: {
+      title: '租户',
+      // i18n: $t('route.multimenu.root'),
+      icon: 'i-heroicons-solid:menu-alt-3',
     },
-    {
-      path: 'setting',
-      name: 'setting',
-      component: () => import('@/views/setting/tenantMenu/index.vue'),
-      meta: {
-        title: '菜单',
-        i18n: $t('route.multimenu.page'),
+    children: [
+      {
+        path: 'setting',
+        name: 'setting',
+        component: () => import('@/views/setting/tenantMenu/index.vue'),
+        meta: {
+          title: '菜单',
+          i18n: $t('route.multimenu.page'),
+        },
       },
-    },
-  ],
-}
+    ],
+  },
+]
 // const routes: RouteRecordRaw = {
 //   path: '/multilevel_menu_example',
 //   component: Layout,

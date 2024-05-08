@@ -35,6 +35,9 @@ const form = ref({
   redirect: '',
   name: '',
   component: '',
+  sort: '',
+  grade: '',
+  navigation: '',
   meta: {
     title: '',
     icon: '',

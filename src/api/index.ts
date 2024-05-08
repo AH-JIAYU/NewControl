@@ -21,7 +21,6 @@ api.interceptors.request.use(
       request.headers['Accept-Language'] = settingsStore.lang
       if (userStore.isLogin) {
         request.headers.Token = userStore.token
-        // request.headers.Authorization = `Bearer ${userStore.token}`
       }
     }
     // 是否将 POST 请求参数进行字符串化处理
