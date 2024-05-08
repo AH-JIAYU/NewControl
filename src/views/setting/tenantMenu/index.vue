@@ -107,7 +107,6 @@ function onDel(row: any) {
 
 <template>
   <div :class="{ 'absolute-container': data.tableAutoHeight }">
-    <PageHeader title="导航管理" content="页面数据为 Mock 示例数据，非真实数据。" />
     <PageMain>
       <ElSpace>
         <ElButton type="primary" size="default" @click="onCreate">

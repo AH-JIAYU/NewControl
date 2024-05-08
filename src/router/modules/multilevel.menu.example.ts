@@ -45,7 +45,6 @@ const routes: RouteRecordRaw = [
         component: () => import('@/views/setting/tenantMenu/index.vue'),
         meta: {
           title: '菜单',
-          i18n: $t('route.multimenu.page'),
         },
       },
     ],
