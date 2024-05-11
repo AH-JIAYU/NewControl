@@ -15,9 +15,9 @@ defineOptions({
   name: 'PagesExampleMenuList',
 })
 
-const router = useRouter()
-const tabbar = useTabbar()
-const settingsStore = useSettingsStore()
+// const router = useRouter()
+// const tabbar = useTabbar()
+// const settingsStore = useSettingsStore()
 
 const data = ref<any>({
   loading: false,
@@ -47,48 +47,14 @@ function getDataList() {
 
 // 添加id赋值给parentId
 function onCreate(row?: any) {
-  // if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {
-  //   tabbar.open({
-  //     name: 'pagesExampleGeneralMenuCreate',
-  //     query: {
-  //       parentId: row.id,
-  //     },
-  //   })
-  // }
-  // else {
-  //   router.push({
-  //     name: 'pagesExampleGeneralMenuCreate',
-  //     query: {
-  //       parentId: row.id,
-  //     },
-  //   })
-  // }
-  data.value.formModeProps.id = '' // 添加时不应有id 组件里 prop为只读 通过父置空id
+  data.value.formModeProps.id = '' //添加时不应有id 组件里 prop为只读 通过父置空id
   data.value.formModeProps.parentId = row.id ?? ''
   data.value.formModeProps.visible = true
 }
 // 编辑时id赋值给id 通过id请求 parentId
 function onEdit(row: any) {
-  // if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {
-  //   console.log(1)
-  //   tabbar.open({
-  //     name: 'pagesExampleGeneralMenuEdit',
-  //     params: {
-  //       id: row.id,
-  //     },
-  //   })
-  // }
-  // else {
-  //   console.log(2)
-  //   router.push({
-  //     name: 'pagesExampleGeneralMenuEdit',
-  //     params: {
-  //       id: row.id,
-  //     },
-  //   })
-  // }
   data.value.formModeProps.id = row.id ?? ''
-  data.value.formModeProps.parentId = '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
+  data.value.formModeProps.parentId = '' //添加时不应有parentId 组件里 prop为只读 通过父置空parentId
   data.value.formModeProps.visible = true
 }
 

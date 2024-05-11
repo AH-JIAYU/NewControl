@@ -19,7 +19,6 @@ export default function useTabbar() {
     tabbarStore.$patch({
       leaveIndex: index,
     })
-    console.log('to',to)
     router.push(to)
   }
 

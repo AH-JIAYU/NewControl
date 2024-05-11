@@ -100,30 +100,30 @@ function getInfo() {
 }
 
 // 鉴权标识
-const inputAuth = ref('')
-const inputAuthVisible = ref(false)
-const InputAuthRef = ref()
-function onInputAuthClose(tag: string) {
-  form.value.meta.auth.splice(form.value.meta.auth.indexOf(tag), 1)
-}
-function onInputAuthShow() {
-  inputAuthVisible.value = true
-  nextTick(() => {
-    InputAuthRef.value!.input!.focus()
-  })
-}
-function onInputAuthConfirm() {
-  if (inputAuth.value) {
-    if (!form.value.meta.auth.includes(inputAuth.value)) {
-      form.value.meta.auth.push(inputAuth.value)
-    }
-    else {
-      ElMessage.warning('标识已存在')
-    }
-  }
-  inputAuthVisible.value = false
-  inputAuth.value = ''
-}
+// const inputAuth = ref('')
+// const inputAuthVisible = ref(false)
+// const InputAuthRef = ref()
+// function onInputAuthClose(tag: string) {
+//   form.value.meta.auth.splice(form.value.meta.auth.indexOf(tag), 1)
+// }
+// function onInputAuthShow() {
+//   inputAuthVisible.value = true
+//   nextTick(() => {
+//     InputAuthRef.value!.input!.focus()
+//   })
+// }
+// function onInputAuthConfirm() {
+//   if (inputAuth.value) {
+//     if (!form.value.meta.auth.includes(inputAuth.value)) {
+//       form.value.meta.auth.push(inputAuth.value)
+//     }
+//     else {
+//       ElMessage.warning('标识已存在')
+//     }
+//   }
+//   inputAuthVisible.value = false
+//   inputAuth.value = ''
+// }
 
 // 缓存规则
 const inputCache = ref('')
@@ -180,39 +180,40 @@ function onInputNoCacheConfirm() {
 const authsTableRef = ref()
 const authsTableKey = ref(0)
 onMounted(() => {
-  onAuthDarg()
+  // onAuthDarg()
   // 第一次进入时id和parentid都为空时 显示父级id
   showParent.value = !!(!form.value.id && !form.value.parentId)
 })
-function onAuthAdd() {
-  form.value.meta.auths.push({
-    name: '',
-    value: '',
-  })
-  nextTick(() => {
-    authsTableRef.value.setScrollTop(form.value.meta.auths.length * 50)
-  })
-}
-function onAuthDelete(index: number) {
-  form.value.meta.auths.splice(index, 1)
-}
-function onAuthDarg() {
-  const tbody = authsTableRef.value.$el.querySelector('.el-table__body-wrapper tbody')
-  Sortable.create(tbody, {
-    handle: '.sortable',
-    animation: 300,
-    ghostClass: 'ghost',
-    onEnd: ({ newIndex, oldIndex }) => {
-      if (newIndex === undefined || oldIndex === undefined) {
-        return
-      }
-      const currRow = form.value.meta.auths.splice(oldIndex, 1)[0]
-      form.value.meta.auths.splice(newIndex, 0, currRow)
-      authsTableKey.value += 1
-      nextTick(() => onAuthDarg())
-    },
-  })
-}
+// function onAuthAdd() {
+//   form.value.meta.auths.push({
+//     name: '',
+//     value: '',
+//   })
+//   nextTick(() => {
+//     authsTableRef.value.setScrollTop(form.value.meta.auths.length * 50)
+//   })
+// }
+// function onAuthDelete(index: number) {
+//   form.value.meta.auths.splice(index, 1)
+// }
+// //拖拽
+// function onAuthDarg() {
+//   const tbody = authsTableRef.value.$el.querySelector('.el-table__body-wrapper tbody')
+//   Sortable.create(tbody, {
+//     handle: '.sortable',
+//     animation: 300,
+//     ghostClass: 'ghost',
+//     onEnd: ({ newIndex, oldIndex }) => {
+//       if (newIndex === undefined || oldIndex === undefined) {
+//         return
+//       }
+//       const currRow = form.value.meta.auths.splice(oldIndex, 1)[0]
+//       form.value.meta.auths.splice(newIndex, 0, currRow)
+//       authsTableKey.value += 1
+//       nextTick(() => onAuthDarg())
+//     },
+//   })
+// }
 
 function onSubmit() {
   if (form.value.id === '') {
@@ -275,7 +276,7 @@ function goBack() {
             <ElCol :xl="12" :lg="24">
               <ElFormItem label="父级导航">
                 <el-select v-model="form.parentId" clear value-key="" placeholder="" clearable filterable>
-                  <el-option v-for="item in list" :key="item.id" :label="item.meta.title" :value="item.id" />
+                  <el-option v-for="item in list" :key="item.id" :label="item.meta.title" :value="item.id" ></el-option>
                 </el-select>
               </ElFormItem>
             </ElCol>
@@ -347,31 +348,31 @@ function goBack() {
                 <ElInput v-model="form.meta.title" clearable placeholder="请输入显示名称" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xl="12" :lg="24">
-              <ElFormItem prop="meta.auth">
-                <template #label>
-                  鉴权标识
-                  <ElTooltip content="当设置多个标识时，只要命中其中一个则鉴权通过" placement="top">
-                    <SvgIcon name="i-ri:question-line" />
-                  </ElTooltip>
-                </template>
-                <ElSpace>
-                  <ElTag
-                    v-for="item in (form.meta.auth as string[])" :key="item" size="large" closable
-                    :disable-transitions="false" @close="onInputAuthClose(item)"
-                  >
-                    {{ item }}
-                  </ElTag>
-                  <ElInput
-                    v-if="inputAuthVisible" ref="InputAuthRef" v-model="inputAuth" style="width: 200px;"
-                    @keyup.enter="onInputAuthConfirm" @blur="onInputAuthConfirm"
-                  />
-                  <ElButton v-else @click="onInputAuthShow">
-                    新增
-                  </ElButton>
-                </ElSpace>
-              </ElFormItem>
-            </ElCol>
+              <!-- <ElCol :xl="12" :lg="24">
+                <ElFormItem prop="meta.auth">
+                  <template #label>
+                    鉴权标识
+                    <ElTooltip content="当设置多个标识时，只要命中其中一个则鉴权通过" placement="top">
+                      <SvgIcon name="i-ri:question-line" />
+                    </ElTooltip>
+                  </template>
+                  <ElSpace>
+                    <ElTag
+                      v-for="item in (form.meta.auth as string[])" :key="item" size="large" closable
+                      :disable-transitions="false" @close="onInputAuthClose(item)"
+                    >
+                      {{ item }}
+                    </ElTag>
+                    <ElInput
+                      v-if="inputAuthVisible" ref="InputAuthRef" v-model="inputAuth" style="width: 200px;"
+                      @keyup.enter="onInputAuthConfirm" @blur="onInputAuthConfirm"
+                    />
+                    <ElButton v-else @click="onInputAuthShow">
+                      新增
+                    </ElButton>
+                  </ElSpace>
+                </ElFormItem>
+              </ElCol> -->
             <ElCol :xl="12" :lg="24">
               <ElFormItem label="默认图标" prop="meta.icon">
                 <IconPicker v-model="form.meta.icon" />
@@ -529,7 +530,7 @@ function goBack() {
               </ElFormItem>
             </ElCol>
           </ElRow>
-          <template #rightSide>
+          <!-- <template #rightSide>
             <PageHeader title="权限池">
               <template #content>
                 <p>设置导航所具备的所有权限，权限池内的权限会用于角色管理</p>
@@ -580,7 +581,7 @@ function goBack() {
                 </template>
               </ElTableColumn>
             </ElTable>
-          </template>
+          </template> -->
         </LayoutContainer>
         <el-form-item>
           <ElButton type="primary" size="large" @click="onSubmit">

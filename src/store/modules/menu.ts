@@ -212,7 +212,7 @@ const useMenuStore = defineStore(
     async function generateMenusAtBack() {
       await apiApp.menuList().then((res) => {
         filesystemMenusRaw.value = (res.data as Menu.recordMainRaw[]).filter(item => item.children.length !== 0)
-      }).catch(() => {})
+      }).catch(() => { })
     }
     // 设置主导航
     function setActived(data: number | string) {

@@ -2,7 +2,9 @@
 import type { DetailFormProps } from '../../types'
 import DetailForm from '../DetailForm/index.vue'
 
-const props = defineProps(['id', 'parentId', 'modelValue'])
+const props = defineProps<{
+  mode: 'dialog' | 'drawer'
+} & DetailFormProps>()
 
 const emits = defineEmits<{
   success: []
@@ -14,7 +16,7 @@ const visible = defineModel<boolean>({
 
 const formRef = ref()
 
-const title = computed(() => props.id === '' ? '新增角色' : '编辑角色')
+const title = computed(() => props.id === '' ? '新增角色管理' : '编辑角色管理')
 
 function onSubmit() {
   // submit() 为组件内部方法
@@ -31,7 +33,18 @@ function onCancel() {
 
 <template>
   <div>
-    <ElDrawer v-model="visible" :title="title" size="80%" :close-on-click-modal="false" destroy-on-close @close="onCancel">
+    <ElDialog v-if="props.mode === 'dialog'" v-model="visible" :title="title" width="600px" :close-on-click-modal="false" append-to-body destroy-on-close>
+      <DetailForm ref="formRef" v-bind="props" />
+      <template #footer>
+        <ElButton size="large" @click="onCancel">
+          取消
+        </ElButton>
+        <ElButton type="primary" size="large" @click="onSubmit">
+          确定
+        </ElButton>
+      </template>
+    </ElDialog>
+    <ElDrawer v-else-if="props.mode === 'drawer'" v-model="visible" :title="title" size="600px" :close-on-click-modal="false" destroy-on-close>
       <DetailForm ref="formRef" v-bind="props" />
       <template #footer>
         <ElButton size="large" @click="onCancel">
@@ -44,11 +57,3 @@ function onCancel() {
     </ElDrawer>
   </div>
 </template>
-
-<style scoped lang="scss">
-:deep {
-  .el-drawer__footer {
-    z-index: 999999;
-  }
-}
-</style>
