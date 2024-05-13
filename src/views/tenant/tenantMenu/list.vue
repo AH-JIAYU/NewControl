@@ -39,7 +39,7 @@ onMounted(() => {
 
 function getDataList() {
   data.value.loading = true
-  apiMenu.list().then((res: any) => {
+  apiMenu.list({ type: 'normal' }).then((res: any) => {
     data.value.loading = false
     data.value.dataList = res.data
   })
@@ -47,14 +47,14 @@ function getDataList() {
 
 // 添加id赋值给parentId
 function onCreate(row?: any) {
-  data.value.formModeProps.id = '' //添加时不应有id 组件里 prop为只读 通过父置空id
+  data.value.formModeProps.id = '' // 添加时不应有id 组件里 prop为只读 通过父置空id
   data.value.formModeProps.parentId = row.id ?? ''
   data.value.formModeProps.visible = true
 }
 // 编辑时id赋值给id 通过id请求 parentId
 function onEdit(row: any) {
   data.value.formModeProps.id = row.id ?? ''
-  data.value.formModeProps.parentId = '' //添加时不应有parentId 组件里 prop为只读 通过父置空parentId
+  data.value.formModeProps.parentId = '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
   data.value.formModeProps.visible = true
 }
 
@@ -142,8 +142,7 @@ function onDel(row: any) {
       </ElTable>
     </PageMain>
     <FormMode
-      :id="data.formModeProps.id" v-model="data.formModeProps.visible"
-      :parent-id="data.formModeProps.parentId"
+      :id="data.formModeProps.id" v-model="data.formModeProps.visible" :parent-id="data.formModeProps.parentId"
       @success="getDataList"
     />
   </div>

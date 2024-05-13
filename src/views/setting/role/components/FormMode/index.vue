@@ -16,7 +16,7 @@ const visible = defineModel<boolean>({
 
 const formRef = ref()
 
-const title = computed(() => props.id === '' ? '新增角色管理' : '编辑角色管理')
+const title = computed(() => props.id === '' ? '新增角色' : '编辑角色')
 
 function onSubmit() {
   // submit() 为组件内部方法
@@ -33,7 +33,7 @@ function onCancel() {
 
 <template>
   <div>
-    <ElDialog v-if="props.mode === 'dialog'" v-model="visible" :title="title" width="600px" :close-on-click-modal="false" append-to-body destroy-on-close>
+    <ElDialog v-if="props.mode === 'dialog'" v-model="visible" :title="title" width="60%" :close-on-click-modal="false" append-to-body destroy-on-close>
       <DetailForm ref="formRef" v-bind="props" />
       <template #footer>
         <ElButton size="large" @click="onCancel">
@@ -44,7 +44,7 @@ function onCancel() {
         </ElButton>
       </template>
     </ElDialog>
-    <ElDrawer v-else-if="props.mode === 'drawer'" v-model="visible" :title="title" size="600px" :close-on-click-modal="false" destroy-on-close>
+    <ElDrawer v-else-if="props.mode === 'drawer'" v-model="visible" :title="title" size="60%" :close-on-click-modal="false" destroy-on-close>
       <DetailForm ref="formRef" v-bind="props" />
       <template #footer>
         <ElButton size="large" @click="onCancel">

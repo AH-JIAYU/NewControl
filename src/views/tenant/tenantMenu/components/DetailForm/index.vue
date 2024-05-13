@@ -18,7 +18,6 @@ defineOptions({
 })
 
 const props = defineProps(['id', 'parentId'])
-const route = useRoute()
 const router = useRouter()
 const tabbar = useTabbar()
 
@@ -27,7 +26,7 @@ const settingsStore = useSettingsStore()
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const showParent = ref(false) // 是否显示父级id
-const list = ref(false) // 导航列表
+const list = ref<any>([]) // 导航列表
 const form = ref({
   id: props.id ?? '',
   parentId: props.parentId ?? '',
@@ -73,7 +72,7 @@ const formRules = ref<FormRules>({
 })
 
 onMounted(() => {
-  apiMenu.list().then((res: any) => {
+  apiMenu.list({ type: 'normal' }).then((res: any) => {
     list.value = res.data
   })
   if (form.value.id !== '') {
@@ -177,8 +176,8 @@ function onInputNoCacheConfirm() {
   inputNoCache.value = ''
 }
 
-const authsTableRef = ref()
-const authsTableKey = ref(0)
+// const authsTableRef = ref()
+// const authsTableKey = ref(0)
 onMounted(() => {
   // onAuthDarg()
   // 第一次进入时id和parentid都为空时 显示父级id
@@ -264,7 +263,10 @@ function goBack() {
     <div v-loading="loading" class="page-main">
       <ElForm ref="formRef" :model="form" :rules="formRules" label-position="top">
         <LayoutContainer right-side-width="500px" hide-right-side-toggle>
-          <PageHeader v-if="!!form.parentId || showParent" title="基础配置" content="标准路由配置，包含 path/redirect/name/component" />
+          <PageHeader
+            v-if="!!form.parentId || showParent" title="基础配置"
+            content="标准路由配置，包含 path/redirect/name/component"
+          />
           <ElRow v-if="!!form.parentId || showParent" :gutter="30" style="padding: 20px;">
             <ElCol :xl="12" :lg="24">
               <ElFormItem label="菜单等级">
@@ -276,7 +278,7 @@ function goBack() {
             <ElCol :xl="12" :lg="24">
               <ElFormItem label="父级导航">
                 <el-select v-model="form.parentId" clear value-key="" placeholder="" clearable filterable>
-                  <el-option v-for="item in list" :key="item.id" :label="item.meta.title" :value="item.id" ></el-option>
+                  <el-option v-for="item in list" :key="item.id" :label="item.meta.title" :value="item.id" />
                 </el-select>
               </ElFormItem>
             </ElCol>
@@ -348,7 +350,7 @@ function goBack() {
                 <ElInput v-model="form.meta.title" clearable placeholder="请输入显示名称" />
               </ElFormItem>
             </ElCol>
-              <!-- <ElCol :xl="12" :lg="24">
+            <!-- <ElCol :xl="12" :lg="24">
                 <ElFormItem prop="meta.auth">
                   <template #label>
                     鉴权标识

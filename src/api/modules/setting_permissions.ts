@@ -1,7 +1,7 @@
 import api from '../index'
 
 export default {
-  list: (data: {
+  list: (data?: {
     title?: string
     from: number
     limit: number

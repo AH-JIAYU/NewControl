@@ -1,12 +1,19 @@
 import Mock from 'mockjs'
 
-const AllList: any[] = []
-for (let i = 0; i < 50; i++) {
-  AllList.push(Mock.mock({
-    id: '@id',
-    title: '@ctitle(10, 20)',
-  }))
-}
+const AllList: any[] = [
+  {
+    id: 1,
+    role: 'admin',
+    menu: [1, 2, 3, 7, 8, 9], // 配置的全部
+    permission: [1, 2, 3], // 所有
+  },
+  {
+    id: 2,
+    role: 'staff',
+    menu: [4, 5],
+    permission: [1, 2], // 没有删除
+  },
+]
 
 export default [
   {
@@ -34,7 +41,7 @@ export default [
     url: '/mock/setting/role/detail',
     method: 'get',
     response: (option: any) => {
-      const info = AllList.filter(item => item.id === option.query.id)
+      const info = AllList.filter(item => item.id === Number(option.query.id))
       return {
         error: '',
         status: 1,
