@@ -115,9 +115,5 @@
     "vite-plugin-vue-devtools": "^7.0.25",
     "vite-plugin-vue-meta-layouts": "^0.4.2",
     "vue-tsc": "^2.0.7"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged",
-    "preserveUnused": true
   }
 }
