@@ -1,7 +1,7 @@
 import api from '../index'
 
 export default {
-  list: (data: any) => api.get('menu/list', {
+  list: (data?: any) => api.get('menu/list', {
     baseURL: '/mock/',
     data,
   }),

@@ -9,7 +9,7 @@ for (let i = 0; i < 50; i++) {
 }
 const data = [
   {
-    menu: 'multilevel_menu_example', //路由name 唯一
+    menu: 'multilevel_menu_example', // 路由name 唯一
     type: 'insert', // 类型
     label: '新增按钮', // 备注
     name: 'cs', // key

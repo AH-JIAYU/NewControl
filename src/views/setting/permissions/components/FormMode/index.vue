@@ -2,11 +2,11 @@
 import type { DetailFormProps } from '../../types'
 import DetailForm from '../DetailForm/index.vue'
 
-const props = defineProps<{
-  mode: 'dialog' | 'drawer'
-  id: ''
-  menulev: 1
-} & DetailFormProps>()
+const props = defineProps([
+  'mode',
+  'id',
+  'menulev',
+])
 
 const emits = defineEmits<{
   success: []
@@ -35,8 +35,10 @@ function onCancel() {
 
 <template>
   <div>
-    <ElDialog v-if="props.mode === 'dialog'" v-model="visible" :title="title" width="60%" :close-on-click-modal="false"
-      append-to-body destroy-on-close>
+    <ElDialog
+      v-if="props.mode === 'dialog'" v-model="visible" :title="title" width="60%" :close-on-click-modal="false"
+      append-to-body destroy-on-close
+    >
       <DetailForm ref="formRef" v-bind="props" />
       <template #footer>
         <ElButton size="large" @click="onCancel">
@@ -47,8 +49,10 @@ function onCancel() {
         </ElButton>
       </template>
     </ElDialog>
-    <ElDrawer v-else-if="props.mode === 'drawer'" v-model="visible" :title="title" size="60%"
-      :close-on-click-modal="false" destroy-on-close>
+    <ElDrawer
+      v-else-if="props.mode === 'drawer'" v-model="visible" :title="title" size="60%"
+      :close-on-click-modal="false" destroy-on-close
+    >
       <DetailForm ref="formRef" v-bind="props" />
       <template #footer>
         <ElButton size="large" @click="onCancel">

@@ -41,7 +41,7 @@ export default [
     url: '/mock/setting/role/detail',
     method: 'get',
     response: (option: any) => {
-      const info = AllList.filter(item => item.id === Number(option.query.id) )
+      const info = AllList.filter(item => item.id === Number(option.query.id))
       return {
         error: '',
         status: 1,
