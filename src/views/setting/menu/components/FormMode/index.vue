@@ -17,8 +17,8 @@ const formRef = ref()
 
 const title = computed(() => props.id === '' ? '新增角色' : '编辑角色')
 
-function onSubmit() {
-  // submit() 为组件内部方法
+async function onSubmit() {
+  // // submit() 为组件内部方法
   formRef.value.submit().then(() => {
     emits('success')
     onCancel()
@@ -32,7 +32,10 @@ function onCancel() {
 
 <template>
   <div>
-    <ElDrawer v-model="visible" :title="title" size="60%" :close-on-click-modal="false" destroy-on-close @close="onCancel">
+    <ElDrawer
+      v-model="visible" :title="title" size="60%" :close-on-click-modal="false" destroy-on-close
+      @close="onCancel"
+    >
       <DetailForm ref="formRef" v-bind="props" />
       <template #footer>
         <ElButton size="large" @click="onCancel">

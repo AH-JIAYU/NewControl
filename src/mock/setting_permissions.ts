@@ -13,7 +13,8 @@ const data = [
     type: 'insert', // 类型
     label: '新增按钮', // 备注
     name: 'cs', // key
-    id: '1',
+    id: 1,
+    menuId: 2,
     Permission: 'multilevel_menu_example-write-cs',
   },
   {
@@ -21,7 +22,8 @@ const data = [
     type: 'update', // 类型
     label: '编辑按钮', // 备注
     name: 'cs2', // key
-    id: '2',
+    id: 2,
+    menuId: 2,
     Permission: 'multilevel_menu_example-create-cs2',
   },
   {
@@ -29,7 +31,8 @@ const data = [
     type: 'delete', // 类型
     label: '删除按钮', // 备注
     name: 'cs3', // key
-    id: '3',
+    id: 3,
+    menuId: 3,
     Permission: 'multilevel_menu_exampleMenu-write-cs3',
   },
 ]

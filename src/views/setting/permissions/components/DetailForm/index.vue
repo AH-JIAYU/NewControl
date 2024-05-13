@@ -13,7 +13,7 @@ const formRules = ref<any>({
     { required: true, message: '请选择路由地址', trigger: 'blur' },
   ],
 })
-const menuStore = useMenuStore() // 路由store
+// const menuStore = useMenuStore() // 路由store
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const authsTableRef = ref<any>()
@@ -100,7 +100,7 @@ function onAuthDarg() {
 onMounted(async () => {
   onAuthDarg()// 拖拽
   // form.value.menuData = menuStore.allMenus // 获取store的路由 不带路由层级
-  const res = await menuapi.list()
+  const res = await menuapi.list({ type: 'normal' })
   form.value.menuData = res.data
   form.value.choiceMenuData = findItemsByLevel(form.value.menuData, form.value.menulev)
   if (form.value.id !== '') {

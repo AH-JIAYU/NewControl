@@ -24,7 +24,7 @@ const data = ref({
    * dialog 对话框
    * drawer 抽屉
    */
-  formMode: 'router' as 'router' | 'dialog' | 'drawer',
+  formMode: 'drawer' as 'router' | 'dialog' | 'drawer',
   // 详情
   formModeProps: {
     visible: false,
@@ -146,12 +146,14 @@ function onDel(row: any) {
 <template>
   <div :class="{ 'absolute-container': data.tableAutoHeight }">
     <PageMain>
-      <SearchBar :show-toggle="false">
+      <!-- <SearchBar :show-toggle="false">
         <template #default="{ fold, toggle }">
           <ElForm :model="data.search" size="default" label-width="100px" inline-message inline class="search-form">
             <ElFormItem label="标题">
-              <ElInput v-model="data.search.title" placeholder="请输入标题，支持模糊查询" clearable @keydown.enter="currentChange()"
-                @clear="currentChange()" />
+              <ElInput
+                v-model="data.search.title" placeholder="请输入标题，支持模糊查询" clearable @keydown.enter="currentChange()"
+                @clear="currentChange()"
+              />
             </ElFormItem>
             <ElFormItem>
               <ElButton type="primary" @click="currentChange()">
@@ -170,7 +172,7 @@ function onDel(row: any) {
           </ElForm>
         </template>
       </SearchBar>
-      <ElDivider border-style="dashed" />
+      <ElDivider border-style="dashed" /> -->
       <ElSpace wrap>
         <ElButton type="primary" size="default" @click="onCreate">
           <template #icon>
@@ -178,7 +180,7 @@ function onDel(row: any) {
           </template>
           新增角色管理
         </ElButton>
-        <ElButton v-if="data.batch.enable" size="default" :disabled="!data.batch.selectionDataList.length">
+        <!-- <ElButton v-if="data.batch.enable" size="default" :disabled="!data.batch.selectionDataList.length">
           单个批量操作按钮
         </ElButton>
         <ElButtonGroup v-if="data.batch.enable">
@@ -188,12 +190,15 @@ function onDel(row: any) {
           <ElButton size="default" :disabled="!data.batch.selectionDataList.length">
             批量操作按钮组2
           </ElButton>
-        </ElButtonGroup>
+        </ElButtonGroup> -->
       </ElSpace>
-      <ElTable v-loading="data.loading" class="my-4" :data="data.dataList" stripe highlight-current-row border
-        height="100%" @sort-change="sortChange" @selection-change="data.batch.selectionDataList = $event">
+      <ElTable
+        v-loading="data.loading" class="my-4" :data="data.dataList" stripe highlight-current-row border
+        height="100%" @sort-change="sortChange" @selection-change="data.batch.selectionDataList = $event"
+      >
         <ElTableColumn v-if="data.batch.enable" type="selection" align="center" fixed />
-        <ElTableColumn prop="title" label="标题" />
+        <ElTableColumn prop="id" label="id" />
+        <ElTableColumn prop="role" label="角色码" />
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
             <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">
@@ -205,22 +210,26 @@ function onDel(row: any) {
           </template>
         </ElTableColumn>
       </ElTable>
-      <ElPagination :current-page="pagination.page" :total="pagination.total" :page-size="pagination.size"
+      <ElPagination
+        :current-page="pagination.page" :total="pagination.total" :page-size="pagination.size"
         :page-sizes="pagination.sizes" :layout="pagination.layout" :hide-on-single-page="false" class="pagination"
-        background @size-change="sizeChange" @current-change="currentChange" />
+        background @size-change="sizeChange" @current-change="currentChange"
+      />
     </PageMain>
-    <FormMode v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
-      v-model="data.formModeProps.visible" :mode="data.formMode" @success="getDataList" />
+    <FormMode
+      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
+      v-model="data.formModeProps.visible" :mode="data.formMode" @success="getDataList"
+    />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .absolute-container {
   position: absolute;
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 
   .page-header {
     margin-bottom: 0;
@@ -231,10 +240,10 @@ function onDel(row: any) {
     overflow: auto;
 
     :deep(.main-container) {
-      flex: 1;
-      overflow: auto;
       display: flex;
+      flex: 1;
       flex-direction: column;
+      overflow: auto;
     }
   }
 }
@@ -259,8 +268,8 @@ function onDel(row: any) {
   }
 
   .el-divider {
-    margin-inline: -20px;
     width: calc(100% + 40px);
+    margin-inline: -20px;
   }
 }
 </style>

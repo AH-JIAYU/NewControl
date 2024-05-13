@@ -69,7 +69,7 @@ function recursion(menus: any[], permissions: any[]) {
 async function getDataList() {
   data.value.loading = true
   const permissions = await api.list()
-  const menus = await apiMenu.list()
+  const menus = await apiMenu.list({ type: 'flat' })
   // 处理数据 将权限里的menu和路由里的name相同的数据添加到路由的permissions里
   recursion(menus.data, permissions.data)
   data.value.dataList = menus.data
@@ -153,8 +153,10 @@ function onDel(row: any) {
           新增按钮权限
         </ElButton>
       </ElSpace>
-      <ElTable :data="data.dataList" row-key="id" stripe highlight-current-row default-expand-all border
-        :style="{ lineHeight: 'normal' }">
+      <ElTable
+        :data="data.dataList" row-key="id" stripe highlight-current-row default-expand-all border
+        :style="{ lineHeight: 'normal' }"
+      >
         <ElTableColumn prop="meta.title" width="300" label="模块" />
         <ElTableColumn label="权限">
           <template #default="{ row }">
@@ -174,11 +176,13 @@ function onDel(row: any) {
           </template>
         </ElTableColumn>
       </ElTable>
-      {{data.formModeProps.menulev}}
+      {{ data.formModeProps.menulev }}
     </PageMain>
-    <FormMode v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
-      :menulev="data.formModeProps.menulev" v-model="data.formModeProps.visible" :mode="data.formMode"
-      @success="getDataList" />
+    <FormMode
+      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
+      v-model="data.formModeProps.visible" :menulev="data.formModeProps.menulev" :mode="data.formMode"
+      @success="getDataList"
+    />
   </div>
 </template>
 
@@ -191,10 +195,10 @@ function onDel(row: any) {
 
 .absolute-container {
   position: absolute;
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 
   .page-header {
     margin-bottom: 0;
@@ -205,10 +209,10 @@ function onDel(row: any) {
     overflow: auto;
 
     :deep(.main-container) {
-      flex: 1;
-      overflow: auto;
       display: flex;
+      flex: 1;
       flex-direction: column;
+      overflow: auto;
     }
   }
 }
@@ -233,8 +237,8 @@ function onDel(row: any) {
   }
 
   .el-divider {
-    margin-inline: -20px;
     width: calc(100% + 40px);
+    margin-inline: -20px;
   }
 }
 </style>
