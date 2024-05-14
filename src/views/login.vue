@@ -1,7 +1,7 @@
 <route lang="yaml">
 meta:
   whiteList: true
-  title: 登录
+  title: 登录1
   constant: true
   layout: false
 </route>
