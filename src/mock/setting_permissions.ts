@@ -42,7 +42,7 @@ export default [
     url: '/mock/setting/permissions/list',
     method: 'get',
     response: (option: any) => {
-      // const { title, from, limit } = option.query
+      const { title, from, limit } = option.query
       // const list = AllList.filter((item) => {
       //   return title ? item.title.includes(title) : true
       // })
