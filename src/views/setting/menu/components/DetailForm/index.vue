@@ -17,7 +17,7 @@ defineOptions({
   name: 'PagesExampleMenuDetail',
 })
 
-const props = defineProps(['id', 'parentId'])
+const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
 // const route = useRoute()
 // const router = useRouter()
 // const tabbar = useTabbar()
@@ -28,7 +28,23 @@ const loading = ref(false)
 const formRef = ref<FormInstance>()
 const showParent = ref(false) // 是否显示父级id
 const list = ref() // 导航列表
-const form = ref({
+const munulevs = ref([// 路由等级
+  {
+    value: 1,
+    label: '一级导航',
+  }, {
+    value: 2,
+    label: '二级导航',
+  },
+  {
+    value: 3,
+    label: '三级导航',
+  },
+  {
+    value: 4,
+    label: '内置页面',
+  }])
+const form = ref<any>({
   id: props.id ?? '',
   parentId: props.parentId ?? '',
   path: '',
@@ -36,7 +52,7 @@ const form = ref({
   name: '',
   component: '',
   sort: '',
-  grade: '',
+  menuLevel: props.menuLevel ?? '',
   navigation: '',
   meta: {
     title: '',
@@ -45,11 +61,6 @@ const form = ref({
     defaultOpened: false,
     alwaysOpened: false,
     permanent: false,
-    auth: [] as string[],
-    auths: [] as {
-      name: string
-      value: string
-    }[],
     menu: true,
     breadcrumb: true,
     activeMenu: '',
@@ -76,6 +87,8 @@ onMounted(() => {
   apiMenu.list({ type: 'flat' }).then((res: any) => {
     list.value = res.data
   })
+  // 第一次进入时id和parentid都为空时 显示父级导航
+  showParent.value = !!(!form.value.id && !form.value.parentId)
   if (form.value.id !== '') {
     getInfo()
   }
@@ -83,19 +96,10 @@ onMounted(() => {
 
 function getInfo() {
   loading.value = true
-  // 通过id请求获取parentId 编辑时请求 添加时不需要
-  // id存在请求接口 不存为添加
+  // id存在为编辑 不存为添加
   if (form.value.id) {
-    apiMenu.detail(form.value.id).then((res: any) => {
-      loading.value = false
-      form.value.id = res.data.id
-      form.value.parentId = res.data.parentId
-      form.value.path = res.data.path
-      form.value.redirect = res.data.redirect
-      form.value.name = res.data.name
-      form.value.component = res.data.component
-      Object.assign(form.value.meta, res.data.meta)
-    })
+    form.value = JSON.parse(props.row)
+    loading.value = false
   }
 }
 
@@ -150,23 +154,16 @@ function onInputNoCacheConfirm() {
   inputNoCache.value = ''
 }
 
-// const authsTableRef = ref()
-// const authsTableKey = ref(0)
-onMounted(() => {
-  // onAuthDarg()
-  // 第一次进入时id和parentid都为空时 显示父级id
-  showParent.value = !!(!form.value.id && !form.value.parentId)
-})
-
 defineExpose({
   submit() {
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid) => {
           if (valid) {
+            form.value.menuLevel = Number(form.value.menuLevel) + 1 // 菜单等级自增一
             apiMenu.create(form.value).then(() => {
               ElMessage.success({
-                message: '1模拟新增成功',
+                message: '新增成功',
                 center: true,
               })
               resolve()
@@ -179,7 +176,7 @@ defineExpose({
           if (valid) {
             apiMenu.edit(form.value).then(() => {
               ElMessage.success({
-                message: '1模拟编辑成功',
+                message: '编辑成功',
                 center: true,
               })
               resolve()
@@ -197,19 +194,16 @@ defineExpose({
     <div v-loading="loading" class="page-main">
       <ElForm ref="formRef" :model="form" :rules="formRules" label-position="top">
         <LayoutContainer right-side-width="500px" hide-right-side-toggle style="padding-bottom: 100px;">
-          <PageHeader
-            v-if="!!form.parentId || showParent" title="基础配置"
-            content="标准路由配置，包含 path/redirect/name/component"
-          />
-          <ElRow v-if="!!form.parentId || showParent" :gutter="30" style="padding: 20px;">
-            <ElCol :xl="12" :lg="24">
+          <PageHeader title="基础配置" content="标准路由配置，包含 path/redirect/name/component" />
+          <ElRow :gutter="30" style="padding: 20px;">
+            <ElCol v-if="!!form.parentId || showParent" :xl="12" :lg="24">
               <ElFormItem label="菜单等级">
-                <el-select v-model="form.grade" clear value-key="" placeholder="" clearable filterable>
-                  <el-option v-for="item in 4" :key="item" :label="item" :value="item" />
+                <el-select v-model="form.menuLevel" clear value-key="" placeholder="" clearable filterable>
+                  <el-option v-for="item in munulevs" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
               </ElFormItem>
             </ElCol>
-            <ElCol :xl="12" :lg="24">
+            <ElCol v-if="!!form.parentId || showParent" :xl="12" :lg="24">
               <ElFormItem label="父级导航">
                 <el-select v-model="form.parentId" clear value-key="" placeholder="" clearable filterable>
                   <el-option v-for="item in list" :key="item.id" :label="item.meta.title" :value="item.id" />

@@ -49,12 +49,14 @@ function getDataList() {
 function onCreate(row?: any) {
   data.value.formModeProps.id = '' // 添加时不应有id 组件里 prop为只读 通过父置空id
   data.value.formModeProps.parentId = row.id ?? ''
+  data.value.formModeProps.menuLevel = row.menuLevel ?? '' // 菜单等级 传当前值 走添加接口前自增1
   data.value.formModeProps.visible = true
 }
 // 编辑时id赋值给id 通过id请求 parentId
 function onEdit(row: any) {
   data.value.formModeProps.id = row.id ?? ''
-  data.value.formModeProps.parentId = '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
+  data.value.formModeProps.row = JSON.stringify(row) // 修改时给整个对象传过去
+  data.value.formModeProps.parentId = row.parentId ?? '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
   data.value.formModeProps.visible = true
 }
 
@@ -142,8 +144,8 @@ function onDel(row: any) {
       </ElTable>
     </PageMain>
     <FormMode
-      :id="data.formModeProps.id" v-model="data.formModeProps.visible" :parent-id="data.formModeProps.parentId"
-      @success="getDataList"
+      :id="data.formModeProps.id" v-model="data.formModeProps.visible" :menu-level="data.formModeProps.menuLevel" :parent-id="data.formModeProps.parentId"
+      :row="data.formModeProps.row" @success="getDataList"
     />
   </div>
 </template>

@@ -5,7 +5,7 @@ export default {
     baseURL: '/mock/',
     data,
   }),
-  // list: (data: any) => api.post('menu/get/MenuList', data),
+  // list: (data: any) => api.post('menu/get/getMenuList', data),
 
   detail: (id: number | string) => api.get('menu/detail', {
     params: {
@@ -17,7 +17,7 @@ export default {
   // create: (data: any) => api.post('menu/create', data, {
   //   baseURL: '/mock/',
   // }),
-  create: (data: any) => api.post('menu/insert/Menu', data),
+  create: (data: any) => api.post('menu/insert/insertMenu', data),
 
   // edit: (data: any) => api.post('menu/edit', data, {
   //   baseURL: '/mock/',
@@ -29,5 +29,5 @@ export default {
   // }, {
   //   baseURL: '/mock/',
   // }),
-  delete: (id: number | string) => api.delete(`menu/delete/Menu/${id}`),
+  delete: (id: number | string) => api.delete(`menu/delete/deleteMenu/${id}`),
 }

@@ -14,7 +14,7 @@ const router = useRouter()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
 
-const data = ref({
+const data = ref<any>({
   loading: false,
   // 表格是否自适应高度
   tableAutoHeight: false,
@@ -28,7 +28,9 @@ const data = ref({
   // 详情
   formModeProps: {
     visible: false,
-    menulev: 1, // 路由等级
+    menulev: 1, // 菜单等级
+    path: '', // 菜单
+    auths: [], // 权限
     id: '',
   },
   // 搜索
@@ -68,33 +70,35 @@ function recursion(menus: any[], permissions: any[]) {
 async function getDataList() {
   data.value.loading = true
   const permissions = await api.list()
-  const menus = await apiMenu.list({ type: 'flat' })
+  const menus = await apiMenu.list({ type: 'normal' })
   // 处理数据 将权限里的menu和路由里的name相同的数据添加到路由的permissions里
   recursion(menus.data, permissions.data)
   data.value.dataList = menus.data
   data.value.loading = false
 }
 
-// // 当前页码切换（翻页）
-// function currentChange(page = 1) {
-//   onCurrentChange(page).then(() => getDataList())
-// }
-
 function onCreate() {
   if (data.value.formMode === 'router') {
     if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {
       tabbar.open({
         name: 'multilevel_menu_examplePermissionsCreate',
+        params: {
+          menulev: 3,
+        },
       })
     }
     else {
       router.push({
         name: 'multilevel_menu_examplePermissionsCreate',
+        params: {
+          menulev: 3,
+        },
       })
     }
   }
   else {
     data.value.formModeProps.id = ''
+    data.value.formModeProps.menulev = 3
     data.value.formModeProps.visible = true
   }
 }
@@ -106,7 +110,9 @@ function onEdit(row: any) {
         name: 'multilevel_menu_examplePermissionsEdit',
         params: {
           id: row.id,
-          menulev: row.menuLevel,
+          menulev: row.menuLevel, // 回显菜单等级
+          path: row.path, // 回显菜单
+          auths: JSON.stringify(row.auths), // 回显权限
         },
       })
     }
@@ -115,7 +121,9 @@ function onEdit(row: any) {
         name: 'multilevel_menu_examplePermissionsEdit',
         params: {
           id: row.id,
-          menulev: row.menuLevel,
+          menulev: row.menuLevel, // 回显菜单等级
+          path: row.path, // 回显菜单
+          auths: JSON.stringify(row.auths), // 回显权限
         },
       })
     }
@@ -123,6 +131,8 @@ function onEdit(row: any) {
   else {
     data.value.formModeProps.id = row.id
     data.value.formModeProps.menulev = row.menuLevel
+    data.value.formModeProps.path = row.path
+    data.value.formModeProps.auths = JSON.stringify(row.auths)
     data.value.formModeProps.visible = true
   }
 }
@@ -131,10 +141,10 @@ function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.title}」吗？`, '确认信息').then(() => {
     api.delete(row.id).then(() => {
       getDataList()
-      // ElMessage.success({
-      //   message: '模拟删除成功',
-      //   center: true,
-      // })
+      ElMessage.success({
+        message: '模拟删除成功',
+        center: true,
+      })
     })
   }).catch(() => { })
 }
@@ -166,20 +176,22 @@ function onDel(row: any) {
         </ElTableColumn>
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
-            <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">
-              编辑
-            </ElButton>
-            <ElButton type="danger" size="small" plain @click="onDel(scope.row)">
-              删除
-            </ElButton>
+            <div v-if="scope.row.menuLevel > 2">
+              <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">
+                编辑
+              </ElButton>
+              <ElButton type="danger" size="small" plain @click="onDel(scope.row)">
+                删除
+              </ElButton>
+            </div>
           </template>
         </ElTableColumn>
       </ElTable>
-      {{ data.formModeProps.menulev }}
     </PageMain>
     <FormMode
-      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
-      v-model="data.formModeProps.visible" :menulev="data.formModeProps.menulev" :mode="data.formMode"
+      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id" v-model="data.formModeProps.visible"
+      :path="data.formModeProps.path"
+      :auths="data.formModeProps.auths" :menulev="data.formModeProps.menulev" :mode="data.formMode"
       @success="getDataList"
     />
   </div>

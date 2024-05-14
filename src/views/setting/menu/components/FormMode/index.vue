@@ -3,7 +3,7 @@ import type { DetailFormProps } from '../../types'
 import DetailForm from '../DetailForm/index.vue'
 // import DetailForm from '../../detail.vue'
 
-const props = defineProps(['id', 'parentId', 'modelValue'])
+const props = defineProps(['id', 'parentId', 'modelValue', 'menuLevel', 'row'])
 
 const emits = defineEmits<{
   success: []

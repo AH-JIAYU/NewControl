@@ -1,3 +1,4 @@
+<!-- eslint-disable prefer-promise-reject-errors -->
 <script setup lang="ts">
 import Sortable from 'sortablejs'
 import type { FormInstance, FormRules } from 'element-plus'
@@ -7,10 +8,19 @@ import api from '@/api/modules/setting_permissions'
 import menuapi from '@/api/modules/menu'
 import useMenuStore from '@/store/modules/menu'
 
-const props = defineProps(['id', 'menulev'])
+const props = defineProps(['id', 'menulev', 'path', 'auths'])
 const formRules = ref<any>({
   menu: [
     { required: true, message: '请选择路由地址', trigger: 'blur' },
+  ],
+  type: [
+    { required: true, message: '请选择类型', trigger: 'blur' },
+  ],
+  name: [
+    { required: true, message: '请输入key标识', trigger: 'blur' },
+  ],
+  label: [
+    { required: true, message: '请输入名称', trigger: 'blur' },
   ],
 })
 // const menuStore = useMenuStore() // 路由store
@@ -28,14 +38,7 @@ const form = ref<any>({
   menuData: [], // 全部路由
   choiceMenuData: [], // 展示的选择路由
 })
-const munulevs = ref([// 路由等级
-  {
-    value: 1,
-    label: '一级导航',
-  }, {
-    value: 2,
-    label: '二级导航',
-  },
+const munulevs = ref([// 路由等级  1，2级路由不需要控制按钮权限
   {
     value: 3,
     label: '三级导航',
@@ -99,10 +102,9 @@ function onAuthDarg() {
 }
 onMounted(async () => {
   onAuthDarg()// 拖拽
-  // form.value.menuData = menuStore.allMenus // 获取store的路由 不带路由层级
-  const res = await menuapi.list({ type: 'normal' })
+  const res = await menuapi.list({ type: 'normal' }) // 路由
   form.value.menuData = res.data
-  form.value.choiceMenuData = findItemsByLevel(form.value.menuData, form.value.menulev)
+  form.value.choiceMenuData = findItemsByLevel(form.value.menuData, form.value.menulev) // 筛选路由
   if (form.value.id !== '') {
     getInfo()
   }
@@ -110,26 +112,12 @@ onMounted(async () => {
 
 function getInfo() {
   loading.value = true
-  form.value.data = [{ // 后期换接口
-    menu: 'multilevel_menu_example', // 路由name 唯一
-    type: 'write', // 类型
-    label: '新增按钮', // 备注
-    name: 'cs', // key
-    id: '1',
-    permission: 'multilevel_menu_example-write-cs',
-  },
-  {
-    menu: 'multilevel_menu_example',
-    type: 'edit', // 类型
-    label: '编辑按钮', // 备注
-    name: 'cs2', // key
-    id: '2',
-    permission: 'multilevel_menu_example-create-cs2',
-  }]
-  form.value.flat = !!form.value.data.length
+  form.value.data = JSON.parse(props.auths)
+  form.value.menu = props.path
+  form.value.flat = !!form.value.data.length // 数组为空 确定时走添加接口
   loading.value = false
 }
-
+// 权限表格添加行
 function onAuthAdd() {
   form.value.data.push({
     name: '',
@@ -139,28 +127,31 @@ function onAuthAdd() {
     authsTableRef.value.setScrollTop(form.value.data.length * 50)
   })
 }
-
+// 权限表格删除行
 function onAuthDelete(index: number) {
   form.value.data.splice(index, 1)
 }
 
 defineExpose({
   submit() {
-    form.value.data.forEach((item: any) => {
+    form.value.data.forEach((item: any) => { // 处理数据
       item.menu = form.value.menu
       item.permission = `${form.value.menu}-${item.type}-${item.name}`
     })
-    return new Promise<void>((resolve) => {
-      if (!form.value.flat) {
+    return new Promise<void>((resolve: any, reject: any) => {
+      if (!form.value.flat) { // 判断编辑回显数组是否为空
         formRef.value && formRef.value.validate((valid) => {
           if (valid) {
             api.create(form.value.data).then(() => {
               ElMessage.success({
-                message: '1模拟新增成功',
+                message: '模拟新增成功',
                 center: true,
               })
               resolve()
             })
+          }
+          else {
+            reject() // 校验不通过 阻止代码继续执行
           }
         })
       }
@@ -169,11 +160,14 @@ defineExpose({
           if (valid) {
             api.edit(form.value.data).then(() => {
               ElMessage.success({
-                message: '1模拟编辑成功',
+                message: '模拟编辑成功',
                 center: true,
               })
               resolve()
             })
+          }
+          else {
+            reject() // 校验不通过 阻止代码继续执行
           }
         })
       }
@@ -195,7 +189,18 @@ defineExpose({
       </ElFormItem>
       <ElFormItem label="选择路由" prop="menu">
         <ElSelect v-model="form.menu" placeholder="选择路由">
-          <el-option v-for="item in form.choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.path" />
+          <el-option v-for="item in form.choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.path">
+            <span style="float: left;">{{ item.meta.title }}</span>
+            <span
+              style="
+          float: right;
+          font-size: 13px;
+          color: var(--el-text-color-secondary);
+"
+            >
+              {{ item.name }}
+            </span>
+          </el-option>
         </ElSelect>
       </ElFormItem>
       <ElTable ref="authsTableRef" :key="id" :data="form.data" stripe highlight-current-row border>
@@ -228,30 +233,36 @@ defineExpose({
         </ElTableColumn>
         <ElTableColumn label="类型" align="center">
           <template #default="scope">
-            <el-radio-group v-model="scope.row.type">
-              <el-radio-button value="get" label="get">
-                读
-              </el-radio-button>
-              <el-radio-button value="insert" label="insert">
-                写
-              </el-radio-button>
-              <el-radio-button value="update" label="update">
-                改
-              </el-radio-button>
-              <el-radio-button value="delete" label="delete">
-                删
-              </el-radio-button>
-            </el-radio-group>
+            <ElFormItem :prop="`data.${scope.$index}.type`" :rules="formRules.type">
+              <el-radio-group v-model="scope.row.type">
+                <el-radio-button value="get" label="get">
+                  读
+                </el-radio-button>
+                <el-radio-button value="insert" label="insert">
+                  写
+                </el-radio-button>
+                <el-radio-button value="update" label="update">
+                  改
+                </el-radio-button>
+                <el-radio-button value="delete" label="delete">
+                  删
+                </el-radio-button>
+              </el-radio-group>
+            </ElFormItem>
           </template>
         </ElTableColumn>
         <ElTableColumn label="权限KEY">
           <template #default="scope">
-            <ElInput v-model="scope.row.name" />
+            <ElFormItem :prop="`data.${scope.$index}.name`" :rules="formRules.name">
+              <ElInput v-model="scope.row.name" />
+            </ElFormItem>
           </template>
         </ElTableColumn>
         <ElTableColumn label="名称">
           <template #default="scope">
-            <ElInput v-model="scope.row.label" />
+            <ElFormItem :prop="`data.${scope.$index}.label`" :rules="formRules.label">
+              <ElInput v-model="scope.row.label" />
+            </ElFormItem>
           </template>
         </ElTableColumn>
       </ElTable>
@@ -266,6 +277,10 @@ defineExpose({
   .el-table {
     height: 100%;
     margin-top: 15px;
+
+    .el-form-item__content {
+      margin: 0 !important;
+    }
 
     .el-table__row {
       &.ghost {

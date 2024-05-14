@@ -26,7 +26,7 @@ export default defineFakeRoute([
                 menuLevel: 2,
                 path: '/multilevel_menu_example',
                 component: 'Layout',
-                redirect: '/multilevel_menu_example/menu',
+                redirect: '//multilevel_menu_example/multilevel_menu_exampleMenu',
                 name: 'multilevel_menu_example',
                 meta: {
                   title: '配置',
@@ -39,7 +39,7 @@ export default defineFakeRoute([
                     id: 3,
                     parentId: 3,
                     menuLevel: 3,
-                    path: 'menu',
+                    path: 'multilevel_menu_exampleMenu',
                     name: 'multilevel_menu_exampleMenu',
                     component: 'setting/menu/list.vue',
                     meta: {
@@ -139,7 +139,7 @@ export default defineFakeRoute([
                 menuLevel: 2,
                 path: '/tenant',
                 component: 'Layout',
-                redirect: '//tenant/menu',
+                redirect: '/tenant/teanantMenu',
                 name: 'tenant',
                 meta: {
                   title: '租户',
@@ -151,7 +151,7 @@ export default defineFakeRoute([
                   {
                     id: 6, parentId: 5,
                     menuLevel: 3,
-                    path: 'menu',
+                    path: 'teanantMenu',
                     name: 'teanantMenu',
                     component: 'tenant/tenantMenu/list.vue',
                     meta: {
