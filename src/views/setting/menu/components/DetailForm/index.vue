@@ -28,6 +28,7 @@ const loading = ref(false)
 const formRef = ref<FormInstance>()
 const showParent = ref(false) // 是否显示父级id
 const list = ref() // 导航列表
+const choiceMenuData = ref<any>([]) // 展示的选择路由
 const munulevs = ref([// 路由等级
   {
     value: 1,
@@ -44,6 +45,8 @@ const munulevs = ref([// 路由等级
     value: 4,
     label: '内置页面',
   }])
+const inputTag = ref('') // tag的输入框绑定的值
+const inputVisible = ref(false) // tag新增输入框显隐
 const form = ref<any>({
   id: props.id ?? '',
   parentId: props.parentId ?? '',
@@ -54,6 +57,7 @@ const form = ref<any>({
   sort: '',
   menuLevel: props.menuLevel ?? '',
   navigation: '',
+  key: [],
   meta: {
     title: '',
     icon: '',
@@ -74,6 +78,28 @@ const form = ref<any>({
     paddingBottom: '0px',
   },
 })
+const InputRef = ref<any>() // tag 添加输入框ref
+// tag
+function handleClose(tag: string) {
+  form.value.key.splice(form.value.key.indexOf(tag), 1)
+}
+// tag
+function showInput() {
+  inputVisible.value = true
+  nextTick(() => {
+    InputRef.value!.input!.focus()
+  })
+}
+// tag
+function handleInputConfirm() {
+  if (inputTag.value) {
+    form.value.key = form.value.key || []
+    form.value.key.push(inputTag.value)
+  }
+  inputVisible.value = false
+  inputTag.value = ''
+}
+
 const formRules = ref<FormRules>({
   'path': [
     { required: true, message: '请输入路由地址', trigger: 'blur' },
@@ -83,10 +109,47 @@ const formRules = ref<FormRules>({
   ],
 })
 
+// 函数查找具有特定menulev的所有项目
+function findItemsByLevel(data: any, level: number) {
+  const results: any[] = []
+  function recurse(items: any) {
+    // 确保 items 是数组
+    if (!Array.isArray(items)) {
+      return
+    }
+    for (const item of items) {
+      if (item.menuLevel === level) {
+        results.push(item)
+      }
+      if (Array.isArray(item.children)) {
+        recurse(item.children)
+      }
+    }
+  }
+  recurse(data)
+  return results
+}
+// 选择父级分类Select the parent project ID
+function selectparentid(menuLevel: any) {
+  if (menuLevel === 1) {
+    choiceMenuData.value = findItemsByLevel(list.value, 1)
+  }
+  else if (menuLevel === 2) {
+    choiceMenuData.value = findItemsByLevel(list.value, 2)
+  }
+  else if (menuLevel === 3) {
+    choiceMenuData.value = findItemsByLevel(list.value, 3)
+  }
+  else {
+    choiceMenuData.value = findItemsByLevel(list.value, 4)
+  }
+}
+
 onMounted(() => {
-  apiMenu.list({ type: 'flat' }).then((res: any) => {
+  apiMenu.list({ type: 'normal' }).then((res: any) => {
     list.value = res.data
   })
+  choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel) // 筛选路由
   // 第一次进入时id和parentid都为空时 显示父级导航
   showParent.value = !!(!form.value.id && !form.value.parentId)
   if (form.value.id !== '') {
@@ -197,8 +260,9 @@ defineExpose({
           <PageHeader title="基础配置" content="标准路由配置，包含 path/redirect/name/component" />
           <ElRow :gutter="30" style="padding: 20px;">
             <ElCol v-if="!!form.parentId || showParent" :xl="12" :lg="24">
-              <ElFormItem label="菜单等级">
-                <el-select v-model="form.menuLevel" clear value-key="" placeholder="" clearable filterable>
+              <ElFormItem label="路由等级">
+                <el-select v-model="form.menuLevel" clear value-key="" placeholder="" clearable filterable
+                  @change="selectparentid">
                   <el-option v-for="item in munulevs" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
               </ElFormItem>
@@ -206,7 +270,17 @@ defineExpose({
             <ElCol v-if="!!form.parentId || showParent" :xl="12" :lg="24">
               <ElFormItem label="父级导航">
                 <el-select v-model="form.parentId" clear value-key="" placeholder="" clearable filterable>
-                  <el-option v-for="item in list" :key="item.id" :label="item.meta.title" :value="item.id" />
+                  <!-- <el-option v-for="item in choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.id" /> -->
+                  <el-option v-for="item in choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.id">
+                    <span style="float: left;">{{ item.meta.title }}</span>
+                    <span style="
+          float: right;
+          font-size: 13px;
+          color: var(--el-text-color-secondary);
+">
+                      {{ item.name }}
+                    </span>
+                  </el-option>
                 </el-select>
               </ElFormItem>
             </ElCol>
@@ -259,6 +333,21 @@ defineExpose({
               </ElFormItem>
             </ElCol>
             <ElCol :xl="12" :lg="24">
+              <ElFormItem label="模块接口">
+                <div class="flex gap-2">
+                  <el-tag v-for="tag in form.key" :key="tag" closable :disable-transitions="false"
+                    @close="handleClose(tag)">
+                    {{ tag }}
+                  </el-tag>
+                  <el-input v-if="inputVisible" ref="InputRef" v-model="inputTag" class="w-20" size="small"
+                    @keyup.enter="handleInputConfirm" @blur="handleInputConfirm" />
+                  <el-button v-else class="button-new-tag" size="small" @click="showInput">
+                    + 添加
+                  </el-button>
+                </div>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xl="12" :lg="24">
               <ElFormItem label="默认图标" prop="meta.icon">
                 <IconPicker v-model="form.meta.icon" />
               </ElFormItem>
@@ -304,26 +393,18 @@ defineExpose({
                   <ElTooltip content="当跳转到设置的路由时，则会对当前路由进行缓存" placement="top">
                     <SvgIcon name="i-ri:question-line" />
                   </ElTooltip>
-                  <span v-show="typeof form.meta.cache === 'object'" class="label-tip">切换为<ElLink
-                    type="primary"
-                    :underline="false" @click.prevent="form.meta.cache = true"
-                  >始终缓存</ElLink></span>
-                  <span v-show="typeof form.meta.cache === 'boolean'" class="label-tip">切换为<ElLink
-                    type="primary"
-                    :underline="false" @click.prevent="form.meta.cache = []"
-                  >规则模式</ElLink></span>
+                  <span v-show="typeof form.meta.cache === 'object'" class="label-tip">切换为<ElLink type="primary"
+                      :underline="false" @click.prevent="form.meta.cache = true">始终缓存</ElLink></span>
+                  <span v-show="typeof form.meta.cache === 'boolean'" class="label-tip">切换为<ElLink type="primary"
+                      :underline="false" @click.prevent="form.meta.cache = []">规则模式</ElLink></span>
                 </template>
                 <ElSpace v-show="typeof form.meta.cache === 'object'">
-                  <ElTag
-                    v-for="item in (form.meta.cache as string[])" :key="item" size="large" closable
-                    :disable-transitions="false" @close="onInputCacheClose(item)"
-                  >
+                  <ElTag v-for="item in (form.meta.cache as string[])" :key="item" size="large" closable
+                    :disable-transitions="false" @close="onInputCacheClose(item)">
                     {{ item }}
                   </ElTag>
-                  <ElInput
-                    v-if="inputCacheVisible" ref="InputCacheRef" v-model="inputCache" style="width: 200px;"
-                    @keyup.enter="onInputCacheConfirm" @blur="onInputCacheConfirm"
-                  />
+                  <ElInput v-if="inputCacheVisible" ref="InputCacheRef" v-model="inputCache" style="width: 200px;"
+                    @keyup.enter="onInputCacheConfirm" @blur="onInputCacheConfirm" />
                   <ElButton v-else @click="onInputCacheShow">
                     新增
                   </ElButton>
@@ -343,16 +424,12 @@ defineExpose({
                   <span class="label-tip">当缓存规则为“始终缓存”时生效</span>
                 </template>
                 <ElSpace>
-                  <ElTag
-                    v-for="item in (form.meta.noCache as string[])" :key="item" size="large" closable
-                    :disable-transitions="false" @close="onInputNoCacheClose(item)"
-                  >
+                  <ElTag v-for="item in (form.meta.noCache as string[])" :key="item" size="large" closable
+                    :disable-transitions="false" @close="onInputNoCacheClose(item)">
                     {{ item }}
                   </ElTag>
-                  <ElInput
-                    v-if="inputNoCacheVisible" ref="InputNoCacheRef" v-model="inputNoCache" style="width: 200px;"
-                    @keyup.enter="onInputNoCacheConfirm" @blur="onInputNoCacheConfirm"
-                  />
+                  <ElInput v-if="inputNoCacheVisible" ref="InputNoCacheRef" v-model="inputNoCache" style="width: 200px;"
+                    @keyup.enter="onInputNoCacheConfirm" @blur="onInputNoCacheConfirm" />
                   <ElButton v-else @click="onInputNoCacheShow">
                     新增
                   </ElButton>

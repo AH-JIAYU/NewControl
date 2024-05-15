@@ -4,8 +4,9 @@ import Sortable from 'sortablejs'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import type { DetailFormProps } from '../../types'
+import Edit from '../Edit/index.vue'
 import api from '@/api/modules/setting_permissions'
-import menuapi from '@/api/modules/menu'
+// import menuapi from '@/api/modules/menu'
 import useMenuStore from '@/store/modules/menu'
 
 const props = defineProps(['id', 'menulev', 'path', 'auths'])
@@ -28,6 +29,13 @@ const loading = ref(false)
 const formRef = ref<FormInstance>()
 const authsTableRef = ref<any>()
 const authsTableKey = ref(0)
+const EditProps = ref<any>({ // 组件数据
+  visible: false,
+  id: '',
+  path: '',
+  keys: [],
+  row: {},
+})
 const form = ref<any>({
   id: props.id,
   menulev: props.menulev, // 路由等级
@@ -38,50 +46,50 @@ const form = ref<any>({
   menuData: [], // 全部路由
   choiceMenuData: [], // 展示的选择路由
 })
-const munulevs = ref([// 路由等级  1，2级路由不需要控制按钮权限
-  {
-    value: 3,
-    label: '三级导航',
-  },
-  {
-    value: 4,
-    label: '内置页面',
-  }])
-// 函数查找具有特定menulev的所有项目
-function findItemsByLevel(data: any, level: number) {
-  const results: any[] = []
-  function recurse(items: any) {
-    // 确保 items 是数组
-    if (!Array.isArray(items)) {
-      return
-    }
-    for (const item of items) {
-      if (item.menuLevel === level) {
-        results.push(item)
-      }
-      if (Array.isArray(item.children)) {
-        recurse(item.children)
-      }
-    }
-  }
-  recurse(data)
-  return results
-}
-// 选择父级分类Select the parent project ID
-function selectparentid(menulev: any) {
-  if (menulev === 1) {
-    form.value.choiceMenuData = findItemsByLevel(form.value.menuData, 1)
-  }
-  else if (menulev === 2) {
-    form.value.choiceMenuData = findItemsByLevel(form.value.menuData, 2)
-  }
-  else if (menulev === 3) {
-    form.value.choiceMenuData = findItemsByLevel(form.value.menuData, 3)
-  }
-  else {
-    form.value.choiceMenuData = findItemsByLevel(form.value.menuData, 4)
-  }
-}
+// const munulevs = ref([// 路由等级  1，2级路由不需要控制按钮权限
+//   {
+//     value: 3,
+//     label: '三级导航',
+//   },
+//   {
+//     value: 4,
+//     label: '内置页面',
+//   }])
+// // 函数查找具有特定menulev的所有项目
+// function findItemsByLevel(data: any, level: number) {
+//   const results: any[] = []
+//   function recurse(items: any) {
+//     // 确保 items 是数组
+//     if (!Array.isArray(items)) {
+//       return
+//     }
+//     for (const item of items) {
+//       if (item.menuLevel === level) {
+//         results.push(item)
+//       }
+//       if (Array.isArray(item.children)) {
+//         recurse(item.children)
+//       }
+//     }
+//   }
+//   recurse(data)
+//   return results
+// }
+// // 选择父级分类Select the parent project ID
+// function selectparentid(menulev: any) {
+//   if (menulev === 1) {
+//     form.value.choiceMenuData = findItemsByLevel(form.value.menuData, 1)
+//   }
+//   else if (menulev === 2) {
+//     form.value.choiceMenuData = findItemsByLevel(form.value.menuData, 2)
+//   }
+//   else if (menulev === 3) {
+//     form.value.choiceMenuData = findItemsByLevel(form.value.menuData, 3)
+//   }
+//   else {
+//     form.value.choiceMenuData = findItemsByLevel(form.value.menuData, 4)
+//   }
+// }
 // 拖拽
 function onAuthDarg() {
   const tbody = authsTableRef.value.$el.querySelector('.el-table__body-wrapper tbody')
@@ -100,11 +108,18 @@ function onAuthDarg() {
     },
   })
 }
+// // 选择路由改变时拿到当前路由的row
+// function rowKey(value: any) {
+//   const data = form.value.choiceMenuData.find((item: any) => item.path === value)
+//   console.log('data', data)
+//   data.value.keys = JSON.stringify(data.key)
+// }
+
 onMounted(async () => {
   onAuthDarg()// 拖拽
-  const res = await menuapi.list({ type: 'normal' }) // 路由
-  form.value.menuData = res.data
-  form.value.choiceMenuData = findItemsByLevel(form.value.menuData, form.value.menulev) // 筛选路由
+  // const res = await menuapi.list({ type: 'normal' }) // 路由
+  // form.value.menuData = res.data
+  // form.value.choiceMenuData = findItemsByLevel(form.value.menuData, form.value.menulev) // 筛选路由
   if (form.value.id !== '') {
     getInfo()
   }
@@ -119,13 +134,25 @@ function getInfo() {
 }
 // 权限表格添加行
 function onAuthAdd() {
-  form.value.data.push({
-    name: '',
-    value: '',
+  // form.value.data.push({
+  //   name: '',
+  //   value: '',
+  // })
+  // 添加前,进行表单校验选择路由后才能添加
+  formRef.value && formRef.value.validate((valid) => {
+    if (valid) {
+      EditProps.value.visible = true
+      EditProps.value.id = '' // 置空id
+    }
   })
-  nextTick(() => {
-    authsTableRef.value.setScrollTop(form.value.data.length * 50)
-  })
+  // nextTick(() => {
+  //   authsTableRef.value.setScrollTop(form.value.data.length * 50)
+  // })
+}
+function onEdit(row: any) {
+  EditProps.value.id = row.id
+  EditProps.value.row = JSON.stringify(row)
+  EditProps.value.visible = true
 }
 // 权限表格删除行
 function onAuthDelete(index: number) {
@@ -179,30 +206,24 @@ defineExpose({
 <template>
   <div v-loading="loading">
     <ElForm ref="formRef" :rules="formRules" :model="form" label-width="120px" label-suffix="：">
-      <ElFormItem label="路由等级">
-        <el-select
-          v-model="form.menulev" placeholder="Select" size="large" style="width: 240px;"
-          @change="selectparentid"
-        >
+      <!-- <ElFormItem label="路由等级">
+        <el-select v-model="form.menulev" :disabled="!!form.id" placeholder="Select" @change="selectparentid">
           <el-option v-for="item in munulevs" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </ElFormItem>
       <ElFormItem label="选择路由" prop="menu">
-        <ElSelect v-model="form.menu" placeholder="选择路由">
+        <ElSelect v-model="form.menu" :disabled="!!form.id" placeholder="选择路由" @change="rowKey">
           <el-option v-for="item in form.choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.path">
             <span style="float: left;">{{ item.meta.title }}</span>
-            <span
-              style="
+            <span style="
           float: right;
           font-size: 13px;
-          color: var(--el-text-color-secondary);
-"
-            >
+          color: var(--el-text-color-secondary);">
               {{ item.name }}
             </span>
           </el-option>
         </ElSelect>
-      </ElFormItem>
+      </ElFormItem> -->
       <ElTable ref="authsTableRef" :key="id" :data="form.data" stripe highlight-current-row border>
         <ElTableColumn width="60" align="center" fixed>
           <template #header>
@@ -265,8 +286,17 @@ defineExpose({
             </ElFormItem>
           </template>
         </ElTableColumn>
+        <ElTableColumn label="名称">
+          <template #default="scope">
+            <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">
+              编辑
+            </ElButton>
+          </template>
+        </ElTableColumn>
       </ElTable>
+      {{ EditProps }}
     </ElForm>
+    <Edit :id="EditProps.id" v-model="EditProps.visible" :row="EditProps.row" />
   </div>
 </template>
 

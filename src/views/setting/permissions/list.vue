@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
 import FormMode from './components/FormMode/index.vue'
+import Edit from './components/Edit/index.vue'
 import eventBus from '@/utils/eventBus'
 import api from '@/api/modules/setting_permissions'
 import apiMenu from '@/api/modules/menu'
@@ -32,6 +33,9 @@ const data = ref<any>({
     path: '', // 菜单
     auths: [], // 权限
     id: '',
+  },
+  EditProps: {
+    visible: false, // 添加时的弹框
   },
   // 搜索
   search: {
@@ -78,29 +82,30 @@ async function getDataList() {
 }
 
 function onCreate() {
-  if (data.value.formMode === 'router') {
-    if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {
-      tabbar.open({
-        name: 'multilevel_menu_examplePermissionsCreate',
-        params: {
-          menulev: 3,
-        },
-      })
-    }
-    else {
-      router.push({
-        name: 'multilevel_menu_examplePermissionsCreate',
-        params: {
-          menulev: 3,
-        },
-      })
-    }
-  }
-  else {
-    data.value.formModeProps.id = ''
-    data.value.formModeProps.menulev = 3
-    data.value.formModeProps.visible = true
-  }
+  // if (data.value.formMode === 'router') {
+  //   if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {
+  //     tabbar.open({
+  //       name: 'multilevel_menu_examplePermissionsCreate',
+  //       params: {
+  //         menulev: 3,
+  //       },
+  //     })
+  //   }
+  //   else {
+  //     router.push({
+  //       name: 'multilevel_menu_examplePermissionsCreate',
+  //       params: {
+  //         menulev: 3,
+  //       },
+  //     })
+  //   }
+  // }
+  // else {
+  data.value.EditProps.id = 11
+  data.value.EditProps.visible = true
+  data.value.EditProps.row = JSON.stringify({})
+
+  // }
 }
 
 function onEdit(row: any) {
@@ -137,17 +142,17 @@ function onEdit(row: any) {
   }
 }
 
-function onDel(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.title}」吗？`, '确认信息').then(() => {
-    api.delete(row.id).then(() => {
-      getDataList()
-      ElMessage.success({
-        message: '模拟删除成功',
-        center: true,
-      })
-    })
-  }).catch(() => { })
-}
+// function onDel(row: any) {
+//   ElMessageBox.confirm(`确认删除「${row.title}」吗？`, '确认信息').then(() => {
+//     api.delete(row.id).then(() => {
+//       getDataList()
+//       ElMessage.success({
+//         message: '模拟删除成功',
+//         center: true,
+//       })
+//     })
+//   }).catch(() => { })
+// }
 </script>
 
 <template>
@@ -162,10 +167,8 @@ function onDel(row: any) {
           新增按钮权限
         </ElButton>
       </ElSpace>
-      <ElTable
-        :data="data.dataList" row-key="id" stripe highlight-current-row default-expand-all border
-        :style="{ lineHeight: 'normal' }"
-      >
+      <ElTable :data="data.dataList" row-key="id" stripe highlight-current-row default-expand-all border
+        :style="{ lineHeight: 'normal' }">
         <ElTableColumn prop="meta.title" width="300" label="模块" />
         <ElTableColumn label="权限">
           <template #default="{ row }">
@@ -176,24 +179,20 @@ function onDel(row: any) {
         </ElTableColumn>
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
-            <div v-if="scope.row.menuLevel > 2">
+            <div v-if="scope.row.menuLevel > 2 && scope.row.auths.length">
               <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">
-                编辑
-              </ElButton>
-              <ElButton type="danger" size="small" plain @click="onDel(scope.row)">
-                删除
+                详情
               </ElButton>
             </div>
           </template>
         </ElTableColumn>
       </ElTable>
+      {{ data.EditProps.visible }}
     </PageMain>
-    <FormMode
-      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id" v-model="data.formModeProps.visible"
-      :path="data.formModeProps.path"
-      :auths="data.formModeProps.auths" :menulev="data.formModeProps.menulev" :mode="data.formMode"
-      @success="getDataList"
-    />
+    <FormMode v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
+      v-model="data.formModeProps.visible" :path="data.formModeProps.path" :auths="data.formModeProps.auths"
+      :menulev="data.formModeProps.menulev" :mode="data.formMode" @success="getDataList" />
+    <Edit v-model="data.EditProps.visible" />
   </div>
 </template>
 

@@ -9,6 +9,13 @@ export default {
     params: data,
     baseURL: '/mock/',
   }),
+  // list: (data?: {
+  //   title?: string
+  //   from: number
+  //   limit: number
+  // }) => api.get('role/get/getRoleButton', {
+  //   params: data,
+  // }),
 
   detail: (id: number | string) => api.get('setting/permissions/detail', {
     params: {
@@ -20,6 +27,7 @@ export default {
   create: (data: any) => api.post('setting/permissions/create', data, {
     baseURL: '/mock/',
   }),
+  // create: (data: any) => api.post('button/insert/insertButton', data),
 
   edit: (data: any) => api.post('setting/permissions/edit', data, {
     baseURL: '/mock/',
