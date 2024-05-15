@@ -91,10 +91,6 @@ function rowKey(value: any) {
   // data.value.key = JSON.stringify(data)
 }
 function onSubmit() {
-  // submit() 为组件内部方法
-  // formRef.value.submit().then(() => {
-  //   onCancel()
-  // })
   formRef.value.validate((valid: any) => {
     if (valid) {
       form.value.queryForm.permission = `${form.value.queryForm.menu}-${form.value.queryForm.type}-${form.value.queryForm.name}`
