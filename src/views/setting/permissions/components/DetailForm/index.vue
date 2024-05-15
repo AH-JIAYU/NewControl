@@ -145,9 +145,6 @@ function onAuthAdd() {
       EditProps.value.id = '' // 置空id
     }
   })
-  // nextTick(() => {
-  //   authsTableRef.value.setScrollTop(form.value.data.length * 50)
-  // })
 }
 function onEdit(row: any) {
   EditProps.value.id = row.id
