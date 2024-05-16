@@ -261,8 +261,10 @@ defineExpose({
           <ElRow :gutter="30" style="padding: 20px;">
             <ElCol v-if="!!form.parentId || showParent" :xl="12" :lg="24">
               <ElFormItem label="路由等级">
-                <el-select v-model="form.menuLevel" clear value-key="" placeholder="" clearable filterable
-                  @change="selectparentid">
+                <el-select
+                  v-model="form.menuLevel" clear value-key="" placeholder="" clearable filterable
+                  @change="selectparentid"
+                >
                   <el-option v-for="item in munulevs" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
               </ElFormItem>
@@ -273,11 +275,13 @@ defineExpose({
                   <!-- <el-option v-for="item in choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.id" /> -->
                   <el-option v-for="item in choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.id">
                     <span style="float: left;">{{ item.meta.title }}</span>
-                    <span style="
+                    <span
+                      style="
           float: right;
           font-size: 13px;
           color: var(--el-text-color-secondary);
-">
+"
+                    >
                       {{ item.name }}
                     </span>
                   </el-option>
@@ -335,12 +339,16 @@ defineExpose({
             <ElCol :xl="12" :lg="24">
               <ElFormItem label="模块接口">
                 <div class="flex gap-2">
-                  <el-tag v-for="tag in form.key" :key="tag" closable :disable-transitions="false"
-                    @close="handleClose(tag)">
+                  <el-tag
+                    v-for="tag in form.key" :key="tag" closable :disable-transitions="false"
+                    @close="handleClose(tag)"
+                  >
                     {{ tag }}
                   </el-tag>
-                  <el-input v-if="inputVisible" ref="InputRef" v-model="inputTag" class="w-20" size="small"
-                    @keyup.enter="handleInputConfirm" @blur="handleInputConfirm" />
+                  <el-input
+                    v-if="inputVisible" ref="InputRef" v-model="inputTag" class="w-20" size="small"
+                    @keyup.enter="handleInputConfirm" @blur="handleInputConfirm"
+                  />
                   <el-button v-else class="button-new-tag" size="small" @click="showInput">
                     + 添加
                   </el-button>
@@ -393,18 +401,26 @@ defineExpose({
                   <ElTooltip content="当跳转到设置的路由时，则会对当前路由进行缓存" placement="top">
                     <SvgIcon name="i-ri:question-line" />
                   </ElTooltip>
-                  <span v-show="typeof form.meta.cache === 'object'" class="label-tip">切换为<ElLink type="primary"
-                      :underline="false" @click.prevent="form.meta.cache = true">始终缓存</ElLink></span>
-                  <span v-show="typeof form.meta.cache === 'boolean'" class="label-tip">切换为<ElLink type="primary"
-                      :underline="false" @click.prevent="form.meta.cache = []">规则模式</ElLink></span>
+                  <span v-show="typeof form.meta.cache === 'object'" class="label-tip">切换为<ElLink
+                    type="primary"
+                    :underline="false" @click.prevent="form.meta.cache = true"
+                  >始终缓存</ElLink></span>
+                  <span v-show="typeof form.meta.cache === 'boolean'" class="label-tip">切换为<ElLink
+                    type="primary"
+                    :underline="false" @click.prevent="form.meta.cache = []"
+                  >规则模式</ElLink></span>
                 </template>
                 <ElSpace v-show="typeof form.meta.cache === 'object'">
-                  <ElTag v-for="item in (form.meta.cache as string[])" :key="item" size="large" closable
-                    :disable-transitions="false" @close="onInputCacheClose(item)">
+                  <ElTag
+                    v-for="item in (form.meta.cache as string[])" :key="item" size="large" closable
+                    :disable-transitions="false" @close="onInputCacheClose(item)"
+                  >
                     {{ item }}
                   </ElTag>
-                  <ElInput v-if="inputCacheVisible" ref="InputCacheRef" v-model="inputCache" style="width: 200px;"
-                    @keyup.enter="onInputCacheConfirm" @blur="onInputCacheConfirm" />
+                  <ElInput
+                    v-if="inputCacheVisible" ref="InputCacheRef" v-model="inputCache" style="width: 200px;"
+                    @keyup.enter="onInputCacheConfirm" @blur="onInputCacheConfirm"
+                  />
                   <ElButton v-else @click="onInputCacheShow">
                     新增
                   </ElButton>
@@ -424,12 +440,16 @@ defineExpose({
                   <span class="label-tip">当缓存规则为“始终缓存”时生效</span>
                 </template>
                 <ElSpace>
-                  <ElTag v-for="item in (form.meta.noCache as string[])" :key="item" size="large" closable
-                    :disable-transitions="false" @close="onInputNoCacheClose(item)">
+                  <ElTag
+                    v-for="item in (form.meta.noCache as string[])" :key="item" size="large" closable
+                    :disable-transitions="false" @close="onInputNoCacheClose(item)"
+                  >
                     {{ item }}
                   </ElTag>
-                  <ElInput v-if="inputNoCacheVisible" ref="InputNoCacheRef" v-model="inputNoCache" style="width: 200px;"
-                    @keyup.enter="onInputNoCacheConfirm" @blur="onInputNoCacheConfirm" />
+                  <ElInput
+                    v-if="inputNoCacheVisible" ref="InputNoCacheRef" v-model="inputNoCache" style="width: 200px;"
+                    @keyup.enter="onInputNoCacheConfirm" @blur="onInputNoCacheConfirm"
+                  />
                   <ElButton v-else @click="onInputNoCacheShow">
                     新增
                   </ElButton>
