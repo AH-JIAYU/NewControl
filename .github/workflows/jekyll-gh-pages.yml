@@ -48,3 +48,4 @@ jobs:
       with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist  # 根据您的 Vue 项目配置，这里可能需要修改
+          publish_branch: gh-pages
