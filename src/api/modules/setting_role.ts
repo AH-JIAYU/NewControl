@@ -1,14 +1,15 @@
 import api from '../index'
 
 export default {
-  list: (data: {
-    title?: string
-    from: number
-    limit: number
-  }) => api.get('setting/role/list', {
-    params: data,
-    baseURL: '/mock/',
-  }),
+  // list: (data: {
+  //   title?: string
+  //   from: number
+  //   limit: number
+  // }) => api.get('setting/role/list', {
+  //   params: data,
+  //   baseURL: '/mock/',
+  // }),
+  list: () => api.get('role/get/getRole'),
 
   detail: (id: number | string) => api.get('setting/role/detail', {
     params: {
@@ -17,17 +18,21 @@ export default {
     baseURL: '/mock/',
   }),
 
-  create: (data: any) => api.post('setting/role/create', data, {
-    baseURL: '/mock/',
-  }),
+  // create: (data: any) => api.post('setting/role/create', data, {
+  //   baseURL: '/mock/',
+  // }),
 
-  edit: (data: any) => api.post('setting/role/edit', data, {
-    baseURL: '/mock/',
-  }),
+  create: (data: any) => api.post('role/insert/insertRole', data),
 
-  delete: (id: number | string) => api.post('setting/role/delete', {
-    id,
-  }, {
-    baseURL: '/mock/',
-  }),
+  // edit: (data: any) => api.post('setting/role/edit', data, {
+  //   baseURL: '/mock/',
+  // }),
+  edit: (data: any) => api.post('role/update/updateRole', data),
+
+  // delete: (id: number | string) => api.post('setting/role/delete', {
+  //   id,
+  // }, {
+  //   baseURL: '/mock/',
+  // }),
+  delete: (id: number | string) => api.delete(`role/delete/deleteRole/${id}`),
 }

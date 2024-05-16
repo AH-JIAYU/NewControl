@@ -58,33 +58,32 @@ defineExpose({
   submit() {
     form.value.menu = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
     return new Promise<void>((resolve) => {
-      console.log('form.value',form.value)
-      // if (form.value.id === '') {
-      //   formRef.value && formRef.value.validate((valid) => {
-      //     if (valid) {
-      //       api.create(form.value).then(() => {
-      //         ElMessage.success({
-      //           message: '模拟新增成功',
-      //           center: true,
-      //         })
-      //         resolve()
-      //       })
-      //     }
-      //   })
-      // }
-      // else {
-      //   formRef.value && formRef.value.validate((valid) => {
-      //     if (valid) {
-      //       api.edit(form.value).then(() => {
-      //         ElMessage.success({
-      //           message: '模拟编辑成功',
-      //           center: true,
-      //         })
-      //         resolve()
-      //       })
-      //     }
-      //   })
-      // }
+      if (form.value.id === '') {
+        formRef.value && formRef.value.validate((valid) => {
+          if (valid) {
+            api.create(form.value).then(() => {
+              ElMessage.success({
+                message: '模拟新增成功',
+                center: true,
+              })
+              resolve()
+            })
+          }
+        })
+      }
+      else {
+        formRef.value && formRef.value.validate((valid) => {
+          if (valid) {
+            api.edit(form.value).then(() => {
+              ElMessage.success({
+                message: '模拟编辑成功',
+                center: true,
+              })
+              resolve()
+            })
+          }
+        })
+      }
     })
   },
 })
@@ -108,7 +107,7 @@ defineExpose({
               </div>
               <div class="permission">
                 <div v-if="rowPermission(data.id).length" class="permissions" @click.stop>
-                  <ElCheckboxGroup v-model="form.permission">
+                  <ElCheckboxGroup v-model="form.key">
                     <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.id">
                       {{ auth.label }}
                     </ElCheckbox>

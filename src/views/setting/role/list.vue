@@ -66,8 +66,8 @@ function getDataList() {
   }
   api.list(params).then((res: any) => {
     data.value.loading = false
-    data.value.dataList = res.data.list
-    pagination.value.total = res.data.total
+    data.value.dataList = res.data
+    pagination.value.total = res.data.total || 0
   })
 }
 
@@ -131,7 +131,7 @@ function onEdit(row: any) {
 }
 
 function onDel(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.title}」吗？`, '确认信息').then(() => {
+  ElMessageBox.confirm(`确认删除「${row.role}」吗？`, '确认信息').then(() => {
     api.delete(row.id).then(() => {
       getDataList()
       ElMessage.success({
