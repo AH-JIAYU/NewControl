@@ -1,86 +1,83 @@
 <!-- eslint-disable prefer-promise-reject-errors -->
 <script setup lang="ts">
-import type { FormInstance, FormRules } from "element-plus";
-import { ElMessage, ElMessageBox } from "element-plus";
-import type { DetailFormProps } from "../../types";
-import Edit from "../Edit/index.vue";
-import api from "@/api/modules/setting_permissions";
+import type { FormInstance, FormRules } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import type { DetailFormProps } from '../../types'
+import Edit from '../Edit/index.vue'
+import api from '@/api/modules/setting_permissions'
 // import menuapi from '@/api/modules/menu'
-import useMenuStore from "@/store/modules/menu";
+import useMenuStore from '@/store/modules/menu'
 
-const props = defineProps(["id", "auths"]);
-const formRules = ref<any>({
-  menu: [{ required: true, message: "请选择路由地址", trigger: "blur" }],
-  type: [{ required: true, message: "请选择类型", trigger: "blur" }],
-  name: [{ required: true, message: "请输入key标识", trigger: "blur" }],
-  label: [{ required: true, message: "请输入名称", trigger: "blur" }],
-});
-
-watch(
-  () => props.auths,
-  (newValue, oldValue) => {
-    form.value.data = JSON.parse(newValue);
-  },
-  {
-    deep: true,
-  }
-);
-
-// const menuStore = useMenuStore() // 路由store
-const loading = ref(false);
-const formRef = ref<FormInstance>();
-const authsTableRef = ref<any>();
-const authsTableKey = ref(0);
+const props = defineProps(['id', 'auths'])
+const success = inject<any>('success')
+const loading = ref(false)
+const formRef = ref<FormInstance>()
+const authsTableRef = ref<any>()
 const EditProps = ref<any>({
   // 组件数据
   visible: false,
-  id: "",
-  path: "",
+  id: '',
+  path: '',
   keys: [],
   row: {},
-});
-const success=inject('success')
+})
+
 const form = ref<any>({
   id: props.id,
-  menulev: props.menulev, // 路由等级
-  title: "",
+  title: '',
   flat: false, // 判断添加还是编辑接口
-  menu: "", // 选择路由
+  menu: '', // 选择路由
   data: [], // 权限数组
   menuData: [], // 全部路由
   choiceMenuData: [], // 展示的选择路由
-});
+})
+
+const formRules = ref<any>({
+  menu: [{ required: true, message: '请选择路由地址', trigger: 'blur' }],
+  type: [{ required: true, message: '请选择类型', trigger: 'blur' }],
+  name: [{ required: true, message: '请输入key标识', trigger: 'blur' }],
+  label: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+})
+
+watch(
+  () => props.auths,
+  (newValue) => {
+    form.value.data = JSON.parse(newValue)
+  },
+  {
+    deep: true,
+  },
+)
 onMounted(async () => {
-  if (form.value.id !== "") {
-    getInfo();
+  if (form.value.id !== '') {
+    getInfo()
   }
-});
+})
 
 function getInfo() {
-  loading.value = true;
-  form.value.data = JSON.parse(props.auths);
-  form.value.menu = props.path;
-  form.value.flat = !!form.value.data.length; // 数组为空 确定时走添加接口
-  loading.value = false;
+  loading.value = true
+  form.value.data = JSON.parse(props.auths)
+  form.value.flat = !!form.value.data.length // 数组为空 确定时走添加接口
+  loading.value = false
 }
 
 function onEdit(row: any) {
-  EditProps.value.id = row.id;
-  EditProps.value.row = JSON.stringify(row);
-  EditProps.value.visible = true;
+  EditProps.value.id = row.id
+  EditProps.value.row = JSON.stringify(row)
+  EditProps.value.visible = true
 }
 function onDel(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.label}」吗？`, "确认信息")
+  ElMessageBox.confirm(`确认删除「${row.label}」吗？`, '确认信息')
     .then(() => {
       api.delete(row.id).then(() => {
         ElMessage.success({
-          message: "模拟删除成功",
+          message: '模拟删除成功',
           center: true,
-        });
-        success()  // 祖先组件提供的success
-      });
+        })
+        success() // 祖先组件提供的success
+      })
     })
-    .catch(() => {});
+    .catch(() => {})
 }
 </script>
 
@@ -107,8 +104,10 @@ function onDel(row: any) {
               :prop="`data.${scope.$index}.type`"
               :rules="formRules.type"
             >
-              <el-radio-group disabled v-model="scope.row.type">
-                <el-radio-button value="get" label="get"> 读 </el-radio-button>
+              <el-radio-group v-model="scope.row.type" disabled>
+                <el-radio-button value="get" label="get">
+                  读
+                </el-radio-button>
                 <el-radio-button value="insert" label="insert">
                   写
                 </el-radio-button>
@@ -123,8 +122,8 @@ function onDel(row: any) {
           </template>
         </ElTableColumn>
         <ElTableColumn label="权限KEY" prop="name" />
-        <ElTableColumn label="对应接口" prop="key"> </ElTableColumn>
-        <ElTableColumn label="名称" prop="label"> </ElTableColumn>
+        <ElTableColumn label="对应接口" prop="key" />
+        <ElTableColumn label="名称" prop="label" />
         <ElTableColumn label="名称">
           <template #default="scope">
             <ElButton
@@ -148,8 +147,8 @@ function onDel(row: any) {
       </ElTable>
     </ElForm>
     <Edit
-      :id="EditProps.id"
       v-if="EditProps.visible"
+      :id="EditProps.id"
       v-model="EditProps.visible"
       :row="EditProps.row"
     />
@@ -161,6 +160,7 @@ function onDel(row: any) {
   .el-form-item__content {
     margin: 0 !important;
   }
+
   .el-radio-button__original-radio:disabled:checked + .el-radio-button__inner {
     background-color: #c3e0fd !important;
   }
