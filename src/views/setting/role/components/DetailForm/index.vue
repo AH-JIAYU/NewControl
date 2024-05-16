@@ -15,11 +15,15 @@ const menuData = ref<any>([]) // 路由
 const permissionData = ref<any>([]) // 权限
 
 const form = ref({
+  // page: 1,
+  // limit: 20,
   id: props.id,
   role: '',
+  // roleName: '', // 身份名称
+  // remark: '', // 备注
   menuId: [],
   // permission: [],
-  key: [], // 页面对应的接口
+  permission: [], // 页面对应的接口
 })
 const formRules = ref<FormRules>({
   role: [
@@ -45,7 +49,8 @@ async function getInfo() { // 编辑时获取该id的具体数据
 }
 
 function rowPermission(permissionID: any) {
-  return permissionData.value.filter((item: any) => permissionID === item.menuId)
+  const data = permissionData.value.filter((item: any) => permissionID === item.menuId)
+  return data
 }
 
 defineExpose({
@@ -85,12 +90,17 @@ defineExpose({
 
 <template>
   <div v-loading="loading">
-    {{ form }}
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
       <ElFormItem label="角色码" prop="role">
         <ElInput v-model="form.role" placeholder="请输入角色码" />
       </ElFormItem>
-      <ElFormItem label="角色码" prop="role">
+      <!-- <ElFormItem label="身份名称">
+        <ElInput v-model="form.roleName" placeholder="请输入身份名称" />
+      </ElFormItem>
+      <ElFormItem label="备注">
+        <ElInput v-model="form.remark" placeholder="" />
+      </ElFormItem> -->
+      <ElFormItem label="权限">
         <el-tree
           ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.menuId"
           :default-expanded-keys="[]" node-key="id" show-checkbox default-expand-all highlight-current border
@@ -102,8 +112,8 @@ defineExpose({
               </div>
               <div class="permission">
                 <div v-if="rowPermission(data.id).length" class="permissions" @click.stop>
-                  <ElCheckboxGroup v-model="form.key">
-                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.id">
+                  <ElCheckboxGroup v-model="form.permission">
+                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.key">
                       {{ auth.label }}
                     </ElCheckbox>
                   </ElCheckboxGroup>

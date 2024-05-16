@@ -203,7 +203,6 @@ function onEdit(row: any) {
           </template>
         </ElTableColumn>
       </ElTable>
-      {{ data.EditProps.visible }}
     </PageMain>
     <FormMode
       v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
