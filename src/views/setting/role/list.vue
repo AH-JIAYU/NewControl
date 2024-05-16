@@ -29,6 +29,7 @@ const data = ref({
   formModeProps: {
     visible: false,
     id: '',
+    row:{},
   },
   // 搜索
   search: {
@@ -126,6 +127,7 @@ function onEdit(row: any) {
   }
   else {
     data.value.formModeProps.id = row.id
+    data.value.formModeProps.row = JSON.stringify(row)
     data.value.formModeProps.visible = true
   }
 }
@@ -218,7 +220,7 @@ function onDel(row: any) {
     </PageMain>
     <FormMode
       v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
-      v-model="data.formModeProps.visible" :mode="data.formMode" @success="getDataList"
+      v-model="data.formModeProps.visible" :mode="data.formMode"  :row="data.formModeProps.row" @success="getDataList"
     />
   </div>
 </template>

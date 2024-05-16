@@ -6,12 +6,7 @@ import api from '@/api/modules/setting_role'
 import apiMenu from '@/api/modules/menu'
 import apiPermission from '@/api/modules/setting_permissions'
 
-const props = withDefaults(
-  defineProps<DetailFormProps>(),
-  {
-    id: '',
-  },
-)
+const props = defineProps(['id', 'row', 'mode'])
 
 const loading = ref(false)
 const formRef = ref<FormInstance>()
@@ -22,8 +17,8 @@ const permissionData = ref<any>([]) // 权限
 const form = ref({
   id: props.id,
   role: '',
-  menu: [],
-  permission: [],
+  menuId: [],
+  // permission: [],
   key: [], // 页面对应的接口
 })
 const formRules = ref<FormRules>({
@@ -45,9 +40,8 @@ onMounted(async () => {
 
 async function getInfo() { // 编辑时获取该id的具体数据
   loading.value = true
-  const res = await api.detail(form.value.id)
+  form.value = JSON.parse(props.row) // 数据回填
   loading.value = false
-  form.value = res.data
 }
 
 function rowPermission(permissionID: any) {
@@ -56,7 +50,7 @@ function rowPermission(permissionID: any) {
 
 defineExpose({
   submit() {
-    form.value.menu = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
+    form.value.menuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid) => {
@@ -91,13 +85,14 @@ defineExpose({
 
 <template>
   <div v-loading="loading">
+    {{ form }}
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
       <ElFormItem label="角色码" prop="role">
         <ElInput v-model="form.role" placeholder="请输入角色码" />
       </ElFormItem>
       <ElFormItem label="角色码" prop="role">
         <el-tree
-          ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.menu"
+          ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.menuId"
           :default-expanded-keys="[]" node-key="id" show-checkbox default-expand-all highlight-current border
         >
           <template #default="{ data }">
@@ -110,13 +105,6 @@ defineExpose({
                   <ElCheckboxGroup v-model="form.key">
                     <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.id">
                       {{ auth.label }}
-                    </ElCheckbox>
-                  </ElCheckboxGroup>
-                </div>
-                <div v-if="data.key.length" class="permissions" @click.stop>
-                  <ElCheckboxGroup v-model="form.key">
-                    <ElCheckbox v-for="item in data.key" :key="item" :value="item">
-                      {{ item }}
                     </ElCheckbox>
                   </ElCheckboxGroup>
                 </div>
