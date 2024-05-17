@@ -62,10 +62,7 @@ const formRules = ref<FormRules>({
 })
 
 onMounted(() => {
-  const params = {
-    ...getParams(),
-  }
-  apiRole.list(params).then((res: any) => { // 获取角色列表
+  apiRole.list().then((res: any) => { // 获取角色列表
     roleList.value = res.data.list
   })
   if (form.value.id !== '') {

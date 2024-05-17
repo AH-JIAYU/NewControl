@@ -13,7 +13,6 @@ const useRouteStore = defineStore(
   () => {
     const settingsStore = useSettingsStore()
     const tabbarStore = useTabbarStore()
-
     const isGenerate = ref(false)
     const routesRaw = ref<Route.recordMainRaw[]>([])
     const filesystemRoutesRaw = ref<RouteRecordRaw[]>([])

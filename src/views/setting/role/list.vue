@@ -10,7 +10,7 @@ defineOptions({
 })
 
 const router = useRouter()
-const { pagination, getParams, onSizeChange, onCurrentChange, onSortChange } = usePagination()
+const { pagination, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
 
@@ -29,6 +29,7 @@ const data = ref({
   formModeProps: {
     visible: false,
     id: '',
+    row: {},
   },
   // 搜索
   search: {
@@ -47,7 +48,6 @@ onMounted(() => {
   getDataList()
   if (data.value.formMode === 'router') {
     eventBus.on('get-data-list', () => {
-      console.log(99)
       getDataList()
     })
   }
@@ -63,8 +63,8 @@ function getDataList() {
   data.value.loading = true
   api.list().then((res: any) => {
     data.value.loading = false
-    data.value.dataList = res.data.list
-    pagination.value.total = res.data.total
+    data.value.dataList = res.data
+    pagination.value.total = res.data.length
   })
 }
 
@@ -123,6 +123,7 @@ function onEdit(row: any) {
   }
   else {
     data.value.formModeProps.id = row.id
+    data.value.formModeProps.row = JSON.stringify(row)
     data.value.formModeProps.visible = true
   }
 }
@@ -176,8 +177,8 @@ function onDel(row: any) {
       /> -->
     </PageMain>
     <FormMode
-      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
-      v-model="data.formModeProps.visible" :mode="data.formMode" @success="getDataList"
+      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id" v-model="data.formModeProps.visible"
+      :row="data.formModeProps.row" :mode="data.formMode" @success="getDataList"
     />
   </div>
 </template>
