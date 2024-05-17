@@ -4,13 +4,13 @@ import FormMode from './components/FormMode/index.vue'
 import Edit from './components/Edit/index.vue'
 import eventBus from '@/utils/eventBus'
 import api from '@/api/modules/setting_permissions'
-import apiMenu from '@/api/modules/menu'
+import useRouteStore from '@/store/modules/route'
 import useSettingsStore from '@/store/modules/settings'
 
 defineOptions({
   name: 'SettingPermissionsList',
 })
-
+const routeStore = useRouteStore() // 路由 store
 const router = useRouter()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
@@ -74,10 +74,10 @@ function recursion(menus: any[], permissions: any[]) {
 async function getDataList() {
   data.value.loading = true
   const permissions = await api.list()
-  const menus = await apiMenu.list({ type: 'normal' })
+  const menus: any = routeStore.routesRaw // 从store获取原始路由
   // 处理数据 将权限里的menu和路由里的name相同的数据添加到路由的permissions里
-  recursion(menus.data, permissions.data)
-  data.value.dataList = menus.data
+  recursion(menus, permissions.data)
+  data.value.dataList = menus
   data.value.loading = false
   if (data.value.formModeProps.id) {
     // 当通过inject的success(即getDataList)调用该方法时 是会有id的用于编辑删除更新 DetailForm里的数据
@@ -158,7 +158,7 @@ function onEdit(row: any) {
   }
   else {
     data.value.formModeProps.id = row.id
-    // data.value.formModeProps.menulev = row.menuLevel
+    data.value.formModeProps.menulev = row.menuLevel
     // data.value.formModeProps.path = row.path
     data.value.formModeProps.auths = JSON.stringify(row.auths)
     data.value.formModeProps.visible = true

@@ -100,7 +100,7 @@ const useRouteStore = defineStore(
       const returnRoutes: RouteRecordRaw[] = []
       if (settingsStore.settings.app.routeBaseOn !== 'filesystem') {
         if (routesRaw.value) {
-          routesRaw.value.forEach((item) => {
+          routesRaw.value.forEach((item: any) => {
             const tmpRoutes = cloneDeep(item.children) as RouteRecordRaw[]
             tmpRoutes.map((v) => {
               if (!v.meta) {

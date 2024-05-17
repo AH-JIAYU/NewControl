@@ -12,12 +12,14 @@ import { useRoute, useRouter } from 'vue-router'
 import apiMenu from '@/api/modules/menu'
 import useSettingsStore from '@/store/modules/settings'
 import useTabbar from '@/utils/composables/useTabbar'
+import useRouteStore from '@/store/modules/route'
 
 defineOptions({
   name: 'PagesExampleMenuDetail',
 })
 
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
+const routeStore = useRouteStore() // 路由 store
 // const route = useRoute()
 // const router = useRouter()
 // const tabbar = useTabbar()
@@ -26,7 +28,7 @@ const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
 
 const loading = ref(false)
 const formRef = ref<FormInstance>()
-const showParent = ref(false) // 是否显示父级id
+const showParent = ref<any>(false) // 是否显示父级id
 const list = ref() // 导航列表
 const choiceMenuData = ref<any>([]) // 展示的选择路由
 const munulevs = ref([// 路由等级
@@ -146,10 +148,8 @@ function selectparentid(menuLevel: any) {
 }
 
 onMounted(() => {
-  apiMenu.list({ type: 'normal' }).then((res: any) => {
-    list.value = res.data
-  })
-  choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel) // 筛选路由
+  list.value = routeStore.routesRaw // 从store获取原始路由
+  choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel) // 根据路由等级 筛选路由
   // 第一次进入时id和parentid都为空时 显示父级导航
   showParent.value = !!(!form.value.id && !form.value.parentId)
   if (form.value.id !== '') {
@@ -221,7 +221,7 @@ defineExpose({
   submit() {
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
-        formRef.value && formRef.value.validate((valid) => {
+        formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
             form.value.menuLevel = Number(form.value.menuLevel) + 1 // 菜单等级自增一
             apiMenu.create(form.value).then(() => {
@@ -235,7 +235,7 @@ defineExpose({
         })
       }
       else {
-        formRef.value && formRef.value.validate((valid) => {
+        formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
             apiMenu.edit(form.value).then(() => {
               ElMessage.success({
@@ -272,7 +272,6 @@ defineExpose({
             <ElCol v-if="!!form.parentId || showParent" :xl="12" :lg="24">
               <ElFormItem label="父级导航">
                 <el-select v-model="form.parentId" clear value-key="" placeholder="" clearable filterable>
-                  <!-- <el-option v-for="item in choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.id" /> -->
                   <el-option v-for="item in choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.id">
                     <span style="float: left;">{{ item.meta.title }}</span>
                     <span

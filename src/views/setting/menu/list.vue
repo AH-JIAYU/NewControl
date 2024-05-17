@@ -10,6 +10,7 @@ import { useRouter } from 'vue-router'
 import FormMode from './components/FormMode/index.vue'
 import apiMenu from '@/api/modules/menu'
 import useSettingsStore from '@/store/modules/settings'
+import useRouteStore from '@/store/modules/route'
 
 defineOptions({
   name: 'PagesExampleMenuList',
@@ -18,7 +19,7 @@ defineOptions({
 // const router = useRouter()
 // const tabbar = useTabbar()
 // const settingsStore = useSettingsStore()
-
+const routeStore = useRouteStore()
 const data = ref<any>({
   loading: false,
   // 表格是否自适应高度
@@ -40,6 +41,7 @@ onMounted(() => {
 function getDataList() {
   data.value.loading = true
   apiMenu.list({ type: 'normal' }).then((res: any) => {
+    routeStore.routesRaw = res.data // 更新store
     data.value.loading = false
     data.value.dataList = res.data
   })
@@ -55,6 +57,7 @@ function onCreate(row?: any) {
 // 编辑时id赋值给id 通过id请求 parentId
 function onEdit(row: any) {
   data.value.formModeProps.id = row.id ?? ''
+  data.value.formModeProps.menuLevel = row.menuLevel - 1 // 传路由等级 编辑时回显路由
   data.value.formModeProps.row = JSON.stringify(row) // 修改时给整个对象传过去
   data.value.formModeProps.parentId = row.parentId ?? '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
   data.value.formModeProps.visible = true
@@ -144,8 +147,9 @@ function onDel(row: any) {
       </ElTable>
     </PageMain>
     <FormMode
-      :id="data.formModeProps.id" v-model="data.formModeProps.visible" :menu-level="data.formModeProps.menuLevel" :parent-id="data.formModeProps.parentId"
-      :row="data.formModeProps.row" @success="getDataList"
+      :id="data.formModeProps.id" v-model="data.formModeProps.visible"
+      :menu-level="data.formModeProps.menuLevel" :parent-id="data.formModeProps.parentId" :row="data.formModeProps.row"
+      @success="getDataList"
     />
   </div>
 </template>

@@ -3,16 +3,11 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import type { DetailFormProps } from '../../types'
 import api from '@/api/modules/setting_role'
-import apiMenu from '@/api/modules/menu'
+import useRouteStore from '@/store/modules/route'
 import apiPermission from '@/api/modules/setting_permissions'
 
-const props = withDefaults(
-  defineProps<DetailFormProps>(),
-  {
-    id: '',
-  },
-)
-
+const props = defineProps(['id'])
+const routeStore = useRouteStore() // 路由 store
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const treeRef = ref<any>() // tree ref
@@ -22,7 +17,7 @@ const permissionData = ref<any>([]) // 权限
 const form = ref({
   id: props.id,
   role: '',
-  menu: [],
+  menuId: [],
   permission: [],
 })
 const formRules = ref<FormRules>({
@@ -35,8 +30,7 @@ onMounted(async () => {
   if (form.value.id !== '') {
     await getInfo()
   }
-  const res = await apiMenu.list({ type: 'normal' }) // 路由列表
-  menuData.value = res.data
+  menuData.value = routeStore.routesRaw // 从store获取原始路由
   const { data } = await apiPermission.list() // 权限列表
   permissionData.value = data
   loading.value = false
@@ -55,10 +49,11 @@ function rowPermission(permissionID: any) {
 
 defineExpose({
   submit() {
-    form.value.menu = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
+    form.value.menuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
+    console.log('--------------------------------',form.value.id)
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
-        formRef.value && formRef.value.validate((valid) => {
+        formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
             api.create(form.value).then(() => {
               ElMessage.success({
@@ -71,7 +66,7 @@ defineExpose({
         })
       }
       else {
-        formRef.value && formRef.value.validate((valid) => {
+        formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
             api.edit(form.value).then(() => {
               ElMessage.success({
@@ -94,9 +89,9 @@ defineExpose({
       <ElFormItem label="角色码" prop="role">
         <ElInput v-model="form.role" placeholder="请输入角色码" />
       </ElFormItem>
-      <ElFormItem label="角色码" prop="role">
+      <ElFormItem label="权限">
         <el-tree
-          ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.menu"
+          ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.menuId"
           :default-expanded-keys="[]" node-key="id" show-checkbox default-expand-all highlight-current border
         >
           <template #default="{ data }">
@@ -107,7 +102,7 @@ defineExpose({
               <div class="permission">
                 <div v-if="rowPermission(data.id).length" class="permissions" @click.stop>
                   <ElCheckboxGroup v-model="form.permission">
-                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.id">
+                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.key">
                       {{ auth.label }}
                     </ElCheckbox>
                   </ElCheckboxGroup>

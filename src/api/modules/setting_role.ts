@@ -9,7 +9,7 @@ export default {
   //   params: data,
   //   baseURL: '/mock/',
   // }),
-  list: (data: any) => api.get('role/get/getRole', { params: data }),
+  list: () => api.get('role/get/getRole'),
 
   detail: (id: number | string) => api.get('setting/role/detail', {
     params: {
@@ -34,5 +34,5 @@ export default {
   // }, {
   //   baseURL: '/mock/',
   // }),
-  delete: (role: any) => api.post(`role/delete/deleteRole`, { role }),
+  delete: (id: any) => api.post(`id/delete/deleteRole`, { id }),
 }

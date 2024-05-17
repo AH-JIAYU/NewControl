@@ -47,6 +47,7 @@ onMounted(() => {
   getDataList()
   if (data.value.formMode === 'router') {
     eventBus.on('get-data-list', () => {
+      console.log(99)
       getDataList()
     })
   }
@@ -60,26 +61,22 @@ onBeforeUnmount(() => {
 
 function getDataList() {
   data.value.loading = true
-  const params = {
-    ...getParams(),
-    ...(data.value.search.title && { title: data.value.search.title }),
-  }
-  api.list(params).then((res: any) => {
+  api.list().then((res: any) => {
     data.value.loading = false
     data.value.dataList = res.data.list
     pagination.value.total = res.data.total
   })
 }
 
-// 每页数量切换
-function sizeChange(size: number) {
-  onSizeChange(size).then(() => getDataList())
-}
+// // 每页数量切换
+// function sizeChange(size: number) {
+//   onSizeChange(size).then(() => getDataList())
+// }
 
-// 当前页码切换（翻页）
-function currentChange(page = 1) {
-  onCurrentChange(page).then(() => getDataList())
-}
+// // 当前页码切换（翻页）
+// function currentChange(page = 1) {
+//   onCurrentChange(page).then(() => getDataList())
+// }
 
 // 字段排序
 function sortChange({ prop, order }: { prop: string, order: string }) {
@@ -146,33 +143,6 @@ function onDel(row: any) {
 <template>
   <div :class="{ 'absolute-container': data.tableAutoHeight }">
     <PageMain>
-      <!-- <SearchBar :show-toggle="false">
-        <template #default="{ fold, toggle }">
-          <ElForm :model="data.search" size="default" label-width="100px" inline-message inline class="search-form">
-            <ElFormItem label="标题">
-              <ElInput
-                v-model="data.search.title" placeholder="请输入标题，支持模糊查询" clearable @keydown.enter="currentChange()"
-                @clear="currentChange()"
-              />
-            </ElFormItem>
-            <ElFormItem>
-              <ElButton type="primary" @click="currentChange()">
-                <template #icon>
-                  <SvgIcon name="i-ep:search" />
-                </template>
-                筛选
-              </ElButton>
-              <ElButton link disabled @click="toggle">
-                <template #icon>
-                  <SvgIcon :name="fold ? 'i-ep:caret-bottom' : 'i-ep:caret-top'" />
-                </template>
-                {{ fold ? '展开' : '收起' }}
-              </ElButton>
-            </ElFormItem>
-          </ElForm>
-        </template>
-      </SearchBar>
-      <ElDivider border-style="dashed" /> -->
       <ElSpace wrap>
         <ElButton type="primary" size="default" @click="onCreate">
           <template #icon>
@@ -180,17 +150,6 @@ function onDel(row: any) {
           </template>
           新增角色管理
         </ElButton>
-        <!-- <ElButton v-if="data.batch.enable" size="default" :disabled="!data.batch.selectionDataList.length">
-          单个批量操作按钮
-        </ElButton>
-        <ElButtonGroup v-if="data.batch.enable">
-          <ElButton size="default" :disabled="!data.batch.selectionDataList.length">
-            批量操作按钮组1
-          </ElButton>
-          <ElButton size="default" :disabled="!data.batch.selectionDataList.length">
-            批量操作按钮组2
-          </ElButton>
-        </ElButtonGroup> -->
       </ElSpace>
       <ElTable
         v-loading="data.loading" class="my-4" :data="data.dataList" stripe highlight-current-row border
@@ -210,11 +169,11 @@ function onDel(row: any) {
           </template>
         </ElTableColumn>
       </ElTable>
-      <ElPagination
+      <!-- <ElPagination
         :current-page="pagination.page" :total="pagination.total" :page-size="pagination.size"
         :page-sizes="pagination.sizes" :layout="pagination.layout" :hide-on-single-page="false" class="pagination"
         background @size-change="sizeChange" @current-change="currentChange"
-      />
+      /> -->
     </PageMain>
     <FormMode
       v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
