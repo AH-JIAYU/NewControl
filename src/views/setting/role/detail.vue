@@ -10,18 +10,17 @@ defineOptions({
 const route = useRoute()
 const router = useRouter()
 const tabbar = useTabbar()
-
 const settingsStore = useSettingsStore()
 
 const formRef = ref()
-
+// 提交
 function onSubmit() {
   formRef.value.submit().then(() => {
     eventBus.emit('get-data-list')
     goBack()
   })
 }
-
+// 取消
 function onCancel() {
   goBack()
 }

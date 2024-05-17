@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ElMessage, ElMessageBox } from 'element-plus'
 import FormMode from './components/FormMode/index.vue'
 import Edit from './components/Edit/index.vue'
 import eventBus from '@/utils/eventBus'
@@ -72,7 +71,7 @@ function recursion(menus: any[], permissions: any[]) {
     return []
   })
 }
-
+// 获取数据
 async function getDataList() {
   data.value.loading = true
   const permissions = await api.list()
@@ -103,34 +102,13 @@ function findObjectById(arr: any, targetId: any) {
   }
   return null
 }
-
+// 新增
 function onCreate() {
-  // if (data.value.formMode === 'router') {
-  //   if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {
-  //     tabbar.open({
-  //       name: 'multilevel_menu_examplePermissionsCreate',
-  //       params: {
-  //         menulev: 3,
-  //       },
-  //     })
-  //   }
-  //   else {
-  //     router.push({
-  //       name: 'multilevel_menu_examplePermissionsCreate',
-  //       params: {
-  //         menulev: 3,
-  //       },
-  //     })
-  //   }
-  // }
-  // else {
   data.value.EditProps.id = 11
   data.value.EditProps.visible = true
   data.value.EditProps.row = JSON.stringify({})
-
-  // }
 }
-
+// 修改
 function onEdit(row: any) {
   if (data.value.formMode === 'router') {
     if (
@@ -162,7 +140,6 @@ function onEdit(row: any) {
   else {
     data.value.formModeProps.id = row.id
     data.value.formModeProps.menulev = row.menuLevel
-    // data.value.formModeProps.path = row.path
     data.value.formModeProps.auths = JSON.stringify(row.auths)
     data.value.formModeProps.visible = true
   }

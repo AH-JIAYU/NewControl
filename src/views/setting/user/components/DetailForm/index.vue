@@ -12,10 +12,7 @@ const props = withDefaults(
   },
 )
 
-const { getParams } = usePagination()
-
 const roleList = ref<any>([])
-
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const form = ref({
@@ -26,6 +23,7 @@ const form = ref({
   sex: '2',
   role_id: '',
 })
+// 校验
 const formRules = ref<FormRules>({
   account: [
     { required: true, message: '请输入帐号', trigger: 'blur' },
@@ -69,7 +67,7 @@ onMounted(() => {
     getInfo()
   }
 })
-
+// 获取数据
 function getInfo() {
   loading.value = true
   apiUser.detail(form.value.id).then((res: any) => {
@@ -79,7 +77,7 @@ function getInfo() {
     form.value.mobile = res.data.mobile
   })
 }
-
+// 暴露方法
 defineExpose({
   submit() {
     return new Promise<void>((resolve) => {

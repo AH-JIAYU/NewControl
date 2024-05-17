@@ -4,11 +4,10 @@
   </route>
 
 <script setup lang="ts">
-import Sortable from 'sortablejs'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import apiMenu from '@/api/modules/menu'
 import useSettingsStore from '@/store/modules/settings'
 import useTabbar from '@/utils/composables/useTabbar'
@@ -20,7 +19,6 @@ defineOptions({
 const props = defineProps(['id', 'parentId'])
 const router = useRouter()
 const tabbar = useTabbar()
-
 const settingsStore = useSettingsStore()
 
 const loading = ref(false)
@@ -62,6 +60,7 @@ const form = ref({
     paddingBottom: '0px',
   },
 })
+// 校验
 const formRules = ref<FormRules>({
   'path': [
     { required: true, message: '请输入路由地址', trigger: 'blur' },
@@ -79,7 +78,7 @@ onMounted(() => {
     getInfo()
   }
 })
-
+// 获取数据
 function getInfo() {
   loading.value = true
   // 通过id请求获取parentId 编辑时请求 添加时不需要
@@ -97,32 +96,6 @@ function getInfo() {
     })
   }
 }
-
-// 鉴权标识
-// const inputAuth = ref('')
-// const inputAuthVisible = ref(false)
-// const InputAuthRef = ref()
-// function onInputAuthClose(tag: string) {
-//   form.value.meta.auth.splice(form.value.meta.auth.indexOf(tag), 1)
-// }
-// function onInputAuthShow() {
-//   inputAuthVisible.value = true
-//   nextTick(() => {
-//     InputAuthRef.value!.input!.focus()
-//   })
-// }
-// function onInputAuthConfirm() {
-//   if (inputAuth.value) {
-//     if (!form.value.meta.auth.includes(inputAuth.value)) {
-//       form.value.meta.auth.push(inputAuth.value)
-//     }
-//     else {
-//       ElMessage.warning('标识已存在')
-//     }
-//   }
-//   inputAuthVisible.value = false
-//   inputAuth.value = ''
-// }
 
 // 缓存规则
 const inputCache = ref('')
@@ -176,44 +149,11 @@ function onInputNoCacheConfirm() {
   inputNoCache.value = ''
 }
 
-// const authsTableRef = ref()
-// const authsTableKey = ref(0)
 onMounted(() => {
-  // onAuthDarg()
   // 第一次进入时id和parentid都为空时 显示父级id
   showParent.value = !!(!form.value.id && !form.value.parentId)
 })
-// function onAuthAdd() {
-//   form.value.meta.auths.push({
-//     name: '',
-//     value: '',
-//   })
-//   nextTick(() => {
-//     authsTableRef.value.setScrollTop(form.value.meta.auths.length * 50)
-//   })
-// }
-// function onAuthDelete(index: number) {
-//   form.value.meta.auths.splice(index, 1)
-// }
-// //拖拽
-// function onAuthDarg() {
-//   const tbody = authsTableRef.value.$el.querySelector('.el-table__body-wrapper tbody')
-//   Sortable.create(tbody, {
-//     handle: '.sortable',
-//     animation: 300,
-//     ghostClass: 'ghost',
-//     onEnd: ({ newIndex, oldIndex }) => {
-//       if (newIndex === undefined || oldIndex === undefined) {
-//         return
-//       }
-//       const currRow = form.value.meta.auths.splice(oldIndex, 1)[0]
-//       form.value.meta.auths.splice(newIndex, 0, currRow)
-//       authsTableKey.value += 1
-//       nextTick(() => onAuthDarg())
-//     },
-//   })
-// }
-
+// 提交
 function onSubmit() {
   if (form.value.id === '') {
     formRef.value && formRef.value.validate((valid) => {
@@ -242,7 +182,7 @@ function onSubmit() {
     })
   }
 }
-
+// 取消
 function onCancel() {
   goBack()
 }

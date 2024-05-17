@@ -1,13 +1,12 @@
 <!-- eslint-disable prefer-promise-reject-errors -->
 <script setup lang="ts">
-import type { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import type { DetailFormProps } from '../../types'
 import Edit from '../Edit/index.vue'
 import api from '@/api/modules/setting_permissions'
-import useMenuStore from '@/store/modules/menu'
-
+// 父级传递数据
 const props = defineProps(['id', 'auths', 'menulev'])
+// 校验
 const formRules = ref<any>({
   menu: [{ required: true, message: '请选择路由地址', trigger: 'blur' }],
   type: [{ required: true, message: '请选择类型', trigger: 'blur' }],
@@ -15,7 +14,6 @@ const formRules = ref<any>({
   label: [{ required: true, message: '请输入名称', trigger: 'blur' }],
 })
 
-// const menuStore = useMenuStore() // 路由store
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const authsTableRef = ref<any>()

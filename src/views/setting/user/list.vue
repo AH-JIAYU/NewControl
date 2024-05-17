@@ -63,7 +63,7 @@ onBeforeUnmount(() => {
     eventBus.off('get-data-list')
   }
 })
-
+// 获取数据
 function getDataList() {
   data.value.loading = true
   const params = {
@@ -107,7 +107,7 @@ function currentChange(page = 1) {
 function sortChange({ prop, order }: { prop: string, order: string }) {
   onSortChange(prop, order).then(() => getDataList())
 }
-
+// 新增
 function onCreate() {
   if (data.value.formMode === 'router') {
     tabbar.open({
@@ -119,7 +119,7 @@ function onCreate() {
     data.value.formModeProps.visible = true
   }
 }
-
+// 修改
 function onEdit(row: any) {
   if (data.value.formMode === 'router') {
     tabbar.open({
@@ -134,7 +134,7 @@ function onEdit(row: any) {
     data.value.formModeProps.visible = true
   }
 }
-
+// 开关事件
 function onChangeStatus(row: any) {
   return new Promise<boolean>((resolve) => {
     ElMessageBox.confirm(`确认${!row.status ? '启用' : '禁用'}「${row.account}」吗？`, '确认信息').then(() => {
@@ -158,7 +158,7 @@ function onChangeStatus(row: any) {
     })
   })
 }
-
+// 重置密码
 function onResetPassword(row: any) {
   ElMessageBox.confirm(`确认将「${row.account}」的密码重置为 “123456” 吗？`, '确认信息').then(() => {
     apiUser.passwordReset(row.id).then(() => {
@@ -169,7 +169,7 @@ function onResetPassword(row: any) {
     })
   }).catch(() => { })
 }
-
+// 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.account}」用户吗？`, '确认信息').then(() => {
     apiUser.delete(row.id).then(() => {
@@ -181,7 +181,7 @@ function onDel(row: any) {
     })
   }).catch(() => { })
 }
-
+// 循环事件
 function handleMoreOperating(command: string, row: any) {
   switch (command) {
     case 'resetPassword':

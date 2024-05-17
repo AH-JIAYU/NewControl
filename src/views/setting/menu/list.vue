@@ -6,19 +6,14 @@ meta:
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import FormMode from './components/FormMode/index.vue'
 import apiMenu from '@/api/modules/menu'
-import useSettingsStore from '@/store/modules/settings'
 import useRouteStore from '@/store/modules/route'
 
 defineOptions({
   name: 'PagesExampleMenuList',
 })
 
-// const router = useRouter()
-// const tabbar = useTabbar()
-// const settingsStore = useSettingsStore()
 const routeStore = useRouteStore()
 const data = ref<any>({
   loading: false,
@@ -37,7 +32,7 @@ const data = ref<any>({
 onMounted(() => {
   getDataList()
 })
-
+// 获取数据
 function getDataList() {
   data.value.loading = true
   apiMenu.list({ type: 'normal' }).then((res: any) => {
@@ -62,7 +57,7 @@ function onEdit(row: any) {
   data.value.formModeProps.parentId = row.parentId ?? '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
   data.value.formModeProps.visible = true
 }
-
+// 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.meta.title}」吗？`, '确认信息').then(() => {
     apiMenu.delete(row.id).then((res: any) => {

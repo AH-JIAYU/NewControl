@@ -50,17 +50,6 @@ const menuList = [
               title: '客户报告',
             },
           },
-          {
-            id: 7,
-            parentId: 3,
-            menuLevel: 3,
-            path: 'role',
-            name: 'multilevel_menu_exampleRole',
-            component: 'setting/role/list.vue',
-            meta: {
-              title: '角色管理',
-            },
-          },
         ],
       },
     ],

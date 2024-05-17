@@ -3,7 +3,6 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import api from '@/api/modules/setting_role'
 import useRouteStore from '@/store/modules/route'
-// import apiPermission from '@/api/modules/setting_permissions'
 import userButtonPer from '@/store/modules/buttonPermission'
 
 const props = defineProps(['id', 'row'])
@@ -21,6 +20,7 @@ const form = ref<any>({
   menuId: [],
   permissions: [],
 })
+// 校验
 const formRules = ref<FormRules>({
   role: [
     { required: true, message: '请输入角色吗', trigger: 'blur' },
@@ -35,7 +35,7 @@ onMounted(async () => {
   permissionData.value = await buttonPer.getPermissions // 调用store的方法获取按钮权限，如果没有就调接口
   loading.value = false
 })
-
+// 获取
 async function getInfo() { // 编辑时获取该id的具体数据
   loading.value = true
   form.value = JSON.parse(props.row)
@@ -46,7 +46,7 @@ async function getInfo() { // 编辑时获取该id的具体数据
 function rowPermission(permissionID: any) {
   return permissionData.value.filter((item: any) => permissionID === item.menuId)
 }
-
+// 暴露
 defineExpose({
   submit() {
     form.value.menuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id

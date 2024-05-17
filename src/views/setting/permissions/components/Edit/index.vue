@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElForm, ElMessage, ElMessageBox } from 'element-plus'
+import { ElForm, ElMessage } from 'element-plus'
 import api from '@/api/modules/setting_permissions'
 import useRouteStore from '@/store/modules/route'
 
@@ -18,6 +18,7 @@ const form = ref<any>({
     id: props.id || '',
   }, // 最后传输的数据 载荷
 })
+// 表单校验
 const formRules = ref<any>({
   menu: [{ required: true, message: '请选择路由地址', trigger: 'blur' }],
   type: [{ required: true, message: '请选择类型', trigger: 'blur' }],
@@ -28,9 +29,7 @@ const formRules = ref<any>({
 const visible: any = defineModel({
   default: false,
 })
-
 const title = computed(() => (props.id === '' ? '新增权限' : '编辑权限'))
-
 const munulevs = ref([
   // 路由等级  1，2级路由不需要控制按钮权限
   {
@@ -129,6 +128,7 @@ onMounted(async () => {
     form.value.menulev,
   ) // 筛选路由
 })
+// 关闭弹框
 function onCancel() {
   visible.value = false
 }

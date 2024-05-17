@@ -6,18 +6,12 @@ meta:
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import FormMode from './components/FormMode/index.vue'
 import apiMenu from '@/api/modules/tenant_tenantMenu'
-import useSettingsStore from '@/store/modules/settings'
 
 defineOptions({
   name: 'PagesExampleMenuList',
 })
-
-// const router = useRouter()
-// const tabbar = useTabbar()
-// const settingsStore = useSettingsStore()
 
 const data = ref<any>({
   loading: false,
@@ -61,7 +55,7 @@ function onEdit(row: any) {
   data.value.formModeProps.parentId = '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
   data.value.formModeProps.visible = true
 }
-
+// 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.meta.title}」吗？`, '确认信息').then(() => {
     apiMenu.delete(row.id).then(() => {

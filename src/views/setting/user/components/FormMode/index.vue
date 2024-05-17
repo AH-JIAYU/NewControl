@@ -9,7 +9,7 @@ const props = defineProps<{
 const emits = defineEmits<{
   success: []
 }>()
-
+// 弹框变量
 const visible = defineModel<boolean>({
   default: false,
 })
@@ -17,7 +17,7 @@ const visible = defineModel<boolean>({
 const formRef = ref()
 
 const title = computed(() => props.id === '' ? '新增用户' : '编辑用户')
-
+// 提交
 function onSubmit() {
   // submit() 为组件内部方法
   formRef.value.submit().then(() => {
@@ -25,7 +25,7 @@ function onSubmit() {
     onCancel()
   })
 }
-
+// 取消
 function onCancel() {
   visible.value = false
 }

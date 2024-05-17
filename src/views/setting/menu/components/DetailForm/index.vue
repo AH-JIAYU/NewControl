@@ -4,14 +4,10 @@
   </route>
 
 <script setup lang="ts">
-import Sortable from 'sortablejs'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import apiMenu from '@/api/modules/menu'
-import useSettingsStore from '@/store/modules/settings'
-import useTabbar from '@/utils/composables/useTabbar'
 import useRouteStore from '@/store/modules/route'
 
 defineOptions({
@@ -20,12 +16,6 @@ defineOptions({
 
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
 const routeStore = useRouteStore() // 路由 store
-// const route = useRoute()
-// const router = useRouter()
-// const tabbar = useTabbar()
-
-// const settingsStore = useSettingsStore()
-
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const showParent = ref<any>(false) // 是否显示父级id
@@ -101,7 +91,7 @@ function handleInputConfirm() {
   inputVisible.value = false
   inputTag.value = ''
 }
-
+// 表单校验
 const formRules = ref<FormRules>({
   'path': [
     { required: true, message: '请输入路由地址', trigger: 'blur' },
@@ -165,7 +155,7 @@ function getInfo() {
     loading.value = false
   }
 }
-
+// 缓存规则
 const inputCache = ref('')
 const inputCacheVisible = ref(false)
 const InputCacheRef = ref()

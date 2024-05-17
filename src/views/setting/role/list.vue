@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
     eventBus.off('get-data-list')
   }
 })
-
+// 获取数据
 function getDataList() {
   data.value.loading = true
   api.list().then((res: any) => {
@@ -67,22 +67,11 @@ function getDataList() {
     pagination.value.total = res.data.length
   })
 }
-
-// // 每页数量切换
-// function sizeChange(size: number) {
-//   onSizeChange(size).then(() => getDataList())
-// }
-
-// // 当前页码切换（翻页）
-// function currentChange(page = 1) {
-//   onCurrentChange(page).then(() => getDataList())
-// }
-
 // 字段排序
 function sortChange({ prop, order }: { prop: string, order: string }) {
   onSortChange(prop, order).then(() => getDataList())
 }
-
+// 新增
 function onCreate() {
   if (data.value.formMode === 'router') {
     if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {
@@ -101,7 +90,7 @@ function onCreate() {
     data.value.formModeProps.visible = true
   }
 }
-
+// 修改
 function onEdit(row: any) {
   if (data.value.formMode === 'router') {
     if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {
@@ -127,7 +116,7 @@ function onEdit(row: any) {
     data.value.formModeProps.visible = true
   }
 }
-
+// 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.title}」吗？`, '确认信息').then(() => {
     api.delete(row.id).then(() => {
@@ -170,11 +159,6 @@ function onDel(row: any) {
           </template>
         </ElTableColumn>
       </ElTable>
-      <!-- <ElPagination
-        :current-page="pagination.page" :total="pagination.total" :page-size="pagination.size"
-        :page-sizes="pagination.sizes" :layout="pagination.layout" :hide-on-single-page="false" class="pagination"
-        background @size-change="sizeChange" @current-change="currentChange"
-      /> -->
     </PageMain>
     <FormMode
       v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id" v-model="data.formModeProps.visible"

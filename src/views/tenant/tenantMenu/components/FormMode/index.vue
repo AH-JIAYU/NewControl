@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import type { DetailFormProps } from '../../types'
 import DetailForm from '../DetailForm/index.vue'
-// import DetailForm from '../../detail.vue'
 
 const props = defineProps(['id', 'parentId', 'modelValue'])
-
 const emits = defineEmits<{
   success: []
 }>()
-
+// 弹框变量
 const visible = defineModel<boolean>({
   default: false,
 })
-
 const formRef = ref()
-
+// 标题
 const title = computed(() => props.id === '' ? '新增角色' : '编辑角色')
 
+// 提交
 function onSubmit() {
   // submit() 为组件内部方法
   formRef.value.submit().then(() => {
@@ -24,7 +21,7 @@ function onSubmit() {
     onCancel()
   })
 }
-
+// 取消
 function onCancel() {
   visible.value = false
 }
