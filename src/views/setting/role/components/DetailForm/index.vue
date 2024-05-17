@@ -50,7 +50,6 @@ function rowPermission(permissionID: any) {
 defineExpose({
   submit() {
     form.value.menuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
-    console.log('--------------------------------',form.value.id)
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid: any) => {
