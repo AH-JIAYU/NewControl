@@ -1,10 +1,10 @@
 <route lang="yaml">
-meta:
-  whiteList: true
-  title: 登录
-  constant: true
-  layout: false
-</route>
+  meta:
+    whiteList: true
+    title: 登录
+    constant: true
+    layout: false
+  </route>
 
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
@@ -71,88 +71,6 @@ function handleLogin() {
     }
   })
 }
-
-// 注册
-const registerFormRef = ref<FormInstance>()
-const registerForm = ref({
-  account: '',
-  captcha: '',
-  password: '',
-  checkPassword: '',
-})
-const registerRules = ref<FormRules>({
-  account: [
-    { required: true, trigger: 'blur', message: '请输入用户名' },
-  ],
-  captcha: [
-    { required: true, trigger: 'blur', message: '请输入验证码' },
-  ],
-  password: [
-    { required: true, trigger: 'blur', message: '请输入密码' },
-    { min: 6, max: 18, trigger: 'blur', message: '密码长度为6到18位' },
-  ],
-  checkPassword: [
-    { required: true, trigger: 'blur', message: '请再次输入密码' },
-    {
-      validator: (rule, value, callback) => {
-        if (value !== registerForm.value.password) {
-          callback(new Error('两次输入的密码不一致'))
-        }
-        else {
-          callback()
-        }
-      },
-    },
-  ],
-})
-function handleRegister() {
-  ElMessage({
-    message: '注册模块仅提供界面演示，无实际功能，需开发者自行扩展',
-    type: 'warning',
-  })
-  registerFormRef.value && registerFormRef.value.validate((valid) => {
-    if (valid) {
-      // 这里编写业务代码
-    }
-  })
-}
-
-// 重置密码
-const resetFormRef = ref<FormInstance>()
-const resetForm = ref({
-  account: storage.local.get('login_account'),
-  captcha: '',
-  newPassword: '',
-})
-const resetRules = ref<FormRules>({
-  account: [
-    { required: true, trigger: 'blur', message: '请输入用户名' },
-  ],
-  captcha: [
-    { required: true, trigger: 'blur', message: '请输入验证码' },
-  ],
-  newPassword: [
-    { required: true, trigger: 'blur', message: '请输入新密码' },
-    { min: 6, max: 18, trigger: 'blur', message: '密码长度为6到18位' },
-  ],
-})
-function handleReset() {
-  ElMessage({
-    message: '重置密码仅提供界面演示，无实际功能，需开发者自行扩展',
-    type: 'info',
-  })
-  resetFormRef.value && resetFormRef.value.validate((valid) => {
-    if (valid) {
-      // 这里编写业务代码
-    }
-  })
-}
-
-function testAccount(account: string) {
-  loginForm.value.account = account
-  loginForm.value.password = '123456'
-  handleLogin()
-}
 </script>
 
 <template>
@@ -192,311 +110,203 @@ function testAccount(account: string) {
           <ElCheckbox v-model="loginForm.remember">
             记住我
           </ElCheckbox>
-          <ElLink type="primary" :underline="false" @click="formType = 'reset'">
-            忘记密码了?
-          </ElLink>
         </div>
         <ElButton :loading="loading" type="primary" size="large" style="width: 100%;" @click.prevent="handleLogin">
           {{ t('app.login') }}
         </ElButton>
-        <div class="sub-link">
-          <span class="text">还没有帐号?</span>
-          <ElLink type="primary" :underline="false" @click="formType = 'register'">
-            创建新帐号
-          </ElLink>
-        </div>
-        <div style="margin-top: 20px; margin-bottom: -20px; text-align: center;">
-          <ElDivider>演示账号一键登录</ElDivider>
-          <ElButton type="primary" size="small" plain @click="testAccount('admin')">
-            admin
-          </ElButton>
-          <ElButton size="small" plain @click="testAccount('test')">
-            test
-          </ElButton>
-        </div>
-      </ElForm>
-      <ElForm v-show="formType === 'register'" ref="registerFormRef" :model="registerForm" :rules="registerRules" class="login-form" auto-complete="on">
-        <div class="title-container">
-          <h3 class="title">
-            探索从这里开始! 🚀
-          </h3>
-        </div>
-        <div>
-          <ElFormItem prop="account">
-            <ElInput v-model="registerForm.account" placeholder="用户名" tabindex="1">
-              <template #prefix>
-                <SvgIcon name="i-ri:user-3-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="captcha">
-            <ElInput v-model="registerForm.captcha" placeholder="验证码" tabindex="2">
-              <template #prefix>
-                <SvgIcon name="i-ic:baseline-verified-user" />
-              </template>
-              <template #append>
-                <ElButton>发送验证码</ElButton>
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="password">
-            <ElInput v-model="registerForm.password" type="password" placeholder="密码" tabindex="3" show-password>
-              <template #prefix>
-                <SvgIcon name="i-ri:lock-2-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="checkPassword">
-            <ElInput v-model="registerForm.checkPassword" type="password" placeholder="确认密码" tabindex="4" show-password>
-              <template #prefix>
-                <SvgIcon name="i-ri:lock-2-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-        </div>
-        <ElButton :loading="loading" type="primary" size="large" style="width: 100%; margin-top: 20px;" @click.prevent="handleRegister">
-          注册
-        </ElButton>
-        <div class="sub-link">
-          <span class="text">已经有帐号?</span>
-          <ElLink type="primary" :underline="false" @click="formType = 'login'">
-            去登录
-          </ElLink>
-        </div>
-      </ElForm>
-      <ElForm v-show="formType === 'reset'" ref="resetFormRef" :model="resetForm" :rules="resetRules" class="login-form">
-        <div class="title-container">
-          <h3 class="title">
-            忘记密码了? 🔒
-          </h3>
-        </div>
-        <div>
-          <ElFormItem prop="account">
-            <ElInput v-model="resetForm.account" :placeholder="t('app.account')" type="text" tabindex="1">
-              <template #prefix>
-                <SvgIcon name="i-ri:user-3-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="captcha">
-            <ElInput v-model="resetForm.captcha" :placeholder="t('app.captcha')" type="text" tabindex="2">
-              <template #prefix>
-                <SvgIcon name="i-ic:baseline-verified-user" />
-              </template>
-              <template #append>
-                <ElButton>{{ t('app.sendCaptcha') }}</ElButton>
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="newPassword">
-            <ElInput v-model="resetForm.newPassword" type="password" :placeholder="t('app.newPassword')" tabindex="3" show-password>
-              <template #prefix>
-                <SvgIcon name="i-ri:lock-2-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-        </div>
-        <ElButton :loading="loading" type="primary" size="large" style="width: 100%; margin-top: 20px;" @click.prevent="handleReset">
-          {{ t('app.check') }}
-        </ElButton>
-        <div class="sub-link">
-          <ElLink type="primary" :underline="false" @click="formType = 'login'">
-            {{ t('app.goLogin') }}
-          </ElLink>
-        </div>
       </ElForm>
     </div>
     <Copyright />
   </div>
 </template>
 
-<style lang="scss" scoped>
-[data-mode="mobile"] {
-  #login-box {
-    position: relative;
-    top: inherit;
-    left: inherit;
-    flex-direction: column;
-    justify-content: start;
+  <style lang="scss" scoped>
+  [data-mode="mobile"] {
+    #login-box {
+      position: relative;
+      top: inherit;
+      left: inherit;
+      flex-direction: column;
+      justify-content: start;
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      box-shadow: none;
+      transform: translateX(0) translateY(0);
+
+      .login-banner {
+        width: 100%;
+        padding: 20px 0;
+
+        .banner {
+          position: relative;
+          top: inherit;
+          right: inherit;
+          display: inherit;
+          width: 100%;
+          max-width: 375px;
+          margin: 0 auto;
+          transform: translateY(0);
+        }
+      }
+
+      .login-form {
+        width: 100%;
+        min-height: auto;
+        padding: 30px;
+      }
+    }
+
+    .copyright {
+      position: relative;
+    }
+
+    .login-switcher {
+      display: none;
+    }
+  }
+
+  :deep(input[type="password"]::-ms-reveal) {
+    display: none;
+  }
+
+  :deep(.i18n-selector) {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1;
+    font-size: 18px;
+    color: var(--el-text-color-primary);
+    cursor: pointer;
+  }
+
+  .bg-banner {
+    position: fixed;
+    z-index: 0;
     width: 100%;
     height: 100%;
-    border-radius: 0;
-    box-shadow: none;
-    transform: translateX(0) translateY(0);
+    background: radial-gradient(circle at center, var(--g-container-bg), var(--g-bg));
+  }
+
+  #login-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+    background-color: var(--g-container-bg);
+    border-radius: 10px;
+    box-shadow: var(--el-box-shadow);
+    transform: translateX(-50%) translateY(-50%);
 
     .login-banner {
-      width: 100%;
-      padding: 20px 0;
+      position: relative;
+      width: 450px;
+      overflow: hidden;
+      background-color: var(--g-bg);
 
       .banner {
-        position: relative;
-        top: inherit;
-        right: inherit;
-        display: inherit;
         width: 100%;
-        max-width: 375px;
-        margin: 0 auto;
-        transform: translateY(0);
+
+        @include position-center(y);
+      }
+
+      .logo {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        height: 30px;
+        border-radius: 4px;
+        box-shadow: var(--el-box-shadow-light);
       }
     }
 
     .login-form {
-      width: 100%;
-      min-height: auto;
-      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 500px;
+      min-height: 500px;
+      padding: 50px;
+      overflow: hidden;
+
+      .title-container {
+        position: relative;
+
+        .title {
+          margin: 0 auto 30px;
+          font-size: 1.3em;
+          font-weight: bold;
+          color: var(--el-text-color-primary);
+        }
+      }
+    }
+
+    .el-form-item {
+      margin-bottom: 24px;
+
+      :deep(.el-input) {
+        width: 100%;
+        height: 48px;
+        line-height: inherit;
+
+        input {
+          height: 48px;
+        }
+
+        .el-input__prefix,
+        .el-input__suffix {
+          display: flex;
+          align-items: center;
+        }
+
+        .el-input__prefix {
+          left: 10px;
+        }
+
+        .el-input__suffix {
+          right: 10px;
+        }
+      }
+    }
+
+    :deep(.el-divider__text) {
+      background-color: var(--g-container-bg);
+    }
+
+    .flex-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .sub-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--el-text-color-secondary);
+
+      .text {
+        margin-inline-end: 10px;
+      }
     }
   }
 
   .copyright {
-    position: relative;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+    margin: 0;
   }
 
   .login-switcher {
-    display: none;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
   }
-}
-
-:deep(input[type="password"]::-ms-reveal) {
-  display: none;
-}
-
-:deep(.i18n-selector) {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1;
-  font-size: 18px;
-  color: var(--el-text-color-primary);
-  cursor: pointer;
-}
-
-.bg-banner {
-  position: fixed;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at center, var(--g-container-bg), var(--g-bg));
-}
-
-#login-box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  justify-content: space-between;
-  overflow: hidden;
-  background-color: var(--g-container-bg);
-  border-radius: 10px;
-  box-shadow: var(--el-box-shadow);
-  transform: translateX(-50%) translateY(-50%);
-
-  .login-banner {
-    position: relative;
-    width: 450px;
-    overflow: hidden;
-    background-color: var(--g-bg);
-
-    .banner {
-      width: 100%;
-
-      @include position-center(y);
-    }
-
-    .logo {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      height: 30px;
-      border-radius: 4px;
-      box-shadow: var(--el-box-shadow-light);
-    }
-  }
-
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 500px;
-    min-height: 500px;
-    padding: 50px;
-    overflow: hidden;
-
-    .title-container {
-      position: relative;
-
-      .title {
-        margin: 0 auto 30px;
-        font-size: 1.3em;
-        font-weight: bold;
-        color: var(--el-text-color-primary);
-      }
-    }
-  }
-
-  .el-form-item {
-    margin-bottom: 24px;
-
-    :deep(.el-input) {
-      width: 100%;
-      height: 48px;
-      line-height: inherit;
-
-      input {
-        height: 48px;
-      }
-
-      .el-input__prefix,
-      .el-input__suffix {
-        display: flex;
-        align-items: center;
-      }
-
-      .el-input__prefix {
-        left: 10px;
-      }
-
-      .el-input__suffix {
-        right: 10px;
-      }
-    }
-  }
-
-  :deep(.el-divider__text) {
-    background-color: var(--g-container-bg);
-  }
-
-  .flex-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-
-  .sub-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-    font-size: 14px;
-    color: var(--el-text-color-secondary);
-
-    .text {
-      margin-inline-end: 10px;
-    }
-  }
-}
-
-.copyright {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 20px;
-  margin: 0;
-}
-
-.login-switcher {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-}
-</style>
+  </style>
