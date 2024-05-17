@@ -29,5 +29,5 @@ export default {
   // }, {
   //   baseURL: '/mock/',
   // }),
-  delete: (id: any) => api.post(`menu/delete/deleteMenu`, { id }),
+  delete: (id: number | string) => api.delete(`menu/delete/deleteMenu/${id}`),
 }

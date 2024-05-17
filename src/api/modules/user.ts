@@ -16,12 +16,10 @@ export default {
   }) => api.post('user/login', data, {
   }),
 
-  // // 获取权限
-  // permission: () => api.get('user/permission', {
-  //   baseURL: '/mock/',
-  // }),
   // 获取权限
-  permission: () => api.get('role/get/getRoleButton'),
+  permission: () => api.get('user/permission', {
+    baseURL: '/mock/',
+  }),
 
   // 修改密码
   passwordEdit: (data: {

@@ -81,10 +81,7 @@ async function getDataList() {
   data.value.loading = false
   if (data.value.formModeProps.id) {
     // 当通过inject的success(即getDataList)调用该方法时 是会有id的用于编辑删除更新 DetailForm里的数据
-    const obj = findObjectById(
-      data.value.dataList,
-      data.value.formModeProps.id,
-    )
+    const obj = findObjectById(data.value.dataList, data.value.formModeProps.id)
     data.value.formModeProps.auths = JSON.stringify(obj.auths)
   }
 }

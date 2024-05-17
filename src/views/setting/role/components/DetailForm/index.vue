@@ -6,7 +6,12 @@ import api from '@/api/modules/setting_role'
 import apiMenu from '@/api/modules/menu'
 import apiPermission from '@/api/modules/setting_permissions'
 
-const props = defineProps(['id', 'row', 'mode'])
+const props = withDefaults(
+  defineProps<DetailFormProps>(),
+  {
+    id: '',
+  },
+)
 
 const loading = ref(false)
 const formRef = ref<FormInstance>()
@@ -15,15 +20,10 @@ const menuData = ref<any>([]) // 路由
 const permissionData = ref<any>([]) // 权限
 
 const form = ref({
-  // page: 1,
-  // limit: 20,
   id: props.id,
   role: '',
-  // roleName: '', // 身份名称
-  // remark: '', // 备注
-  menuId: [],
-  // permission: [],
-  permission: [], // 页面对应的接口
+  menu: [],
+  permission: [],
 })
 const formRules = ref<FormRules>({
   role: [
@@ -44,18 +44,18 @@ onMounted(async () => {
 
 async function getInfo() { // 编辑时获取该id的具体数据
   loading.value = true
-  form.value = JSON.parse(props.row) // 数据回填
+  const res = await api.detail(form.value.id)
   loading.value = false
+  form.value = res.data
 }
 
 function rowPermission(permissionID: any) {
-  const data = permissionData.value.filter((item: any) => permissionID === item.menuId)
-  return data
+  return permissionData.value.filter((item: any) => permissionID === item.menuId)
 }
 
 defineExpose({
   submit() {
-    form.value.menuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
+    form.value.menu = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid) => {
@@ -94,15 +94,9 @@ defineExpose({
       <ElFormItem label="角色码" prop="role">
         <ElInput v-model="form.role" placeholder="请输入角色码" />
       </ElFormItem>
-      <!-- <ElFormItem label="身份名称">
-        <ElInput v-model="form.roleName" placeholder="请输入身份名称" />
-      </ElFormItem>
-      <ElFormItem label="备注">
-        <ElInput v-model="form.remark" placeholder="" />
-      </ElFormItem> -->
-      <ElFormItem label="权限">
+      <ElFormItem label="角色码" prop="role">
         <el-tree
-          ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.menuId"
+          ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.menu"
           :default-expanded-keys="[]" node-key="id" show-checkbox default-expand-all highlight-current border
         >
           <template #default="{ data }">
@@ -113,7 +107,7 @@ defineExpose({
               <div class="permission">
                 <div v-if="rowPermission(data.id).length" class="permissions" @click.stop>
                   <ElCheckboxGroup v-model="form.permission">
-                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.key">
+                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.id">
                       {{ auth.label }}
                     </ElCheckbox>
                   </ElCheckboxGroup>

@@ -1,24 +1,29 @@
 <script setup lang="ts">
-import type { DetailFormProps } from '../../types'
-import DetailForm from '../DetailForm/index.vue'
+import type { DetailFormProps } from "../../types";
+import DetailForm from "../DetailForm/index.vue";
 
-const props = defineProps(['mode', 'id', 'auths'])
+const props = defineProps(["mode", "id", "auths"]);
+
+const emits = defineEmits<{
+  success: [];
+}>();
+
 const visible = defineModel<boolean>({
   default: false,
-})
+});
 
-const formRef = ref()
+const formRef = ref();
 
 const title = computed(() =>
-  props.id === '' ? '新增权限管理' : '编辑权限管理',
-)
+  props.id === "" ? "新增权限管理" : "编辑权限管理"
+);
 
 function onSubmit() {
-  onCancel()
+    onCancel();
 }
 
 function onCancel() {
-  visible.value = false
+  visible.value = false;
 }
 </script>
 
@@ -35,9 +40,7 @@ function onCancel() {
     >
       <DetailForm ref="formRef" v-bind="props" />
       <template #footer>
-        <ElButton size="large" @click="onCancel">
-          取消
-        </ElButton>
+        <ElButton size="large" @click="onCancel"> 取消 </ElButton>
         <ElButton type="primary" size="large" @click="onSubmit">
           确定
         </ElButton>
@@ -53,9 +56,7 @@ function onCancel() {
     >
       <DetailForm ref="formRef" v-bind="props" />
       <template #footer>
-        <ElButton size="large" @click="onCancel">
-          取消
-        </ElButton>
+        <ElButton size="large" @click="onCancel"> 取消 </ElButton>
         <ElButton type="primary" size="large" @click="onSubmit">
           确定
         </ElButton>

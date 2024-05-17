@@ -29,7 +29,6 @@ const data = ref({
   formModeProps: {
     visible: false,
     id: '',
-    row: {},
   },
   // 搜索
   search: {
@@ -67,8 +66,8 @@ function getDataList() {
   }
   api.list(params).then((res: any) => {
     data.value.loading = false
-    data.value.dataList = res.data
-    pagination.value.total = res.data.total || 0
+    data.value.dataList = res.data.list
+    pagination.value.total = res.data.total
   })
 }
 
@@ -127,14 +126,13 @@ function onEdit(row: any) {
   }
   else {
     data.value.formModeProps.id = row.id
-    data.value.formModeProps.row = JSON.stringify(row)
     data.value.formModeProps.visible = true
   }
 }
 
 function onDel(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.role}」吗？`, '确认信息').then(() => {
-    api.delete(row.role).then(() => {
+  ElMessageBox.confirm(`确认删除「${row.title}」吗？`, '确认信息').then(() => {
+    api.delete(row.id).then(() => {
       getDataList()
       ElMessage.success({
         message: '模拟删除成功',
@@ -182,12 +180,24 @@ function onDel(row: any) {
           </template>
           新增角色管理
         </ElButton>
+        <!-- <ElButton v-if="data.batch.enable" size="default" :disabled="!data.batch.selectionDataList.length">
+          单个批量操作按钮
+        </ElButton>
+        <ElButtonGroup v-if="data.batch.enable">
+          <ElButton size="default" :disabled="!data.batch.selectionDataList.length">
+            批量操作按钮组1
+          </ElButton>
+          <ElButton size="default" :disabled="!data.batch.selectionDataList.length">
+            批量操作按钮组2
+          </ElButton>
+        </ElButtonGroup> -->
       </ElSpace>
       <ElTable
         v-loading="data.loading" class="my-4" :data="data.dataList" stripe highlight-current-row border
         height="100%" @sort-change="sortChange" @selection-change="data.batch.selectionDataList = $event"
       >
         <ElTableColumn v-if="data.batch.enable" type="selection" align="center" fixed />
+        <ElTableColumn prop="id" label="id" />
         <ElTableColumn prop="role" label="角色码" />
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
@@ -208,7 +218,7 @@ function onDel(row: any) {
     </PageMain>
     <FormMode
       v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
-      v-model="data.formModeProps.visible" :mode="data.formMode" :row="data.formModeProps.row" @success="getDataList"
+      v-model="data.formModeProps.visible" :mode="data.formMode" @success="getDataList"
     />
   </div>
 </template>
