@@ -8,7 +8,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import FormMode from './components/FormMode/index.vue'
-import apiMenu from '@/api/modules/menu'
+import apiMenu from '@/api/modules/tenant_tenantMenu'
 import useSettingsStore from '@/store/modules/settings'
 
 defineOptions({
