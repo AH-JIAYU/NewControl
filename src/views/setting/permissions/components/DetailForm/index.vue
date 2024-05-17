@@ -68,7 +68,7 @@ function onDel(row: any) {
     .then(() => {
       api.delete(row.id).then(() => {
         ElMessage.success({
-          message: '模拟删除成功',
+          message: '删除成功',
           center: true,
         })
         success() // 祖先组件提供的success

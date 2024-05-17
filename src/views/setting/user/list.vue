@@ -145,7 +145,7 @@ function onChangeStatus(row: any) {
       }).then(() => {
         row.statusLoading = false
         ElMessage.success({
-          message: `模拟${!row.status ? '启用' : '禁用'}成功`,
+          message: `${!row.status ? '启用' : '禁用'}成功`,
           center: true,
         })
         return resolve(true)
@@ -163,7 +163,7 @@ function onResetPassword(row: any) {
   ElMessageBox.confirm(`确认将「${row.account}」的密码重置为 “123456” 吗？`, '确认信息').then(() => {
     apiUser.passwordReset(row.id).then(() => {
       ElMessage.success({
-        message: '模拟重置成功',
+        message: '重置成功',
         center: true,
       })
     })
@@ -175,7 +175,7 @@ function onDel(row: any) {
     apiUser.delete(row.id).then(() => {
       getDataList()
       ElMessage.success({
-        message: '模拟删除成功',
+        message: '删除成功',
         center: true,
       })
     })

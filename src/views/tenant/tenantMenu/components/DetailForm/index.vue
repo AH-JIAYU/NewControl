@@ -160,7 +160,7 @@ function onSubmit() {
       if (valid) {
         apiMenu.create(form.value).then(() => {
           ElMessage.success({
-            message: '模拟新增成功',
+            message: '新增成功',
             center: true,
           })
           goBack()
@@ -173,7 +173,7 @@ function onSubmit() {
       if (valid) {
         apiMenu.edit(form.value).then(() => {
           ElMessage.success({
-            message: '模拟编辑成功',
+            message: '编辑成功',
             center: true,
           })
           goBack()

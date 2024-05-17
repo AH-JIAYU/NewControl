@@ -122,7 +122,7 @@ function onDel(row: any) {
     api.delete(row.id).then(() => {
       getDataList()
       ElMessage.success({
-        message: '模拟删除成功',
+        message: '删除成功',
         center: true,
       })
     })
