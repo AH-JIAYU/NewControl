@@ -1,24 +1,25 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
-import type { DetailFormProps } from '../../types'
 import api from '@/api/modules/setting_role'
 import useRouteStore from '@/store/modules/route'
-import apiPermission from '@/api/modules/setting_permissions'
+// import apiPermission from '@/api/modules/setting_permissions'
+import userButtonPer from '@/store/modules/buttonPermission'
 
-const props = defineProps(['id'])
+const props = defineProps(['id', 'row'])
 const routeStore = useRouteStore() // 路由 store
+const buttonPer = userButtonPer() // 按钮权限store
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const treeRef = ref<any>() // tree ref
 const menuData = ref<any>([]) // 路由
 const permissionData = ref<any>([]) // 权限
 
-const form = ref({
+const form = ref<any>({
   id: props.id,
   role: '',
   menuId: [],
-  permission: [],
+  permissions: [],
 })
 const formRules = ref<FormRules>({
   role: [
@@ -31,18 +32,17 @@ onMounted(async () => {
     await getInfo()
   }
   menuData.value = routeStore.routesRaw // 从store获取原始路由
-  const { data } = await apiPermission.list() // 权限列表
-  permissionData.value = data
+  permissionData.value = await buttonPer.getPermissions // 调用store的方法获取按钮权限，如果没有就调接口
   loading.value = false
 })
 
 async function getInfo() { // 编辑时获取该id的具体数据
   loading.value = true
-  const res = await api.detail(form.value.id)
+  form.value = JSON.parse(props.row)
   loading.value = false
-  form.value = res.data
 }
 
+// 查询当前路由有那些权限
 function rowPermission(permissionID: any) {
   return permissionData.value.filter((item: any) => permissionID === item.menuId)
 }
@@ -100,7 +100,7 @@ defineExpose({
               </div>
               <div class="permission">
                 <div v-if="rowPermission(data.id).length" class="permissions" @click.stop>
-                  <ElCheckboxGroup v-model="form.permission">
+                  <ElCheckboxGroup v-model="form.permissions">
                     <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.key">
                       {{ auth.label }}
                     </ElCheckbox>

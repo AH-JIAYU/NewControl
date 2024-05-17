@@ -5,7 +5,6 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import type { DetailFormProps } from '../../types'
 import Edit from '../Edit/index.vue'
 import api from '@/api/modules/setting_permissions'
-// import menuapi from '@/api/modules/menu'
 import useMenuStore from '@/store/modules/menu'
 
 const props = defineProps(['id', 'auths', 'menulev'])

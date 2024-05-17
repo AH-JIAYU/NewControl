@@ -6,10 +6,12 @@ import eventBus from '@/utils/eventBus'
 import api from '@/api/modules/setting_permissions'
 import useRouteStore from '@/store/modules/route'
 import useSettingsStore from '@/store/modules/settings'
+import userButtonPer from '@/store/modules/buttonPermission'
 
 defineOptions({
   name: 'SettingPermissionsList',
 })
+const buttonPer = userButtonPer()
 const routeStore = useRouteStore() // 路由 store
 const router = useRouter()
 const tabbar = useTabbar()
@@ -74,6 +76,7 @@ function recursion(menus: any[], permissions: any[]) {
 async function getDataList() {
   data.value.loading = true
   const permissions = await api.list()
+  buttonPer.permissions = permissions.data // 存store
   const menus: any = routeStore.routesRaw // 从store获取原始路由
   // 处理数据 将权限里的menu和路由里的name相同的数据添加到路由的permissions里
   recursion(menus, permissions.data)
