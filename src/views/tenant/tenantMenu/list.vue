@@ -39,10 +39,14 @@ onMounted(() => {
 
 function getDataList() {
   data.value.loading = true
-  apiMenu.list({ type: 'normal' }).then((res: any) => {
+  apiMenu.list().then((res: any) => {
     data.value.loading = false
     data.value.dataList = res.data
   })
+  // apiMenu.list({ type: 'normal' }).then((res: any) => {
+  //   data.value.loading = false
+  //   data.value.dataList = res.data
+  // })
 }
 
 // 添加id赋值给parentId
