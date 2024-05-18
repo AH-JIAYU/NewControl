@@ -1,0 +1,9 @@
+
+/**
+ * 由 Fantastic-admin 提供技术支持
+ * Powered by Fantastic-admin
+ * Gitee  https://fantastic-admin.gitee.io
+ * Github https://fantastic-admin.github.io
+ */
+
+import{p as o,f as E,r as i,B as R,ao as u,h as r,ap as h,ai as I,o as U,c as w,a as c,w as m,_ as F}from"./index-B13k3BKp.js";const d={list:e=>o.get("setting/basis_dictionary/list",{params:e,baseURL:"/mock/"}),detail:e=>o.get("setting/basis_dictionary/detail",{params:e,baseURL:"/mock/"}),create:e=>o.post("setting/basis_dictionary/create",e,{baseURL:"/mock/"}),edit:e=>o.post("setting/basis_dictionary/edit",e,{baseURL:"/mock/"}),delete:e=>o.post("setting/basis_dictionary/delete",{id:e},{baseURL:"/mock/"})},L=E({__name:"index",props:{id:{default:""}},setup(e,{expose:p}){const f=e,n=i(!1),s=i(),t=i({id:f.id,title:""}),_=i({title:[{required:!0,message:"请输入标题",trigger:"blur"}]});R(()=>{t.value.id!==""&&v()});function v(){n.value=!0,d.detail(t.value.id).then(l=>{n.value=!1,t.value.title=l.data.title})}return p({submit(){return new Promise(l=>{t.value.id===""?s.value&&s.value.validate(a=>{a&&d.create(t.value).then(()=>{u.success({message:"模拟新增成功",center:!0}),l()})}):s.value&&s.value.validate(a=>{a&&d.edit(t.value).then(()=>{u.success({message:"模拟编辑成功",center:!0}),l()})})})}}),(l,a)=>{const g=r("ElInput"),b=r("ElFormItem"),x=r("ElForm"),k=h("loading");return I((U(),w("div",null,[c(x,{ref_key:"formRef",ref:s,model:t.value,rules:_.value,"label-width":"120px","label-suffix":"："},{default:m(()=>[c(b,{label:"标题",prop:"title"},{default:m(()=>[c(g,{modelValue:t.value.title,"onUpdate:modelValue":a[0]||(a[0]=y=>t.value.title=y),placeholder:"请输入标题"},null,8,["modelValue"])]),_:1})]),_:1},8,["model","rules"])])),[[k,n.value]])}}}),D=F(L,[["__scopeId","data-v-e0c173d8"]]),B=Object.freeze(Object.defineProperty({__proto__:null,default:D},Symbol.toStringTag,{value:"Module"}));export{D,d as a,B as i};
