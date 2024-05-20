@@ -1,350 +1,165 @@
-import Mock from 'mockjs'
+import { defineFakeRoute } from 'vite-plugin-fake-server/client'
 
-const AllList: any[] = [
+// 字典
+const dictionaryList = [
+  {
+    id: 1,
+    label: '这是一个超级超级超级超级长的字典标题',
+    code: 'test',
+    items: [
+      {
+        id: 1,
+        name: '测试',
+        value: '1',
+        enable: true,
+      },
+    ],
+  },
   {
     id: 2,
-    code: 'System Common Classes',
-    name: '系统常用类',
-    pid: null,
-    sort: 1,
-    remark: '',
-    isglobal: true,
-    tenant_id: null,
-    createdAt: '2023-11-01T10:54:43.000Z',
-    updatedAt: '2024-01-05T03:32:28.753Z',
-    children: [
+    label: '性别',
+    code: 'sex',
+    items: [
       {
-        id: 16,
-        code: 'currency',
-        name: '币种',
-        pid: 2,
-        sort: 1,
-        remark: null,
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-05T23:40:47.000Z',
-        updatedAt: '2023-11-05T23:40:47.000Z',
+        id: 2,
+        name: '女',
+        value: '0',
+        enable: true,
       },
       {
-        id: 23,
-        code: 'language',
-        name: '语言',
-        pid: 2,
-        sort: 1,
-        remark: null,
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T02:16:07.000Z',
-        updatedAt: '2023-11-09T02:16:07.000Z',
+        id: 3,
+        name: '男',
+        value: '1',
+        enable: true,
       },
       {
         id: 4,
-        code: 'National Dictionary',
-        name: '国家字典',
-        pid: 2,
-        sort: 1,
-        remark: '',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-01T11:00:09.000Z',
-        updatedAt: '2024-01-05T03:31:09.853Z',
-      },
-      {
-        id: 22,
-        code: 'Project',
-        name: '项目类型',
-        pid: 2,
-        sort: 1,
-        remark: null,
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-08T09:13:26.000Z',
-        updatedAt: '2024-01-05T03:31:58.508Z',
-      },
-      {
-        id: 5,
-        code: 'Gender',
-        name: '性别',
-        pid: 2,
-        sort: 1,
-        remark: null,
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-01T11:35:04.000Z',
-        updatedAt: '2024-01-05T03:32:23.710Z',
+        name: '保密',
+        value: '2',
+        enable: true,
       },
     ],
   },
   {
     id: 3,
-    code: 'Pre data class',
-    name: '前置资料类',
-    pid: null,
-    sort: 1,
-    remark: '',
-    isglobal: true,
-    tenant_id: null,
-    createdAt: '2023-11-01T10:57:25.000Z',
-    updatedAt: '2024-01-05T03:32:38.122Z',
-  },
-  {
-    id: 24,
-    code: 'Problem Library',
-    name: '问题库',
-    pid: null,
-    sort: 1,
-    remark: null,
-    isglobal: true,
-    tenant_id: null,
-    createdAt: '2023-11-09T07:42:04.000Z',
-    updatedAt: '2024-01-05T03:34:20.652Z',
+    label: '用户',
+    code: 'user',
+    items: [],
     children: [
       {
-        id: 27,
-        code: 'gender',
-        name: '性别',
-        pid: 24,
-        sort: 1,
-        remark: 'checkbox',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T07:44:03.000Z',
-        updatedAt: '2023-11-10T08:07:49.000Z',
+        id: 4,
+        label: '证件',
+        code: 'user_card',
+        items: [
+          {
+            id: 5,
+            name: '居民身份证',
+            value: '1',
+            enable: true,
+          },
+          {
+            id: 6,
+            name: '出生证',
+            value: '2',
+            enable: false,
+          },
+          {
+            id: 7,
+            name: '护照',
+            value: '3',
+            enable: true,
+          },
+        ],
       },
       {
-        id: 40,
-        code: 'employment',
-        name: '工作情况',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-10T06:17:34.000Z',
-        updatedAt: '2023-11-10T08:08:07.000Z',
-      },
-      {
-        id: 29,
-        code: 'education',
-        name: '教育',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T07:51:53.000Z',
-        updatedAt: '2023-11-10T08:08:17.000Z',
-      },
-      {
-        id: 30,
-        code: 'marriage',
-        name: '婚姻状况',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T07:52:49.000Z',
-        updatedAt: '2023-11-10T08:08:20.000Z',
-      },
-      {
-        id: 32,
-        code: 'industry',
-        name: '行业',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T07:55:31.000Z',
-        updatedAt: '2023-11-10T08:08:27.000Z',
-      },
-      {
-        id: 33,
-        code: 'department',
-        name: '部门',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T07:55:55.000Z',
-        updatedAt: '2023-11-10T08:08:30.000Z',
-      },
-      {
-        id: 34,
-        code: 'title',
-        name: '职位',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T07:56:31.000Z',
-        updatedAt: '2023-11-10T08:08:33.000Z',
-      },
-      {
-        id: 25,
-        code: 'age',
-        name: '年龄',
-        pid: 24,
-        sort: 1,
-        remark: 'ageinput',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T07:42:44.000Z',
-        updatedAt: '2023-11-10T08:43:29.000Z',
-      },
-      {
-        id: 28,
-        code: 'Ethnic',
-        name: '种族',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T07:51:18.000Z',
-        updatedAt: '2024-01-05T03:35:35.481Z',
-      },
-      {
-        id: 36,
-        code: 'Number of employees',
-        name: '公司人数',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T08:00:01.000Z',
-        updatedAt: '2024-01-05T03:36:06.535Z',
-      },
-      {
-        id: 37,
-        code: 'Annual revenue of the company',
-        name: '公司年收入',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T08:00:11.000Z',
-        updatedAt: '2024-01-05T03:36:27.225Z',
-      },
-      {
-        id: 31,
-        code: 'Annual household income',
-        name: '家庭年收入',
-        pid: 24,
-        sort: 1,
-        remark: 'select',
-        isglobal: true,
-        tenant_id: null,
-        createdAt: '2023-11-09T07:54:03.000Z',
-        updatedAt: '2024-01-05T03:36:45.117Z',
+        id: 5,
+        label: '学历',
+        code: 'user_education',
+        items: [
+          {
+            id: 8,
+            name: '初中及以下',
+            value: '1',
+            enable: true,
+          },
+          {
+            id: 9,
+            name: '高中',
+            value: '2',
+            enable: true,
+          },
+          {
+            id: 10,
+            name: '大学',
+            value: '3',
+            enable: true,
+          },
+        ],
       },
     ],
   },
 ]
-const details = [
+
+export default defineFakeRoute([
   {
-    id: 386,
-    key: 'en',
-    value: 'US',
-    remark: '其它-英语',
-    isglobal: null,
-    tenant_id: null,
-    level: 1,
-    createdAt: '2023-11-09T02:19:59.000Z',
-    updatedAt: '2023-11-13T01:03:07.000Z',
-    children: [],
-  },
-  {
-    id: 392,
-    key: 'es',
-    value: 'ES',
-    remark: '西班牙语',
-    isglobal: null,
-    tenant_id: null,
-    level: 1,
-    createdAt: '2023-11-09T02:22:21.000Z',
-    updatedAt: '2023-11-13T01:05:05.000Z',
-    children: [],
-  },
-  {
-    id: 387,
-    key: 'fr',
-    value: 'FR',
-    remark: '法语',
-    isglobal: null,
-    tenant_id: null,
-    level: 1,
-    createdAt: '2023-11-09T02:20:32.000Z',
-    updatedAt: '2023-11-13T01:04:05.000Z',
-    children: [],
-  },
-  {
-    id: 389,
-    key: 'ja',
-    value: 'JP',
-    remark: '日语',
-    isglobal: null,
-    tenant_id: null,
-    level: 1,
-    createdAt: '2023-11-09T02:21:08.000Z',
-    updatedAt: '2023-11-13T01:03:31.000Z',
-    children: [],
-  },
-  {
-    id: 393,
-    key: 'ko',
-    value: 'KR',
-    remark: '韩语',
-    isglobal: null,
-    tenant_id: null,
-    level: 1,
-    createdAt: '2023-11-09T02:23:35.000Z',
-    updatedAt: '2023-11-13T01:03:56.000Z',
-    children: [],
-  },
-  {
-    id: 390,
-    key: 'zh',
-    value: 'CN',
-    remark: '中国-简体中文',
-    isglobal: null,
-    tenant_id: null,
-    level: 1,
-    createdAt: '2023-11-09T02:21:34.000Z',
-    updatedAt: '2023-11-10T09:21:01.000Z',
-    children: [],
-  },
-]
-export default [
-  {
-    url: '/mock/setting/basis_dictionary/list',
+    url: '/mock/dictionary/list',
     method: 'get',
     response: () => {
+      function getDictionaryTree(list: any[]) {
+        const tree = []
+        for (const i in list) {
+          const item: Record<string, any> = {
+            id: list[i].id,
+            label: list[i].label,
+            code: list[i].code,
+          }
+          if (list[i].children) {
+            item.children = getDictionaryTree(list[i].children)
+          }
+          tree.push(item)
+        }
+        return tree
+      }
+      const pageList = getDictionaryTree(dictionaryList)
       return {
         error: '',
         status: 1,
-        data: AllList,
+        data: pageList,
       }
     },
   },
   {
-    url: '/mock/setting/basis_dictionary/detail',
+    url: '/mock/dictionary/detail',
     method: 'get',
-    response: () => {
+    response: ({ query }) => {
+      function findDictionary(list: any, parentId: number | '', id: number): any {
+        for (const i in list) {
+          if (list[i].id === id) {
+            return {
+              parentId,
+              id: list[i].id,
+              name: list[i].label,
+              code: list[i].code,
+            }
+          }
+          else if (list[i].children) {
+            const temp = findDictionary(list[i].children, list[i].id, id)
+            if (temp) {
+              return temp
+            }
+          }
+        }
+      }
+      const info = findDictionary(dictionaryList, '', ~~query.id)
       return {
         error: '',
         status: 1,
-        data: details,
+        data: info,
       }
     },
   },
   {
-    url: '/mock/setting/basis_dictionary/create',
+    url: '/mock/dictionary/create',
     method: 'post',
     response: () => {
       return {
@@ -357,7 +172,7 @@ export default [
     },
   },
   {
-    url: '/mock/setting/basis_dictionary/edit',
+    url: '/mock/dictionary/edit',
     method: 'post',
     response: () => {
       return {
@@ -370,7 +185,7 @@ export default [
     },
   },
   {
-    url: '/mock/setting/basis_dictionary/delete',
+    url: '/mock/dictionary/delete',
     method: 'post',
     response: () => {
       return {
@@ -382,4 +197,140 @@ export default [
       }
     },
   },
-]
+  {
+    url: '/mock/dictionary/item/list',
+    method: 'get',
+    response: ({ query }) => {
+      const { dictionary_id, title, from, limit } = query
+      function findDictionary(list: any, dictionary_id: number): any {
+        for (const i in list) {
+          if (list[i].id === dictionary_id) {
+            return list[i].items ?? []
+          }
+          if (list[i].children) {
+            return findDictionary(list[i].children, dictionary_id)
+          }
+        }
+      }
+      let list: any[] = findDictionary(dictionaryList, ~~dictionary_id) ?? []
+      list = list.filter((item) => {
+        return title ? item.name.includes(title) : true
+      })
+      const pageList = list.filter((item, index) => {
+        return index >= ~~from && index < (~~from + ~~limit)
+      })
+      return {
+        error: '',
+        status: 1,
+        data: {
+          list: pageList,
+          total: list.length,
+        },
+      }
+    },
+  },
+  {
+    url: '/mock/dictionary/item/detail',
+    method: 'get',
+    response: ({ query }) => {
+      function findDictionaryItem(list: any, id: number): any {
+        for (const i in list) {
+          if (list[i].items.some((item: any) => item.id === id)) {
+            return list[i].items.find((item: any) => item.id === id)
+          }
+          if (list[i].children) {
+            return findDictionaryItem(list[i].children, id)
+          }
+        }
+      }
+      const info = findDictionaryItem(dictionaryList, ~~query.id)
+      return {
+        error: '',
+        status: 1,
+        data: info,
+      }
+    },
+  },
+  {
+    url: '/mock/dictionary/item/create',
+    method: 'post',
+    response: () => {
+      return {
+        error: '',
+        status: 1,
+        data: {
+          isSuccess: true,
+        },
+      }
+    },
+  },
+  {
+    url: '/mock/dictionary/item/edit',
+    method: 'post',
+    response: () => {
+      return {
+        error: '',
+        status: 1,
+        data: {
+          isSuccess: true,
+        },
+      }
+    },
+  },
+  {
+    url: '/mock/dictionary/item/delete',
+    method: 'post',
+    response: () => {
+      return {
+        error: '',
+        status: 1,
+        data: {
+          isSuccess: true,
+        },
+      }
+    },
+  },
+  {
+    url: '/mock/dictionary/item/change/enable',
+    method: 'post',
+    response: () => {
+      return {
+        error: '',
+        status: 1,
+        data: {
+          isSuccess: true,
+        },
+      }
+    },
+  },
+  {
+    url: '/mock/dictionary/get',
+    method: 'get',
+    response: ({ query }) => {
+      const { code } = query
+      function findDictionary(list: any, code: string): any {
+        for (const i in list) {
+          if (list[i].code === code) {
+            return list[i].items ?? []
+          }
+          if (list[i].children) {
+            return findDictionary(list[i].children, code)
+          }
+        }
+      }
+      let list: any[] = findDictionary(dictionaryList, code as string) ?? []
+      list = list.filter(item => item.enable)
+      list = list.map(item => ({
+        name: item.name,
+        value: item.value,
+      }))
+      return {
+        error: '',
+        status: 1,
+        data: {
+          list,
+        },
+      }
+    },
+  },
+])
