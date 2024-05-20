@@ -2,19 +2,20 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import apiDictionary from '@/api/modules/setting_basisDictionary'
-
+// 父级传递的数据
 const props = withDefaults(
   defineProps<{
     parentId?: string | number
     id?: string | number
     tree: any[]
+    row: string
   }>(),
   {
     parentId: '',
     id: '',
   },
 )
-
+// 更新数据
 const emits = defineEmits<{
   addNode: [
     node: {
@@ -36,7 +37,7 @@ const emits = defineEmits<{
 const visible = defineModel<boolean>({
   default: false,
 })
-
+// 弹窗标题
 const title = computed(() => props.id === '' ? '新增字典' : '编辑字典')
 function formatTree(tree: any[], id: string | number, childrenDisabled = false) {
   const data: any[] = []
@@ -61,45 +62,46 @@ function formatTree(tree: any[], id: string | number, childrenDisabled = false) 
 const myTree = computed(() => formatTree(props.tree, props.id))
 
 const formRef = ref<FormInstance>()
+// 表单
 const form = ref({
-  parentId: props.parentId,
+  catalogueId: props.parentId,
   id: props.id,
-  name: '',
-  code: '',
+  englishName: '',
+  chineseName: '',
+  remark: '',
 })
+// 校验
 const formRules = ref<FormRules>({
-  name: [
+  chineseName: [
     { required: true, message: '请输入字典名称' },
   ],
-  code: [
+  englishName: [
     { required: true, message: '请输入字典编码' },
   ],
 })
 
 onMounted(() => {
   if (props.id !== '') {
-    apiDictionary.detail(props.id).then((res) => {
-      // form.value.parentId = res.data.parentId
-      form.value.id = res.data.id
-      form.value.name = res.data.name
-      form.value.code = res.data.code
-    })
+    const { id, englishName, chineseName } = JSON.parse(props.row)
+    form.value.id = id
+    form.value.chineseName = chineseName
+    form.value.englishName = englishName
   }
 })
-
+// 提交数据
 function onSubmit() {
   if (form.value.id === '') {
     formRef.value && formRef.value.validate((valid) => {
       if (valid) {
-        apiDictionary.create(form.value).then((res) => {
+        apiDictionary.create(form.value).then(() => {
           ElMessage.success({
-            message: '模拟新增成功',
+            message: '新增成功',
             center: true,
           })
           emits('addNode', {
-            id: res.data.data,
-            label: form.value.name,
-            code: form.value.code,
+            id: form.value.id,
+            label: form.value.chineseName,
+            code: form.value.englishName,
           })
           onCancel()
         })
@@ -111,21 +113,21 @@ function onSubmit() {
       if (valid) {
         apiDictionary.edit(form.value).then(() => {
           ElMessage.success({
-            message: '模拟编辑成功',
+            message: '编辑成功',
             center: true,
           })
           emits('editNode', {
             id: form.value.id,
-            label: form.value.name,
-            code: form.value.code,
-          }, form.value.parentId)
+            label: form.value.chineseName,
+            code: form.value.englishName,
+          }, form.value.catalogueId)
           onCancel()
         })
       }
     })
   }
 }
-
+// 关闭弹框
 function onCancel() {
   visible.value = false
 }
@@ -135,13 +137,13 @@ function onCancel() {
   <ElDialog v-model="visible" :title="title" width="400px" :close-on-click-modal="false" append-to-body destroy-on-close @closed="onCancel">
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="80px">
       <ElFormItem label="父级字典" prop="parentId">
-        <ElCascader v-model="form.parentId" :options="myTree" :props="{ value: 'id', emitPath: false, checkStrictly: true }" :show-all-levels="false" placeholder="请选择父级字典，默认为根字典" clearable />
+        <ElCascader v-model="form.catalogueId" :options="myTree" :props="{ value: 'id', label: 'name', emitPath: false, checkStrictly: true }" :show-all-levels="false" placeholder="请选择父级字典，默认为根字典" clearable />
       </ElFormItem>
-      <ElFormItem label="字典名称" prop="name">
-        <ElInput v-model="form.name" placeholder="请输入字典名称" clearable />
+      <ElFormItem label="字典名称" prop="chineseName">
+        <ElInput v-model="form.chineseName" placeholder="请输入字典名称" clearable />
       </ElFormItem>
-      <ElFormItem label="字典编码" prop="code">
-        <ElInput v-model="form.code" placeholder="请输入字典编码" clearable />
+      <ElFormItem label="字典编码" prop="englishName">
+        <ElInput v-model="form.englishName" placeholder="请输入字典编码" clearable />
       </ElFormItem>
     </ElForm>
     <template #footer>

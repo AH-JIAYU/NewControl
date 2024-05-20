@@ -2,19 +2,20 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import apiDictionary from '@/api/modules/setting_basisDictionary'
-
+// 父级传递的数据
 const props = withDefaults(
   defineProps<{
     dictionaryId: string | number
     id?: string | number
     tree: any[]
+    row: string
   }>(),
   {
     dictionaryId: '',
     id: '',
   },
 )
-
+// 更新数据
 const emits = defineEmits<{
   success: []
 }>()
@@ -22,48 +23,50 @@ const emits = defineEmits<{
 const visible = defineModel<boolean>({
   default: false,
 })
-
+// 弹窗标题
 const title = computed(() => props.id === '' ? '新增字典项' : '编辑字典项')
 
 const formRef = ref<FormInstance>()
+// 表单
 const form = ref({
-  dictionaryId: props.dictionaryId,
   id: props.id,
-  name: '',
-  value: '',
-  enable: true,
+  parentId: null, // 父id
+  catalogueId: props.dictionaryId, // 目录id
+  englishName: '', // 英文名称
+  chineseName: '', // 中文名称
+  code: '', // 编码
+  remark: '', // 备注
+  active: '', // 状态
 })
+// 校验
 const formRules = ref<FormRules>({
-  dictionaryId: [
+  catalogueId: [
     { required: true, message: '请选择所属字典' },
   ],
-  name: [
+  chineseName: [
     { required: true, message: '请输入字典项名称' },
   ],
-  value: [
+  englishName: [
     { required: true, message: '请输入字典项键值' },
   ],
 })
-
 onMounted(() => {
   if (props.id !== '') {
-    apiDictionary.itemDetail(props.id).then((res) => {
-      // form.value.dictionaryId = res.data.dictionaryId
-      form.value.id = res.data.id
-      form.value.name = res.data.name
-      form.value.value = res.data.value
-      form.value.enable = res.data.enable
-    })
+    const { active, englishName, chineseName, catalogueId } = JSON.parse(props.row)
+    form.value.catalogueId = catalogueId
+    form.value.chineseName = chineseName
+    form.value.englishName = englishName
+    form.value.active = active
   }
 })
-
+// 提交数据
 function onSubmit() {
   if (form.value.id === '') {
     formRef.value && formRef.value.validate((valid) => {
       if (valid) {
         apiDictionary.itemCreate(form.value).then(() => {
           ElMessage.success({
-            message: '模拟新增成功',
+            message: '新增成功',
             center: true,
           })
           emits('success')
@@ -77,7 +80,7 @@ function onSubmit() {
       if (valid) {
         apiDictionary.itemEdit(form.value).then(() => {
           ElMessage.success({
-            message: '模拟编辑成功',
+            message: '编辑成功',
             center: true,
           })
           emits('success')
@@ -87,7 +90,7 @@ function onSubmit() {
     })
   }
 }
-
+// 关闭弹框
 function onCancel() {
   visible.value = false
 }
@@ -96,17 +99,17 @@ function onCancel() {
 <template>
   <ElDialog v-model="visible" :title="title" width="400px" :close-on-click-modal="false" append-to-body destroy-on-close @closed="onCancel">
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="100px">
-      <ElFormItem label="所属字典" prop="dictionaryId">
-        <ElCascader v-model="form.dictionaryId" :options="tree" :props="{ value: 'id', emitPath: false, checkStrictly: true }" :show-all-levels="false" placeholder="请选择所属字典" />
+      <ElFormItem label="所属字典">
+        <ElCascader v-model="form.catalogueId" :options="tree" :props="{ value: 'id', label: 'chineseName', emitPath: false, checkStrictly: true }" :show-all-levels="false" placeholder="请选择所属字典" />
       </ElFormItem>
-      <ElFormItem label="字典项名称" prop="name">
-        <ElInput v-model="form.name" placeholder="请输入字典项名称" clearable />
+      <ElFormItem label="字典项名称" prop="chineseName">
+        <ElInput v-model="form.chineseName" placeholder="请输入字典项名称" clearable />
       </ElFormItem>
-      <ElFormItem label="字典项键值" prop="value">
-        <ElInput v-model="form.value" placeholder="请输入字典项键值" clearable />
+      <ElFormItem label="字典项键值" prop="englishName">
+        <ElInput v-model="form.englishName" placeholder="请输入字典项键值" clearable />
       </ElFormItem>
-      <ElFormItem label="状态" prop="enable">
-        <ElSwitch v-model="form.enable" inline-prompt active-text="启用" inactive-text="禁用" />
+      <ElFormItem label="状态" prop="code">
+        <ElSwitch v-model="form.active" inline-prompt active-text="启用" inactive-text="禁用" />
       </ElFormItem>
     </ElForm>
     <template #footer>

@@ -1,61 +1,23 @@
 import api from '../index'
 
 export default {
-  list: () => api.get('dictionary/list', {
-    baseURL: '/mock/',
-  }),
+  list: () => api.get('dict/get/getDict'),
 
-  detail: (id: number | string) => api.get('dictionary/detail', {
-    params: {
-      id,
-    },
-    baseURL: '/mock/',
-  }),
+  create: (data: any) => api.post('/dict/insert/insertDict', data),
 
-  create: (data: any) => api.post('dictionary/create', data, {
-    baseURL: '/mock/',
-  }),
+  edit: (data: any) => api.post('/dict/update/updateDict', data),
 
-  edit: (data: any) => api.post('dictionary/edit', data, {
-    baseURL: '/mock/',
-  }),
-
-  delete: (id: number | string) => api.post('dictionary/delete', {
+  delete: (id: number | string) => api.post('/dict/delete/deleteDict', {
     id,
-  }, {
-    baseURL: '/mock/',
   }),
 
-  itemList: (data: {
-    dictionary_id: number | string
-    title?: string
-    from: number
-    limit: number
-  }) => api.get('dictionary/item/list', {
-    params: data,
-    baseURL: '/mock/',
-  }),
+  itemList: (id: any) => api.get(`/dict/get/getDictDataSourceByDictId/${id}`),
 
-  itemDetail: (id: number | string) => api.get('dictionary/item/detail', {
-    params: {
-      id,
-    },
-    baseURL: '/mock/',
-  }),
+  itemCreate: (data: any) => api.post('/dict/insert/insertDictDataSource', data),
 
-  itemCreate: (data: any) => api.post('dictionary/item/create', data, {
-    baseURL: '/mock/',
-  }),
+  itemEdit: (data: any) => api.post('/dict/update/updateDataSourceById', data),
 
-  itemEdit: (data: any) => api.post('dictionary/item/edit', data, {
-    baseURL: '/mock/',
-  }),
-
-  itemDelete: (id: number | number[] | string | string[]) => api.post('dictionary/item/delete', {
-    id,
-  }, {
-    baseURL: '/mock/',
-  }),
+  itemDelete: (id: number | number[] | string | string[]) => api.delete(`/dict/delete/deleteDataSourceById/${id}`),
 
   itemChangeEnable: (data: {
     id: number

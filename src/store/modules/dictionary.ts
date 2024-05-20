@@ -1,4 +1,4 @@
-import apiDictionary from '@/api/modules/dictionary'
+import apiDictionary from '@/api/modules/setting_basisDictionary'
 
 export interface DictionaryItem {
   name: string

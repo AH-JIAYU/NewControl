@@ -6,9 +6,9 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type Node from 'element-plus/es/components/tree/src/model/node'
+import { ref } from 'vue'
 import DictionaryDialog from './components/dictionaryDialog/index.vue'
-import DictionaryItemDialog from './components/dictionaryItemDialog/index.vue'
-import UsageDialog from './components/usageDialog/index.vue'
+import DictionaryItemDia from './components/dictionaryItemDialog/index.vue'
 import apiDictionary from '@/api/modules/setting_basisDictionary'
 
 defineOptions({
@@ -22,6 +22,7 @@ interface Dict {
   children?: Dict[]
 }
 const dictionaryRef = ref()
+// 字典
 const dictionary = ref({
   search: '',
   tree: [] as Dict[],
@@ -32,12 +33,14 @@ const dictionary = ref({
     parentId: '' as Dict['id'],
     id: '' as Dict['id'],
   },
+  row: '',
 })
 
-const { pagination, getParams, onSizeChange, onCurrentChange, onSortChange } = usePagination()
+const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 pagination.value.size = 20
 pagination.value.sizes = [20, 50, 100]
 const dictionaryItemRef = ref()
+// 字典项
 const dictionaryItem = ref({
   loading: false,
   // 搜索
@@ -48,16 +51,17 @@ const dictionaryItem = ref({
   // 列表数据
   dataList: [],
   selectionDataList: [],
+  row: '',
   dialog: {
     visible: false,
     id: '' as string | number,
   },
 })
-
+// 获取字典
 function getDictionaryList() {
   dictionaryItem.value.search.dictionaryId = ''
   apiDictionary.list().then((res) => {
-    dictionary.value.tree = res.data
+    dictionary.value.tree = res.data.catalogueList
   })
 }
 onMounted(() => {
@@ -72,24 +76,28 @@ function dictionaryFilter(value: string, data: Dict) {
   }
   return data.label.includes(value)
 }
+// 新增字典
 function dictionaryAdd(data?: Dict) {
   dictionary.value.currentData = data
   dictionary.value.dialog.parentId = data?.id ?? ''
   dictionary.value.dialog.id = ''
   dictionary.value.dialog.visible = true
 }
+// 修改字典
 function dictionaryEdit(node: Node, data: Dict) {
   dictionary.value.currentNode = node
   dictionary.value.currentData = data
+  dictionary.value.row = JSON.stringify(data)
   dictionary.value.dialog.parentId = node.parent.data.id ?? ''
   dictionary.value.dialog.id = data.id
   dictionary.value.dialog.visible = true
 }
-function dictionaryDelete(node: Node, data: Dict) {
-  ElMessageBox.confirm(`确认删除「${data.label}」吗？`, '确认信息').then(() => {
+// 删除字典
+function dictionaryDelete(node: Node, data: any) {
+  ElMessageBox.confirm(`确认删除「${data.chineseName}」吗？`, '确认信息').then(() => {
     apiDictionary.delete(data.id).then(() => {
       ElMessage.success({
-        message: '模拟删除成功',
+        message: '删除成功',
         center: true,
       })
       const parent = node.parent
@@ -119,6 +127,7 @@ function dictionaryAddNode(data: Dict) {
       code: data.code,
     })
   }
+  getDictionaryList()
 }
 // 编辑成功后更新树
 function dictionaryEditNode(data: Dict, parentId: string | number) {
@@ -163,33 +172,30 @@ function dictionaryEditNode(data: Dict, parentId: string | number) {
       children.splice(index, 1)
     }
   }
+  getDictionaryList()
 }
+// 字典项详情
 function dictionaryClick(data: Dict) {
   pagination.value.page = 1
   dictionaryItem.value.search.dictionaryId = data.id
 }
-
+// 监听id变化
 watch(() => dictionaryItem.value.search.dictionaryId, () => {
   getDictionaryItemList()
 })
-
+// 获取字典项
 function getDictionaryItemList() {
   dictionaryItem.value.loading = true
-  const params = {
-    ...getParams(),
-    dictionary_id: dictionaryItem.value.search.dictionaryId,
-    ...(dictionaryItem.value.search.title && { title: dictionaryItem.value.search.title }),
-  }
-  apiDictionary.itemList(params).then((res: any) => {
+  apiDictionary.itemList(dictionaryItem.value.search.dictionaryId).then((res: any) => {
     dictionaryItem.value.loading = false
-    dictionaryItem.value.dataList = res.data.list
+    dictionaryItem.value.dataList = res.data
     dictionaryItem.value.dataList.forEach((item: any) => {
       item.enableLoading = false
     })
-    pagination.value.total = res.data.total
+    pagination.value.total = res.data.length
   })
 }
-
+// 修改字典项状态
 function onChangeEnable(row: any) {
   return new Promise<boolean>((resolve) => {
     ElMessageBox.confirm(`确认${!row.enable ? '启用' : '禁用'}「${row.name}」吗？`, '确认信息').then(() => {
@@ -200,7 +206,7 @@ function onChangeEnable(row: any) {
       }).then(() => {
         row.enableLoading = false
         ElMessage.success({
-          message: `模拟${!row.enable ? '启用' : '禁用'}成功`,
+          message: `${!row.enable ? '启用' : '禁用'}成功`,
           center: true,
         })
         return resolve(true)
@@ -228,52 +234,45 @@ function currentChange(page = 1) {
 function sortChange({ prop, order }: { prop: string, order: string }) {
   onSortChange(prop, order).then(() => getDictionaryItemList())
 }
-
+// 新增
 function onCreate() {
   dictionaryItem.value.dialog.id = ''
   dictionaryItem.value.dialog.visible = true
 }
-
+// 修改
 function onEdit(row: any) {
+  dictionaryItem.value.row = JSON.stringify(row)
   dictionaryItem.value.dialog.id = row.id
   dictionaryItem.value.dialog.visible = true
 }
-
+// 删除
 function onDelete(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.name}」吗？`, '确认信息').then(() => {
+  ElMessageBox.confirm(`确认删除「${row.chineseName}」吗？`, '确认信息').then(() => {
     apiDictionary.itemDelete(row.id).then(() => {
       getDictionaryItemList()
       ElMessage.success({
-        message: '模拟删除成功',
+        message: '删除成功',
         center: true,
       })
     })
   }).catch(() => { })
 }
-
+// 批量删除
 function onDeleteMulti(rows: any[]) {
   ElMessageBox.confirm(`确认删除选中的 ${rows.length} 条数据吗？`, '确认信息').then(() => {
     apiDictionary.itemDelete(rows.map(item => item.id)).then(() => {
       getDictionaryItemList()
       ElMessage.success({
-        message: '模拟删除成功',
+        message: '删除成功',
         center: true,
       })
     })
   }).catch(() => { })
 }
-
-// 使用示例
-const usageExampleVisible = ref(false)
 </script>
 
 <template>
   <div class="absolute-container">
-    <PageHeader title="字典管理" content="页面数据为 Mock 示例数据，非真实数据。">
-      <ElButton @click="usageExampleVisible = true">
-        使用示例
-      </ElButton>
-    </PageHeader>
     <div class="page-main">
       <LayoutContainer hide-left-side-toggle>
         <template #leftSide>
@@ -296,10 +295,10 @@ const usageExampleVisible = ref(false)
               <template #default="{ node, data }">
                 <div class="custom-tree-node">
                   <div class="label" :title="node.label">
-                    {{ node.label }}
+                    {{ data.chineseName }}
                   </div>
                   <div class="code">
-                    {{ data.code }}
+                    {{ data.englishName }}
                   </div>
                   <div class="actions">
                     <ElButtonGroup>
@@ -353,18 +352,18 @@ const usageExampleVisible = ref(false)
             @selection-change="dictionaryItem.selectionDataList = $event"
           >
             <ElTableColumn type="selection" align="center" fixed />
-            <ElTableColumn prop="name" label="名称" />
+            <ElTableColumn prop="chineseName" label="名称" />
             <ElTableColumn label="键值" align="center" width="150">
               <template #default="scope">
                 <ElTag type="info">
-                  {{ scope.row.value }}
+                  {{ scope.row.id }}
                 </ElTag>
               </template>
             </ElTableColumn>
             <ElTableColumn label="状态" width="100" align="center">
               <template #default="scope">
                 <ElSwitch
-                  v-model="scope.row.enable" :loading="scope.row.enableLoading" inline-prompt active-text="启用"
+                  v-model="scope.row.active" :loading="scope.row.deleted" inline-prompt active-text="启用"
                   inactive-text="禁用" :before-change="() => onChangeEnable(scope.row)"
                 />
               </template>
@@ -393,16 +392,15 @@ const usageExampleVisible = ref(false)
         </div>
       </LayoutContainer>
       <DictionaryDialog
-        v-if="dictionary.dialog.visible" :id="dictionary.dialog.id" v-model="dictionary.dialog.visible"
+        v-if="dictionary.dialog.visible" :id="dictionary.dialog.id" v-model="dictionary.dialog.visible" :row="dictionary.row"
         :parent-id="dictionary.dialog.parentId" :tree="dictionary.tree" @add-node="dictionaryAddNode"
         @edit-node="dictionaryEditNode"
       />
-      <DictionaryItemDialog
+      <DictionaryItemDia
         v-if="dictionaryItem.dialog.visible" :id="dictionaryItem.dialog.id"
         v-model="dictionaryItem.dialog.visible" :dictionary-id="dictionaryItem.search.dictionaryId"
-        :tree="dictionary.tree" @success="getDictionaryItemList"
+        :tree="dictionary.tree" :row="dictionaryItem.row" @success="getDictionaryItemList"
       />
-      <UsageDialog v-if="usageExampleVisible" v-model="usageExampleVisible" />
     </div>
   </div>
 </template>
