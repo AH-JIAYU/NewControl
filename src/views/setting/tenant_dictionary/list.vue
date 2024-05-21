@@ -60,7 +60,7 @@ function getDictionaryList() {
   dictionary.value.loading = true
   dictionaryItem.value.search.dictionaryId = ''
   apiDictionary.list().then((res) => {
-    dictionary.value.tree = res.data.catalogueList
+    dictionary.value.tree = res.data
     dictionary.value.loading = false
   })
 }
@@ -88,7 +88,7 @@ watch(() => dictionaryItem.value.search.dictionaryId, () => {
 // 获取字典项
 function getDictionaryItemList() {
   dictionaryItem.value.loading = true
-  apiDictionary.itemList(dictionaryItem.value.search.dictionaryId).then((res: any) => {
+  apiDictionary.getTenantDataDictionary(dictionaryItem.value.search.dictionaryId).then((res: any) => {
     dictionaryItem.value.loading = false
     dictionaryItem.value.dataList = res.data
     dictionaryItem.value.dataList.forEach((item: any) => {

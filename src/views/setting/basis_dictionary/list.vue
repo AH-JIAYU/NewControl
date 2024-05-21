@@ -63,7 +63,7 @@ function getDictionaryList() {
   dictionary.value.loading = true
   dictionaryItem.value.search.dictionaryId = ''
   apiDictionary.list().then((res) => {
-    dictionary.value.tree = res.data.catalogueList
+    dictionary.value.tree = res.data
     dictionary.value.loading = false
   })
 }
