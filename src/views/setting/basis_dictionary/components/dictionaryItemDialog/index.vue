@@ -36,7 +36,6 @@ const form = ref({
   chineseName: '', // 中文名称
   code: '', // 编码
   remark: '', // 备注
-  active: '', // 状态
 })
 // 校验
 const formRules = ref<FormRules>({
@@ -47,16 +46,18 @@ const formRules = ref<FormRules>({
     { required: true, message: '请输入字典项名称' },
   ],
   englishName: [
+    { required: true, message: '请输入字典项英文名称' },
+  ],
+  code: [
     { required: true, message: '请输入字典项键值' },
   ],
 })
 onMounted(() => {
   if (props.id !== '') {
-    const { active, englishName, chineseName, catalogueId } = JSON.parse(props.row)
+    const { englishName, chineseName, catalogueId } = JSON.parse(props.row)
     form.value.catalogueId = catalogueId
     form.value.chineseName = chineseName
     form.value.englishName = englishName
-    form.value.active = active
   }
 })
 // 提交数据
@@ -105,11 +106,11 @@ function onCancel() {
       <ElFormItem label="字典项名称" prop="chineseName">
         <ElInput v-model="form.chineseName" placeholder="请输入字典项名称" clearable />
       </ElFormItem>
-      <ElFormItem label="字典项键值" prop="englishName">
-        <ElInput v-model="form.englishName" placeholder="请输入字典项键值" clearable />
+      <ElFormItem label="英文名称" prop="englishName">
+        <ElInput v-model="form.englishName" placeholder="请输入字典项名称" clearable />
       </ElFormItem>
-      <ElFormItem label="状态" prop="code">
-        <ElSwitch v-model="form.active" inline-prompt active-text="启用" inactive-text="禁用" />
+      <ElFormItem label="字典项键值" prop="code">
+        <ElInput v-model="form.code" placeholder="请输入字典项键值" clearable />
       </ElFormItem>
     </ElForm>
     <template #footer>

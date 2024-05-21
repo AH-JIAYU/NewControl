@@ -4,12 +4,9 @@
   </route>
 
 <script setup lang="ts">
-import { ElMessage, ElMessageBox } from 'element-plus'
 import type Node from 'element-plus/es/components/tree/src/model/node'
-import { ref } from 'vue'
-import DictionaryDialog from './components/dictionaryDialog/index.vue'
-import DictionaryItemDia from './components/dictionaryItemDialog/index.vue'
-import apiDictionary from '@/api/modules/setting_basisDictionary'
+import { onMounted, ref, watch } from 'vue'
+import apiDictionary from '@/api/modules/setting_tenantDictionary'
 
 defineOptions({
   name: 'PagesExampleDictionary',
@@ -79,104 +76,6 @@ function dictionaryFilter(value: string, data: Dict) {
   }
   return data.label.includes(value)
 }
-// 新增字典
-function dictionaryAdd(data?: Dict) {
-  dictionary.value.currentData = data
-  dictionary.value.dialog.parentId = data?.id ?? ''
-  dictionary.value.dialog.id = ''
-  dictionary.value.dialog.visible = true
-}
-// 修改字典
-function dictionaryEdit(node: Node, data: Dict) {
-  dictionary.value.currentNode = node
-  dictionary.value.currentData = data
-  dictionary.value.row = JSON.stringify(data)
-  dictionary.value.dialog.parentId = node.parent.data.id ?? ''
-  dictionary.value.dialog.id = data.id
-  dictionary.value.dialog.visible = true
-}
-// 删除字典
-function dictionaryDelete(node: Node, data: any) {
-  ElMessageBox.confirm(`确认删除「${data.chineseName}」吗？`, '确认信息').then(() => {
-    apiDictionary.delete(data.id).then(() => {
-      ElMessage.success({
-        message: '删除成功',
-        center: true,
-      })
-      const parent = node.parent
-      const children: Dict[] = parent.data.children || parent.data
-      const index = children.findIndex(d => d.id === data.id)
-      children.splice(index, 1)
-      dictionary.value.tree = [...dictionary.value.tree]
-    })
-  })
-}
-// 新增成功后更新树
-function dictionaryAddNode(data: Dict) {
-  if (dictionary.value.currentData) {
-    if (!dictionary.value.currentData.children) {
-      dictionary.value.currentData.children = []
-    }
-    dictionary.value.currentData.children.push({
-      id: data.id,
-      label: data.label,
-      code: data.code,
-    })
-  }
-  else {
-    dictionary.value.tree.push({
-      id: data.id,
-      label: data.label,
-      code: data.code,
-    })
-  }
-  getDictionaryList()
-}
-// 编辑成功后更新树
-function dictionaryEditNode(data: Dict, parentId: string | number) {
-  if (dictionary.value.currentNode && dictionary.value.currentData) {
-    if ((dictionary.value.currentNode.parent.data.id ?? '') === parentId) {
-      // 如果 parentId 一致说明节点位置没有变化，直接更新
-      dictionary.value.currentData.label = data.label
-      dictionary.value.currentData.code = data.code
-    }
-    else {
-      // 先更新原有节点信息
-      const parent = dictionary.value.currentNode.parent
-      const children: Dict[] = parent.data.children || parent.data
-      const index = children.findIndex(item => item.id === data.id)
-      children[index].label = data.label
-      children[index].code = data.code
-      // 然后找到需要移动到的父节点位置，并将原有节点移动过去
-      if (parentId) {
-        const findDictionary: any = (list: Dict[], parentId: number) => {
-          for (const i in list) {
-            if (list[i].id === parentId) {
-              return list[i]
-            }
-            else if (list[i].children) {
-              const temp = findDictionary(list[i].children, parentId)
-              if (temp) {
-                return temp
-              }
-            }
-          }
-        }
-        const targetNode = findDictionary(dictionary.value.tree, parentId)
-        if (!targetNode.children) {
-          targetNode.children = []
-        }
-        targetNode.children.push(children[index])
-      }
-      else {
-        dictionary.value.tree.push(children[index])
-      }
-      // 最后删除原节点
-      children.splice(index, 1)
-    }
-  }
-  getDictionaryList()
-}
 // 字典项详情
 function dictionaryClick(data: Dict) {
   pagination.value.page = 1
@@ -213,41 +112,6 @@ function currentChange(page = 1) {
 function sortChange({ prop, order }: { prop: string, order: string }) {
   onSortChange(prop, order).then(() => getDictionaryItemList())
 }
-// 新增
-function onCreate() {
-  dictionaryItem.value.dialog.id = ''
-  dictionaryItem.value.dialog.visible = true
-}
-// 修改
-function onEdit(row: any) {
-  dictionaryItem.value.row = JSON.stringify(row)
-  dictionaryItem.value.dialog.id = row.id
-  dictionaryItem.value.dialog.visible = true
-}
-// 删除
-function onDelete(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.chineseName}」吗？`, '确认信息').then(() => {
-    apiDictionary.itemDelete(row.id).then(() => {
-      getDictionaryItemList()
-      ElMessage.success({
-        message: '删除成功',
-        center: true,
-      })
-    })
-  }).catch(() => { })
-}
-// 批量删除
-function onDeleteMulti(rows: any[]) {
-  ElMessageBox.confirm(`确认删除选中的 ${rows.length} 条数据吗？`, '确认信息').then(() => {
-    apiDictionary.itemDelete(rows.map(item => item.id)).then(() => {
-      getDictionaryItemList()
-      ElMessage.success({
-        message: '删除成功',
-        center: true,
-      })
-    })
-  }).catch(() => { })
-}
 </script>
 
 <template>
@@ -256,10 +120,7 @@ function onDeleteMulti(rows: any[]) {
       <LayoutContainer hide-left-side-toggle>
         <template #leftSide>
           <ElButtonGroup class="btns">
-            <ElButton type="primary" class="add" @click="dictionaryAdd()">
-              新增字典
-            </ElButton>
-            <ElButton @click="getDictionaryList">
+            <ElButton class="add" @click="getDictionaryList">
               <template #icon>
                 <SvgIcon name="i-ep:refresh" />
               </template>
@@ -279,25 +140,6 @@ function onDeleteMulti(rows: any[]) {
                   <div class="code">
                     {{ data.englishName }}
                   </div>
-                  <div class="actions">
-                    <ElButtonGroup>
-                      <ElButton type="primary" plain size="default" @click.stop="dictionaryAdd(data)">
-                        <template #icon>
-                          <SvgIcon name="i-ep:plus" />
-                        </template>
-                      </ElButton>
-                      <ElButton type="info" plain size="default" @click.stop="dictionaryEdit(node, data)">
-                        <template #icon>
-                          <SvgIcon name="i-ep:edit" />
-                        </template>
-                      </ElButton>
-                      <ElButton type="danger" plain size="default" @click.stop="dictionaryDelete(node, data)">
-                        <template #icon>
-                          <SvgIcon name="i-ep:delete" />
-                        </template>
-                      </ElButton>
-                    </ElButtonGroup>
-                  </div>
                 </div>
               </template>
             </ElTree>
@@ -305,19 +147,6 @@ function onDeleteMulti(rows: any[]) {
         </template>
         <div v-show="dictionaryItem.search.dictionaryId" class="dictionary-container">
           <ElSpace wrap>
-            <ElButton type="primary" @click="onCreate">
-              <template #icon>
-                <SvgIcon name="i-ep:plus" />
-              </template>
-            </ElButton>
-            <ElButton
-              type="danger" :disabled="!dictionaryItem.selectionDataList.length"
-              @click="onDeleteMulti(dictionaryItem.selectionDataList)"
-            >
-              <template #icon>
-                <SvgIcon name="i-ep:delete" />
-              </template>
-            </ElButton>
             <ElInput v-model="dictionaryItem.search.title" placeholder="请输入关键词筛选字典项" clearable style="width: 200px;" />
             <ElButton @click="getDictionaryItemList">
               <template #icon>
@@ -340,16 +169,6 @@ function onDeleteMulti(rows: any[]) {
                 </ElTag>
               </template>
             </ElTableColumn>
-            <ElTableColumn label="操作" width="200" align="center">
-              <template #default="scope">
-                <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">
-                  编辑
-                </ElButton>
-                <ElButton type="danger" size="small" plain @click="onDelete(scope.row)">
-                  删除
-                </ElButton>
-              </template>
-            </ElTableColumn>
           </ElTable>
           <ElPagination
             :current-page="pagination.page" :total="pagination.total" :page-size="pagination.size"
@@ -363,16 +182,6 @@ function onDeleteMulti(rows: any[]) {
           </div>
         </div>
       </LayoutContainer>
-      <DictionaryDialog
-        v-if="dictionary.dialog.visible" :id="dictionary.dialog.id" v-model="dictionary.dialog.visible" :row="dictionary.row"
-        :parent-id="dictionary.dialog.parentId" :tree="dictionary.tree" @add-node="dictionaryAddNode"
-        @edit-node="dictionaryEditNode"
-      />
-      <DictionaryItemDia
-        v-if="dictionaryItem.dialog.visible" :id="dictionaryItem.dialog.id"
-        v-model="dictionaryItem.dialog.visible" :dictionary-id="dictionaryItem.search.dictionaryId"
-        :tree="dictionary.tree" :row="dictionaryItem.row" @success="getDictionaryItemList"
-      />
     </div>
   </div>
 </template>
