@@ -1,7 +1,7 @@
 <route lang="yaml">
-meta:
-  enabled: false
-</route>
+  meta:
+    enabled: false
+  </route>
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -30,38 +30,37 @@ const data = ref<any>({
 onMounted(() => {
   getDataList()
 })
-
+// 获取数据
 function getDataList() {
   data.value.loading = true
-  apiMenu.list().then((res: any) => {
+  apiMenu.list({ type: 'normal' }).then((res: any) => {
     data.value.loading = false
     data.value.dataList = res.data
   })
-  // apiMenu.list({ type: 'normal' }).then((res: any) => {
-  //   data.value.loading = false
-  //   data.value.dataList = res.data
-  // })
 }
 
 // 添加id赋值给parentId
 function onCreate(row?: any) {
   data.value.formModeProps.id = '' // 添加时不应有id 组件里 prop为只读 通过父置空id
   data.value.formModeProps.parentId = row.id ?? ''
+  data.value.formModeProps.menuLevel = row.menuLevel ?? '' // 菜单等级 传当前值 走添加接口前自增1
   data.value.formModeProps.visible = true
 }
 // 编辑时id赋值给id 通过id请求 parentId
 function onEdit(row: any) {
   data.value.formModeProps.id = row.id ?? ''
-  data.value.formModeProps.parentId = '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
+  data.value.formModeProps.menuLevel = row.menuLevel - 1 // 传路由等级 编辑时回显路由
+  data.value.formModeProps.row = JSON.stringify(row) // 修改时给整个对象传过去
+  data.value.formModeProps.parentId = row.parentId ?? '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
   data.value.formModeProps.visible = true
 }
 // 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.meta.title}」吗？`, '确认信息').then(() => {
-    apiMenu.delete(row.id).then(() => {
+    apiMenu.delete({ id: row.id }).then((res: any) => {
       getDataList()
-      ElMessage.success({
-        message: '删除成功',
+      ElMessage[res.status === 1 ? 'success' : 'error']({
+        message: res.status === 1 ? '删除成功' : '请求失败',
         center: true,
       })
     })
@@ -140,38 +139,39 @@ function onDel(row: any) {
       </ElTable>
     </PageMain>
     <FormMode
-      :id="data.formModeProps.id" v-model="data.formModeProps.visible" :parent-id="data.formModeProps.parentId"
+      :id="data.formModeProps.id" v-model="data.formModeProps.visible"
+      :menu-level="data.formModeProps.menuLevel" :parent-id="data.formModeProps.parentId" :row="data.formModeProps.row"
       @success="getDataList"
     />
   </div>
 </template>
 
-<style lang="scss" scoped>
-.absolute-container {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
+  <style lang="scss" scoped>
+  .absolute-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 
-  .page-header {
-    margin-bottom: 0;
-  }
+    .page-header {
+      margin-bottom: 0;
+    }
 
-  .page-main {
-    flex: 1;
-    overflow: auto;
-
-    :deep(.main-container) {
-      display: flex;
+    .page-main {
       flex: 1;
-      flex-direction: column;
       overflow: auto;
+
+      :deep(.main-container) {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        overflow: auto;
+      }
     }
   }
-}
 
-:deep(.el-table td.el-table__cell div) {
-  @include text-overflow;
-}
-</style>
+  :deep(.el-table td.el-table__cell div) {
+    @include text-overflow;
+  }
+  </style>

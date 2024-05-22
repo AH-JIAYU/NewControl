@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
-import api from '@/api/modules/setting_role'
+import api from '@/api/modules/setting_versionManagement'
 import useRouteStore from '@/store/modules/route'
 import userButtonPer from '@/store/modules/buttonPermission'
 
@@ -16,14 +16,14 @@ const permissionData = ref<any>([]) // 权限
 
 const form = ref<any>({
   id: props.id,
-  role: '',
-  menuId: [],
-  permissions: [],
+  name: '',
+  versionMenuId: [],
+  versionButtonId: [],
 })
 // 校验
 const formRules = ref<FormRules>({
-  role: [
-    { required: true, message: '请输入角色吗', trigger: 'blur' },
+  name: [
+    { required: true, message: '请输入角色码', trigger: 'blur' },
   ],
 })
 
@@ -44,13 +44,13 @@ async function getInfo() { // 编辑时获取该id的具体数据
 
 // 查询当前路由有那些权限
 function rowPermission(permissionID: any) {
-  return permissionData.value.filter((item: any) => permissionID === item.menuId)
+  return permissionData.value.filter((item: any) => permissionID === item.versionMenuId)
 }
 
 // 暴露
 defineExpose({
   submit() {
-    form.value.menuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
+    form.value.versionMenuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid: any) => {
@@ -86,12 +86,12 @@ defineExpose({
 <template>
   <div v-loading="loading">
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
-      <ElFormItem label="角色码" prop="role">
-        <ElInput v-model="form.role" placeholder="请输入角色码" />
+      <ElFormItem label="版本" prop="name">
+        <ElInput v-model="form.name" placeholder="请输入版本" />
       </ElFormItem>
       <ElFormItem label="权限">
         <el-tree
-          ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.menuId"
+          ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.versionMenuId"
           :default-expanded-keys="[]" node-key="id" show-checkbox default-expand-all highlight-current border
         >
           <template #default="{ data }">
@@ -100,8 +100,8 @@ defineExpose({
                 {{ data.meta.title }}
               </div>
               <div class="permission">
-                <div v-if="rowPermission(data.id).length" class="permissions" @click.stop>
-                  <ElCheckboxGroup v-model="form.permissions">
+                <div v-if="rowPermission(data.id).length" class="versionButtonId" @click.stop>
+                  <ElCheckboxGroup v-model="form.versionButtonId">
                     <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.key">
                       {{ auth.label }}
                     </ElCheckbox>
@@ -151,7 +151,7 @@ defineExpose({
     border-left: 1px solid #f1f1f1;
   }
 
-  .permissions {
+  .versionButtonId {
     display: flex;
     flex-direction: column;
     align-items: start;

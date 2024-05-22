@@ -63,7 +63,7 @@ function onDel(row: any) {
     apiMenu.delete({ id: row.id }).then((res: any) => {
       getDataList()
       ElMessage[res.status === 1 ? 'success' : 'error']({
-        message: res.error,
+        message: res.status === 1 ? '删除成功' : '请求失败',
         center: true,
       })
     })

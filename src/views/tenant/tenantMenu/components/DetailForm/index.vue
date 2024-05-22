@@ -7,25 +7,39 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import apiMenu from '@/api/modules/menu'
-import useSettingsStore from '@/store/modules/settings'
-import useTabbar from '@/utils/composables/useTabbar'
+import apiMenu from '@/api/modules/tenant_tenantMenu'
+import useRouteStore from '@/store/modules/route'
 
 defineOptions({
   name: 'PagesExampleMenuDetail',
 })
 
-const props = defineProps(['id', 'parentId'])
-const router = useRouter()
-const tabbar = useTabbar()
-const settingsStore = useSettingsStore()
-
+const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
+const routeStore = useRouteStore() // 路由 store
 const loading = ref(false)
 const formRef = ref<FormInstance>()
-const showParent = ref(false) // 是否显示父级id
-const list = ref<any>([]) // 导航列表
-const form = ref({
+const showParent = ref<any>(false) // 是否显示父级id
+const list = ref() // 导航列表
+const choiceMenuData = ref<any>([]) // 展示的选择路由
+const munulevs = ref([// 路由等级
+  {
+    value: 1,
+    label: '一级导航',
+  }, {
+    value: 2,
+    label: '二级导航',
+  },
+  {
+    value: 3,
+    label: '三级导航',
+  },
+  {
+    value: 4,
+    label: '内置页面',
+  }])
+const inputTag = ref('') // tag的输入框绑定的值
+const inputVisible = ref(false) // tag新增输入框显隐
+const form = ref<any>({
   id: props.id ?? '',
   parentId: props.parentId ?? '',
   path: '',
@@ -33,8 +47,9 @@ const form = ref({
   name: '',
   component: '',
   sort: '',
-  grade: '',
+  menuLevel: props.menuLevel ?? '',
   navigation: '',
+  key: [],
   meta: {
     title: '',
     icon: '',
@@ -42,11 +57,6 @@ const form = ref({
     defaultOpened: false,
     alwaysOpened: false,
     permanent: false,
-    auth: [] as string[],
-    auths: [] as {
-      name: string
-      value: string
-    }[],
     menu: true,
     breadcrumb: true,
     activeMenu: '',
@@ -60,7 +70,28 @@ const form = ref({
     paddingBottom: '0px',
   },
 })
-// 校验
+const InputRef = ref<any>() // tag 添加输入框ref
+// tag
+function handleClose(tag: string) {
+  form.value.key.splice(form.value.key.indexOf(tag), 1)
+}
+// tag
+function showInput() {
+  inputVisible.value = true
+  nextTick(() => {
+    InputRef.value!.input!.focus()
+  })
+}
+// tag
+function handleInputConfirm() {
+  if (inputTag.value) {
+    form.value.key = form.value.key || []
+    form.value.key.push(inputTag.value)
+  }
+  inputVisible.value = false
+  inputTag.value = ''
+}
+// 表单校验
 const formRules = ref<FormRules>({
   'path': [
     { required: true, message: '请输入路由地址', trigger: 'blur' },
@@ -70,33 +101,60 @@ const formRules = ref<FormRules>({
   ],
 })
 
+// 函数查找具有特定menulev的所有项目
+function findItemsByLevel(data: any, level: number) {
+  const results: any[] = []
+  function recurse(items: any) {
+    // 确保 items 是数组
+    if (!Array.isArray(items)) {
+      return
+    }
+    for (const item of items) {
+      if (item.menuLevel === level) {
+        results.push(item)
+      }
+      if (Array.isArray(item.children)) {
+        recurse(item.children)
+      }
+    }
+  }
+  recurse(data)
+  return results
+}
+// 选择父级分类Select the parent project ID
+function selectparentid(menuLevel: any) {
+  if (menuLevel === 1) {
+    choiceMenuData.value = findItemsByLevel(list.value, 1)
+  }
+  else if (menuLevel === 2) {
+    choiceMenuData.value = findItemsByLevel(list.value, 2)
+  }
+  else if (menuLevel === 3) {
+    choiceMenuData.value = findItemsByLevel(list.value, 3)
+  }
+  else {
+    choiceMenuData.value = findItemsByLevel(list.value, 4)
+  }
+}
+
 onMounted(() => {
-  apiMenu.list({ type: 'normal' }).then((res: any) => {
-    list.value = res.data
-  })
+  list.value = routeStore.routesRaw // 从store获取原始路由
+  choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel) // 根据路由等级 筛选路由
+  // 第一次进入时id和parentid都为空时 显示父级导航
+  showParent.value = !!(!form.value.id && !form.value.parentId)
   if (form.value.id !== '') {
     getInfo()
   }
 })
-// 获取数据
+
 function getInfo() {
   loading.value = true
-  // 通过id请求获取parentId 编辑时请求 添加时不需要
-  // id存在请求接口 不存为添加
+  // id存在为编辑 不存为添加
   if (form.value.id) {
-    apiMenu.detail(form.value.id).then((res: any) => {
-      loading.value = false
-      form.value.id = res.data.id
-      form.value.parentId = res.data.parentId
-      form.value.path = res.data.path
-      form.value.redirect = res.data.redirect
-      form.value.name = res.data.name
-      form.value.component = res.data.component
-      Object.assign(form.value.meta, res.data.meta)
-    })
+    form.value = JSON.parse(props.row)
+    loading.value = false
   }
 }
-
 // 缓存规则
 const inputCache = ref('')
 const inputCacheVisible = ref(false)
@@ -149,76 +207,73 @@ function onInputNoCacheConfirm() {
   inputNoCache.value = ''
 }
 
-onMounted(() => {
-  // 第一次进入时id和parentid都为空时 显示父级id
-  showParent.value = !!(!form.value.id && !form.value.parentId)
+defineExpose({
+  submit() {
+    return new Promise<void>((resolve) => {
+      if (form.value.id === '') {
+        formRef.value && formRef.value.validate((valid: any) => {
+          if (valid) {
+            form.value.menuLevel = Number(form.value.menuLevel) + 1 // 菜单等级自增一
+            apiMenu.create(form.value).then(() => {
+              ElMessage.success({
+                message: '新增成功',
+                center: true,
+              })
+              resolve()
+            })
+          }
+        })
+      }
+      else {
+        formRef.value && formRef.value.validate((valid: any) => {
+          if (valid) {
+            apiMenu.edit(form.value).then(() => {
+              ElMessage.success({
+                message: '编辑成功',
+                center: true,
+              })
+              resolve()
+            })
+          }
+        })
+      }
+    })
+  },
 })
-// 提交
-function onSubmit() {
-  if (form.value.id === '') {
-    formRef.value && formRef.value.validate((valid) => {
-      if (valid) {
-        apiMenu.create(form.value).then(() => {
-          ElMessage.success({
-            message: '新增成功',
-            center: true,
-          })
-          goBack()
-        })
-      }
-    })
-  }
-  else {
-    formRef.value && formRef.value.validate((valid) => {
-      if (valid) {
-        apiMenu.edit(form.value).then(() => {
-          ElMessage.success({
-            message: '编辑成功',
-            center: true,
-          })
-          goBack()
-        })
-      }
-    })
-  }
-}
-// 取消
-function onCancel() {
-  goBack()
-}
-
-// 返回列表页
-function goBack() {
-  if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {
-    tabbar.close({ name: 'pagesExampleGeneralMenuList' })
-  }
-  else {
-    router.push({ name: 'pagesExampleGeneralMenuList' })
-  }
-}
 </script>
 
 <template>
   <div class="absolute-container">
     <div v-loading="loading" class="page-main">
       <ElForm ref="formRef" :model="form" :rules="formRules" label-position="top">
-        <LayoutContainer right-side-width="500px" hide-right-side-toggle>
-          <PageHeader
-            v-if="!!form.parentId || showParent" title="基础配置"
-            content="标准路由配置，包含 path/redirect/name/component"
-          />
-          <ElRow v-if="!!form.parentId || showParent" :gutter="30" style="padding: 20px;">
-            <ElCol :xl="12" :lg="24">
-              <ElFormItem label="菜单等级">
-                <el-select v-model="form.grade" clear value-key="" placeholder="" clearable filterable>
-                  <el-option v-for="item in 4" :key="item" :label="item" :value="item" />
+        <LayoutContainer right-side-width="500px" hide-right-side-toggle style="padding-bottom: 100px;">
+          <PageHeader title="基础配置" content="标准路由配置，包含 path/redirect/name/component" />
+          <ElRow :gutter="30" style="padding: 20px;">
+            <ElCol v-if="!!form.parentId || showParent" :xl="12" :lg="24">
+              <ElFormItem label="路由等级">
+                <el-select
+                  v-model="form.menuLevel" clear value-key="" placeholder="" clearable filterable
+                  @change="selectparentid"
+                >
+                  <el-option v-for="item in munulevs" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
               </ElFormItem>
             </ElCol>
-            <ElCol :xl="12" :lg="24">
+            <ElCol v-if="!!form.parentId || showParent" :xl="12" :lg="24">
               <ElFormItem label="父级导航">
                 <el-select v-model="form.parentId" clear value-key="" placeholder="" clearable filterable>
-                  <el-option v-for="item in list" :key="item.id" :label="item.meta.title" :value="item.id" />
+                  <el-option v-for="item in choiceMenuData" :key="item.id" :label="item.meta.title" :value="item.id">
+                    <span style="float: left;">{{ item.meta.title }}</span>
+                    <span
+                      style="
+          float: right;
+          font-size: 13px;
+          color: var(--el-text-color-secondary);
+"
+                    >
+                      {{ item.name }}
+                    </span>
+                  </el-option>
                 </el-select>
               </ElFormItem>
             </ElCol>
@@ -263,58 +318,32 @@ function goBack() {
               </ElFormItem>
             </ElCol>
           </ElRow>
-          <PageHeader title="扩展配置">
-            <template #content>
-              <div style="display: flex;">
-                框架扩展配置，详细配置介绍请查看<ElLink
-                  type="primary"
-                  href="https://fantastic-admin.gitee.io/guide/router.html#%E5%AF%BC%E8%88%AA%E9%85%8D%E7%BD%AE"
-                  target="_blank"
-                >
-                  框架文档
-                </ElLink>
-              </div>
-            </template>
-          </PageHeader>
+          <PageHeader title="扩展配置" />
           <ElRow :gutter="30" style="padding: 20px;">
-            <!-- 父级id -->
-            <!-- <ElCol v-if=" showParent" :xl="12" :lg="24">
-              <ElFormItem label="父级id">
-                <el-select v-model="form.parentId" clear value-key="" placeholder="" clearable filterable>
-                  <el-option v-for="item in 4" :key="item" :label="item" :value="item" />
-                </el-select>
-              </ElFormItem>
-            </ElCol> -->
             <ElCol :xl="12" :lg="24">
               <ElFormItem label="显示名称" prop="meta.title">
                 <ElInput v-model="form.meta.title" clearable placeholder="请输入显示名称" />
               </ElFormItem>
             </ElCol>
-            <!-- <ElCol :xl="12" :lg="24">
-                <ElFormItem prop="meta.auth">
-                  <template #label>
-                    鉴权标识
-                    <ElTooltip content="当设置多个标识时，只要命中其中一个则鉴权通过" placement="top">
-                      <SvgIcon name="i-ri:question-line" />
-                    </ElTooltip>
-                  </template>
-                  <ElSpace>
-                    <ElTag
-                      v-for="item in (form.meta.auth as string[])" :key="item" size="large" closable
-                      :disable-transitions="false" @close="onInputAuthClose(item)"
-                    >
-                      {{ item }}
-                    </ElTag>
-                    <ElInput
-                      v-if="inputAuthVisible" ref="InputAuthRef" v-model="inputAuth" style="width: 200px;"
-                      @keyup.enter="onInputAuthConfirm" @blur="onInputAuthConfirm"
-                    />
-                    <ElButton v-else @click="onInputAuthShow">
-                      新增
-                    </ElButton>
-                  </ElSpace>
-                </ElFormItem>
-              </ElCol> -->
+            <ElCol :xl="12" :lg="24">
+              <ElFormItem label="模块接口">
+                <div class="flex gap-2">
+                  <el-tag
+                    v-for="tag in form.key" :key="tag" closable :disable-transitions="false"
+                    @close="handleClose(tag)"
+                  >
+                    {{ tag }}
+                  </el-tag>
+                  <el-input
+                    v-if="inputVisible" ref="InputRef" v-model="inputTag" class="w-20" size="small"
+                    @keyup.enter="handleInputConfirm" @blur="handleInputConfirm"
+                  />
+                  <el-button v-else class="button-new-tag" size="small" @click="showInput">
+                    + 添加
+                  </el-button>
+                </div>
+              </ElFormItem>
+            </ElCol>
             <ElCol :xl="12" :lg="24">
               <ElFormItem label="默认图标" prop="meta.icon">
                 <IconPicker v-model="form.meta.icon" />
@@ -472,85 +501,9 @@ function goBack() {
               </ElFormItem>
             </ElCol>
           </ElRow>
-          <!-- <template #rightSide>
-            <PageHeader title="权限池">
-              <template #content>
-                <p>设置导航所具备的所有权限，权限池内的权限会用于角色管理</p>
-                <p style="margin-bottom: 0;">
-                  通常只在最子级导航上进行设置
-                </p>
-              </template>
-            </PageHeader>
-            <ElTable
-              ref="authsTableRef" :key="authsTableKey" :data="form.meta.auths" stripe highlight-current-row
-              border
-            >
-              <ElTableColumn width="60" align="center" fixed>
-                <template #header>
-                  <ElButton type="primary" size="small" circle plain @click="onAuthAdd">
-                    <template #icon>
-                      <SvgIcon name="i-ep:plus" />
-                    </template>
-                  </ElButton>
-                </template>
-                <template #default="scope">
-                  <span class="index">{{ scope.$index + 1 }}</span>
-                  <ElButton type="danger" size="small" plain circle class="delete" @click="onAuthDelete(scope.$index)">
-                    <template #icon>
-                      <SvgIcon name="i-ep:delete" />
-                    </template>
-                  </ElButton>
-                </template>
-              </ElTableColumn>
-              <ElTableColumn width="80" align="center" fixed>
-                <template #header>
-                  排序
-                </template>
-                <template #default>
-                  <ElTag type="info" class="sortable">
-                    <SvgIcon name="i-ep:d-caret" />
-                  </ElTag>
-                </template>
-              </ElTableColumn>
-              <ElTableColumn label="名称">
-                <template #default="scope">
-                  <ElInput v-model="scope.row.name" />
-                </template>
-              </ElTableColumn>
-              <ElTableColumn label="标识">
-                <template #default="scope">
-                  <ElInput v-model="scope.row.value" />
-                </template>
-              </ElTableColumn>
-            </ElTable>
-          </template> -->
         </LayoutContainer>
-        <el-form-item>
-          <ElButton type="primary" size="large" @click="onSubmit">
-            提交
-          </ElButton>
-          <ElButton size="large" @click="onCancel">
-            取消
-          </ElButton>
-        </el-form-item>
-        <template #footer>
-          <ElButton size="large" @click="onCancel">
-            取消
-          </ElButton>
-          <ElButton type="primary" size="large" @click="onSubmit">
-            确定
-          </ElButton>
-        </template>
       </ElForm>
     </div>
-    <!-- <FixedActionBar>
-        <ElButton type="primary" size="large" @click="onSubmit">
-          提交
-        </ElButton>
-        <ElButton size="large" @click="onCancel">
-          取消
-        </ElButton>
-      </FixedActionBar> -->
   </div>
 </template>
 

@@ -41,22 +41,25 @@ const visible = defineModel<boolean>({
 const title = computed(() => props.id === '' ? '新增字典' : '编辑字典')
 function formatTree(tree: any[], id: string | number, childrenDisabled = false) {
   const data: any[] = []
-  tree.forEach((item) => {
-    const temp = { ...item }
-    if (temp.id === id || childrenDisabled) {
-      temp.disabled = true
-      if (temp.children) {
-        temp.children = formatTree(temp.children, id, true)
+  if (tree) {
+    tree.forEach((item) => {
+      const temp = { ...item }
+      if (temp.id === id || childrenDisabled) {
+        temp.disabled = true
+        if (temp.children) {
+          temp.children = formatTree(temp.children, id, true)
+        }
       }
-    }
-    else {
-      temp.disabled = false
-      if (temp.children) {
-        temp.children = formatTree(temp.children, id, childrenDisabled)
+      else {
+        temp.disabled = false
+        if (temp.children) {
+          temp.children = formatTree(temp.children, id, childrenDisabled)
+        }
       }
-    }
-    data.push(temp)
-  })
+      data.push(temp)
+    })
+  }
+
   return data
 }
 const myTree = computed(() => formatTree(props.tree, props.id))

@@ -51,6 +51,17 @@ const menuList = [
             },
           },
           {
+            id: 3,
+            parentId: 3,
+            menuLevel: 3,
+            path: 'version_management',
+            name: 'version_management',
+            component: 'setting/version_management/list.vue',
+            meta: {
+              title: '版本管理',
+            },
+          },
+          {
             id: 7,
             parentId: 3,
             menuLevel: 3,
