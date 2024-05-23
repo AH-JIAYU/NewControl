@@ -15,14 +15,13 @@ const useMenuStore = defineStore(
     const settingsStore = useSettingsStore()
     const userStore = useUserStore()
     const routeStore = useRouteStore()
-
     const filesystemMenusRaw = ref<Menu.recordMainRaw[]>([])
     const actived = ref(0)
 
     // 将原始路由转换成导航菜单
     function convertRouteToMenu(routes: Route.recordMainRaw[]): Menu.recordMainRaw[] {
       const returnMenus: Menu.recordMainRaw[] = []
-      routes.forEach((item) => {
+      routes?.forEach((item) => {
         if (settingsStore.settings.menu.menuMode === 'single') {
           returnMenus.length === 0 && returnMenus.push({
             meta: {},
@@ -49,7 +48,7 @@ const useMenuStore = defineStore(
     }
     function convertRouteToMenuRecursive(routes: RouteRecordRaw[], basePath = ''): Menu.recordRaw[] {
       const returnMenus: Menu.recordRaw[] = []
-      routes.forEach((item) => {
+      routes?.forEach((item) => {
         const menuItem: Menu.recordRaw = {
           path: resolveRoutePath(basePath, item.path),
           meta: {
@@ -123,7 +122,7 @@ const useMenuStore = defineStore(
     const defaultOpenedPaths = computed(() => {
       const defaultOpenedPaths: string[] = []
       if (settingsStore.settings.app.routeBaseOn !== 'filesystem') {
-        allMenus.value.forEach((item) => {
+        allMenus?.value.forEach((item) => {
           defaultOpenedPaths.push(...getDefaultOpenedPaths(item.children))
         })
       }
@@ -131,7 +130,7 @@ const useMenuStore = defineStore(
     })
     function getDefaultOpenedPaths(menus: Menu.recordRaw[], rootPath = '') {
       const defaultOpenedPaths: string[] = []
-      menus.forEach((item) => {
+      menus?.forEach((item) => {
         if (item.children) {
           item.meta?.defaultOpened && defaultOpenedPaths.push(resolveRoutePath(rootPath, item.path))
           const childrenDefaultOpenedPaths = getDefaultOpenedPaths(item.children, resolveRoutePath(rootPath, item.path))
@@ -146,7 +145,7 @@ const useMenuStore = defineStore(
     const alwaysOpenedPaths = computed(() => {
       const alwaysOpenedPaths: string[] = []
       if (settingsStore.settings.app.routeBaseOn !== 'filesystem') {
-        allMenus.value.forEach((item) => {
+        allMenus?.value.forEach((item) => {
           alwaysOpenedPaths.push(...getAlwaysOpenedPaths(item.children))
         })
       }
@@ -154,7 +153,7 @@ const useMenuStore = defineStore(
     })
     function getAlwaysOpenedPaths(menus: Menu.recordRaw[], rootPath = '') {
       const alwaysOpenedPaths: string[] = []
-      menus.forEach((item) => {
+      menus?.forEach((item) => {
         if (item.children) {
           item.meta?.alwaysOpened && alwaysOpenedPaths.push(resolveRoutePath(rootPath, item.path))
           const childrenAlwaysOpenedPaths = getAlwaysOpenedPaths(item.children, resolveRoutePath(rootPath, item.path))
@@ -190,7 +189,7 @@ const useMenuStore = defineStore(
     // 根据权限过滤导航
     function filterAsyncMenus<T extends Menu.recordMainRaw[] | Menu.recordRaw[]>(menus: T, permissions: string[]): T {
       const res: any = []
-      menus.forEach((menu) => {
+      menus?.forEach((menu) => {
         if (hasPermission(permissions, menu)) {
           const tmpMenu = cloneDeep(menu)
           if (tmpMenu.children) {

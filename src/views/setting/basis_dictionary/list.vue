@@ -12,7 +12,7 @@ import DictionaryItemDia from './components/dictionaryItemDialog/index.vue'
 import apiDictionary from '@/api/modules/setting_basisDictionary'
 
 defineOptions({
-  name: 'PagesExampleDictionary',
+  name: 'SettingBasisDictionaryList',
 })
 
 interface Dict {
@@ -336,7 +336,7 @@ function onDeleteMulti(rows: any[]) {
             <ElTableColumn label="键值" align="center" width="150">
               <template #default="scope">
                 <ElTag type="info">
-                  {{ scope.row.id }}
+                  {{ scope.row.code }}
                 </ElTag>
               </template>
             </ElTableColumn>

@@ -54,10 +54,11 @@ const formRules = ref<FormRules>({
 })
 onMounted(() => {
   if (props.id !== '') {
-    const { englishName, chineseName, catalogueId } = JSON.parse(props.row)
+    const { englishName, chineseName, catalogueId, code } = JSON.parse(props.row)
     form.value.catalogueId = catalogueId
     form.value.chineseName = chineseName
     form.value.englishName = englishName
+    form.value.code = code
   }
 })
 // 提交数据

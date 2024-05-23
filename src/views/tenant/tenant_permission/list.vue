@@ -2,16 +2,16 @@
 import FormMode from './components/FormMode/index.vue'
 import Edit from './components/Edit/index.vue'
 import eventBus from '@/utils/eventBus'
-import api from '@/api/modules/setting_permissions'
-import useRouteStore from '@/store/modules/route'
+import api from '@/api/modules/tenant_tenantPermission'
+import usetenantMenuStore from '@/store/modules/tenantMenu'
 import useSettingsStore from '@/store/modules/settings'
-import userButtonPer from '@/store/modules/buttonPermission'
+import useTenantButtonPermissionStore from '@/store/modules/tenantButtonPermission'
 
 defineOptions({
-  name: 'SettingPermissionsList',
+  name: 'TenantTenantPermissionList',
 })
-const buttonPer = userButtonPer()
-const routeStore = useRouteStore() // 路由 store
+const buttonPer = useTenantButtonPermissionStore()
+const tenantMenuStore = usetenantMenuStore() // 路由 store
 const router = useRouter()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
@@ -75,8 +75,8 @@ function recursion(menus: any[], permissions: any[]) {
 async function getDataList() {
   data.value.loading = true
   const permissions = await api.list()
-  buttonPer.permissions = permissions.data // 存store
-  const menus: any = routeStore.routesRaw // 从store获取原始路由
+  buttonPer.tenantPermissions = permissions.data // 存store
+  const menus: any = await tenantMenuStore.gettenantMenu // 从store获取原始路由
   // 处理数据 将权限里的menu和路由里的name相同的数据添加到路由的permissions里
   recursion(menus, permissions.data)
   data.value.dataList = menus
@@ -159,8 +159,7 @@ function onEdit(row: any) {
         </ElButton>
       </ElSpace>
       <ElTable
-        v-loading="data.loading"
-        :data="data.dataList" row-key="id" stripe highlight-current-row default-expand-all border
+        v-loading="data.loading" :data="data.dataList" row-key="id" stripe highlight-current-row default-expand-all border
         :style="{ lineHeight: 'normal' }"
       >
         <ElTableColumn prop="meta.title" width="300" label="模块" />

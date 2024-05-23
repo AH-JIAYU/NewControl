@@ -2,28 +2,29 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import api from '@/api/modules/setting_versionManagement'
-import useRouteStore from '@/store/modules/route'
-import userButtonPer from '@/store/modules/buttonPermission'
+import usetenantMenuStore from '@/store/modules/tenantMenu'
+import useTenantButtonPermissionStore from '@/store/modules/tenantButtonPermission'
 
 const props = defineProps(['id', 'row'])
-const routeStore = useRouteStore() // 路由 store
-const buttonPer = userButtonPer() // 按钮权限store
+const tenantMenuStore = usetenantMenuStore() // 路由 store
+const tenantButtonPer = useTenantButtonPermissionStore() // 按钮权限store
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const treeRef = ref<any>() // tree ref
 const menuData = ref<any>([]) // 路由
 const permissionData = ref<any>([]) // 权限
-
+const settingData = ref<any>([])
 const form = ref<any>({
   id: props.id,
   name: '',
+  code: '',
   versionMenuId: [],
   versionButtonId: [],
 })
 // 校验
 const formRules = ref<FormRules>({
   name: [
-    { required: true, message: '请输入角色码', trigger: 'blur' },
+    { required: true, message: '请输入版本', trigger: 'blur' },
   ],
 })
 
@@ -31,20 +32,40 @@ onMounted(async () => {
   if (form.value.id !== '') {
     await getInfo()
   }
-  menuData.value = routeStore.routesRaw // 从store获取原始路由
-  permissionData.value = await buttonPer.getPermissions // 调用store的方法获取按钮权限，如果没有就调接口
+  menuData.value = await tenantMenuStore.gettenantMenu // 从store获取原始路由
+  permissionData.value = await tenantButtonPer.getTenantPermissions // 调用store的方法获取按钮权限，如果没有就调接口
   loading.value = false
 })
+
 // 获取
 async function getInfo() { // 编辑时获取该id的具体数据
   loading.value = true
-  form.value = JSON.parse(props.row)
+  settingData.value = JSON.parse(props.row)
+  form.value.name = settingData.value.name
+  form.value.remark = settingData.value.remark
+  filterId(settingData.value.menuVOList.data)
+  versionBtnId(settingData.value.buttonVOList)
   loading.value = false
 }
-
+function filterId(data: any) {
+  for (const item of data) {
+    form.value.versionMenuId.push(item.id)
+    if (item.children) {
+      filterId(item.children)
+    }
+  }
+}
+function versionBtnId(data: any) {
+  for (const item of data) {
+    form.value.versionButtonId.push(item.id)
+    if (item.children) {
+      filterId(item.children)
+    }
+  }
+}
 // 查询当前路由有那些权限
 function rowPermission(permissionID: any) {
-  return permissionData.value.filter((item: any) => permissionID === item.versionMenuId)
+  return permissionData?.value.filter((item: any) => permissionID === item.menuId)
 }
 
 // 暴露
@@ -55,11 +76,13 @@ defineExpose({
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
+            loading.value = true
             api.create(form.value).then(() => {
               ElMessage.success({
                 message: '新增成功',
                 center: true,
               })
+              loading.value = false
               resolve()
             })
           }
@@ -68,11 +91,13 @@ defineExpose({
       else {
         formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
+            loading.value = true
             api.edit(form.value).then(() => {
               ElMessage.success({
                 message: '编辑成功',
                 center: true,
               })
+              loading.value = false
               resolve()
             })
           }
@@ -100,9 +125,9 @@ defineExpose({
                 {{ data.meta.title }}
               </div>
               <div class="permission">
-                <div v-if="rowPermission(data.id).length" class="versionButtonId" @click.stop>
+                <div v-if="rowPermission(data.id).length" class="buttonId" @click.stop>
                   <ElCheckboxGroup v-model="form.versionButtonId">
-                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.key">
+                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.id" :value="auth.id">
                       {{ auth.label }}
                     </ElCheckbox>
                   </ElCheckboxGroup>
@@ -151,7 +176,7 @@ defineExpose({
     border-left: 1px solid #f1f1f1;
   }
 
-  .versionButtonId {
+  .buttonId {
     display: flex;
     flex-direction: column;
     align-items: start;

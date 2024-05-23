@@ -6,7 +6,7 @@ import api from '@/api/modules/setting_versionManagement'
 import useSettingsStore from '@/store/modules/settings'
 
 defineOptions({
-  name: 'SettingVersionManagementList',
+  name: 'VersionVersionManagementList',
 })
 
 const router = useRouter()
@@ -63,9 +63,7 @@ function getDataList() {
   data.value.loading = true
   api.list().then((res: any) => {
     data.value.loading = false
-    data.value.dataList = res.data.list
-    console.log('res', res)
-
+    data.value.dataList = res.data
     pagination.value.total = res.data.length
   })
 }
@@ -120,7 +118,7 @@ function onEdit(row: any) {
 }
 // 删除
 function onDel(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.title}」吗？`, '确认信息').then(() => {
+  ElMessageBox.confirm(`确认删除「${row.name}」吗？`, '确认信息').then(() => {
     api.delete(row.id).then(() => {
       getDataList()
       ElMessage.success({
@@ -140,7 +138,7 @@ function onDel(row: any) {
           <template #icon>
             <SvgIcon name="i-ep:plus" />
           </template>
-          新增角色管理
+          新增版本管理
         </ElButton>
       </ElSpace>
       <ElTable
@@ -148,8 +146,8 @@ function onDel(row: any) {
         height="100%" @sort-change="sortChange" @selection-change="data.batch.selectionDataList = $event"
       >
         <ElTableColumn v-if="data.batch.enable" type="selection" align="center" fixed />
-        <ElTableColumn prop="id" label="id" />
-        <ElTableColumn prop="name" label="角色码" />
+        <ElTableColumn prop="id" width="300" label="ID" />
+        <ElTableColumn prop="name" label="版本" />
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
             <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">
@@ -162,7 +160,6 @@ function onDel(row: any) {
         </ElTableColumn>
       </ElTable>
     </PageMain>
-    {{ `row${data.formModeProps.row}` }}
     <FormMode
       v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id" v-model="data.formModeProps.visible"
       :row="data.formModeProps.row" :mode="data.formMode" @success="getDataList"

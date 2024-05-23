@@ -8,11 +8,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import FormMode from './components/FormMode/index.vue'
 import apiMenu from '@/api/modules/tenant_tenantMenu'
+import usetenantMenuStore from '@/store/modules/tenantMenu'
 
 defineOptions({
-  name: 'PagesExampleMenuList',
+  name: 'TenantMenuList',
 })
-
+const tenantMenuStore = usetenantMenuStore() // 路由 store
 const data = ref<any>({
   loading: false,
   // 表格是否自适应高度
@@ -34,6 +35,7 @@ onMounted(() => {
 function getDataList() {
   data.value.loading = true
   apiMenu.list({ type: 'normal' }).then((res: any) => {
+    tenantMenuStore.tenantMenu = res.data // 更新store
     data.value.loading = false
     data.value.dataList = res.data
   })
@@ -146,32 +148,32 @@ function onDel(row: any) {
   </div>
 </template>
 
-  <style lang="scss" scoped>
-  .absolute-container {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
+<style lang="scss" scoped>
+.absolute-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 
-    .page-header {
-      margin-bottom: 0;
-    }
+  .page-header {
+    margin-bottom: 0;
+  }
 
-    .page-main {
+  .page-main {
+    flex: 1;
+    overflow: auto;
+
+    :deep(.main-container) {
+      display: flex;
       flex: 1;
+      flex-direction: column;
       overflow: auto;
-
-      :deep(.main-container) {
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        overflow: auto;
-      }
     }
   }
+}
 
-  :deep(.el-table td.el-table__cell div) {
-    @include text-overflow;
-  }
-  </style>
+:deep(.el-table td.el-table__cell div) {
+  @include text-overflow;
+}
+</style>

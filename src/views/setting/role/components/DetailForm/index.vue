@@ -44,7 +44,7 @@ async function getInfo() { // 编辑时获取该id的具体数据
 
 // 查询当前路由有那些权限
 function rowPermission(permissionID: any) {
-  return permissionData.value.filter((item: any) => permissionID === item.menuId)
+  return permissionData?.value.filter((item: any) => permissionID === item.menuId)
 }
 
 // 暴露

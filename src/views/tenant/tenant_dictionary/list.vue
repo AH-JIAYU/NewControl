@@ -9,7 +9,7 @@ import { onMounted, ref, watch } from 'vue'
 import apiDictionary from '@/api/modules/setting_tenantDictionary'
 
 defineOptions({
-  name: 'PagesExampleDictionary',
+  name: 'TenantTenantDictionaryList',
 })
 
 interface Dict {
