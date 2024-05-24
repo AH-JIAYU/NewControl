@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import type { DetailFormProps } from '../../types'
 import DetailForm from '../DetailForm/index.vue'
 
-const props = defineProps<{
-  mode: 'dialog' | 'drawer'
-} & DetailFormProps>()
+const props = defineProps(['id', 'mode', 'row'])
 
 const emits = defineEmits<{
   success: []
@@ -28,6 +25,7 @@ function onSubmit() {
 // 取消
 function onCancel() {
   visible.value = false
+  formRef.value.onCancel()
 }
 </script>
 
@@ -46,14 +44,14 @@ function onCancel() {
     </ElDialog>
     <ElDrawer v-else-if="props.mode === 'drawer'" v-model="visible" :title="title" size="600px" :close-on-click-modal="false" destroy-on-close>
       <DetailForm ref="formRef" v-bind="props" />
-      <div class="buttons">
+      <template #footer>
         <ElButton size="large" @click="onCancel">
           取 消
         </ElButton>
         <ElButton type="primary" size="large" @click="onSubmit">
           确 定
         </ElButton>
-      </div>
+      </template>
     </ElDrawer>
   </div>
 </template>

@@ -7,6 +7,7 @@ meta:
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref } from 'vue'
 import FormMode from './components/FormMode/index.vue'
+import Edit from './components/Edit/index.vue'
 import eventBus from '@/utils/eventBus'
 import apiUser from '@/api/modules/setting_user'
 
@@ -14,7 +15,7 @@ defineOptions({
   name: 'SettingUserList',
 })
 
-const { pagination, getParams, onSizeChange, onCurrentChange, onSortChange } = usePagination()
+const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 const tabbar = useTabbar()
 
 const data = ref({
@@ -30,6 +31,11 @@ const data = ref({
   formMode: 'drawer' as 'router' | 'dialog' | 'drawer',
   // 详情
   formModeProps: {
+    visible: false,
+    id: '',
+    row: '',
+  },
+  editProps: {
     visible: false,
     id: '',
   },
@@ -66,20 +72,13 @@ onBeforeUnmount(() => {
 // 获取数据
 function getDataList() {
   data.value.loading = true
-  const params = {
-    ...getParams(),
-    ...(data.value.search.account && { account: data.value.search.account }),
-    ...(data.value.search.name && { name: data.value.search.name }),
-    ...(data.value.search.mobile && { mobile: data.value.search.mobile }),
-    ...(data.value.search.sex !== '' && { sex: data.value.search.sex }),
-  }
-  apiUser.list(params).then((res: any) => {
+  apiUser.list().then((res: any) => {
     data.value.loading = false
-    data.value.dataList = res.data.list
+    data.value.dataList = res.data
+    pagination.value.total = res.data.length
     data.value.dataList.forEach((item: any) => {
       item.statusLoading = false
     })
-    pagination.value.total = res.data.total
   })
 }
 // 重置筛选数据
@@ -116,6 +115,7 @@ function onCreate() {
   }
   else {
     data.value.formModeProps.id = ''
+    data.value.formModeProps.row = ''
     data.value.formModeProps.visible = true
   }
 }
@@ -131,26 +131,32 @@ function onEdit(row: any) {
   }
   else {
     data.value.formModeProps.id = row.id
+    data.value.formModeProps.row = JSON.stringify(row)
     data.value.formModeProps.visible = true
   }
 }
 // 开关事件
 function onChangeStatus(row: any) {
   return new Promise<boolean>((resolve) => {
-    ElMessageBox.confirm(`确认${!row.status ? '启用' : '禁用'}「${row.account}」吗？`, '确认信息').then(() => {
-      row.statusLoading = true
-      apiUser.changeStatus({
+    ElMessageBox.confirm(`确认${!row.active ? '启用' : '禁用'}「${row.account}」吗？`, '确认信息').then(() => {
+      data.value.loading = true
+      apiUser.edit({
         id: row.id,
-        status: !row.status,
+        account: null,
+        name: null,
+        sex: null,
+        phoneNumber: null,
+        active: !row.active,
       }).then(() => {
-        row.statusLoading = false
         ElMessage.success({
-          message: `${!row.status ? '启用' : '禁用'}成功`,
+          message: `${!row.active ? '启用' : '禁用'}成功`,
           center: true,
         })
+        getDataList()
+        data.value.loading = false
         return resolve(true)
       }).catch(() => {
-        row.statusLoading = false
+        data.value.loading = false
         return resolve(false)
       })
     }).catch(() => {
@@ -158,16 +164,10 @@ function onChangeStatus(row: any) {
     })
   })
 }
-// 重置密码
-function onResetPassword(row: any) {
-  ElMessageBox.confirm(`确认将「${row.account}」的密码重置为 “123456” 吗？`, '确认信息').then(() => {
-    apiUser.passwordReset(row.id).then(() => {
-      ElMessage.success({
-        message: '重置成功',
-        center: true,
-      })
-    })
-  }).catch(() => { })
+// 赋予角色
+function assignRoles(row: any) {
+  data.value.editProps = row
+  data.value.editProps.visible = true
 }
 // 删除
 function onDel(row: any) {
@@ -184,8 +184,8 @@ function onDel(row: any) {
 // 循环事件
 function handleMoreOperating(command: string, row: any) {
   switch (command) {
-    case 'resetPassword':
-      onResetPassword(row)
+    case 'assignRoles':
+      assignRoles(row)
       break
     case 'delete':
       onDel(row)
@@ -265,9 +265,6 @@ function handleMoreOperating(command: string, row: any) {
           </template>
           新增用户
         </ElButton>
-        <ElButton v-if="data.batch.enable" size="default" :disabled="!data.batch.selectionDataList.length">
-          批量操作
-        </ElButton>
       </ElSpace>
       <ElTable
         v-loading="data.loading" class="my-4" :data="data.dataList" stripe highlight-current-row border
@@ -275,7 +272,13 @@ function handleMoreOperating(command: string, row: any) {
       >
         <ElTableColumn v-if="data.batch.enable" type="selection" align="center" fixed />
         <ElTableColumn prop="account" sortable label="帐号" />
-        <ElTableColumn prop="name" label="姓名" width="100" align="center" />
+        <ElTableColumn prop="name" label="姓名" width="100" align="center">
+          <template #default="{ row }">
+            <el-text class="mx-1">
+              {{ row.name ? row.name : '暂无数据' }}
+            </el-text>
+          </template>
+        </ElTableColumn>
         <ElTableColumn prop="sex" label="性别" width="100" align="center">
           <template #default="scope">
             <ElTag v-if="scope.row.sex === 1" type="success" size="small">
@@ -289,12 +292,18 @@ function handleMoreOperating(command: string, row: any) {
             </ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="mobile" label="手机号" width="150" align="center" />
+        <ElTableColumn prop="mobile" label="手机号" width="150" align="center">
+          <template #default="{ row }">
+            <el-text class="mx-1">
+              {{ row.phoneNumber ? row.phoneNumber : '暂无数据' }}
+            </el-text>
+          </template>
+        </ElTableColumn>
         <ElTableColumn label="状态" width="100" align="center">
           <template #default="scope">
             <ElSwitch
-              v-model="scope.row.status" :loading="scope.row.statusLoading" inline-prompt active-text="启用"
-              inactive-text="禁用" :before-change="() => onChangeStatus(scope.row)"
+              v-model="scope.row.active" inline-prompt active-text="启用" inactive-text="禁用"
+              :before-change="() => onChangeStatus(scope.row)"
             />
           </template>
         </ElTableColumn>
@@ -311,8 +320,8 @@ function handleMoreOperating(command: string, row: any) {
                 </ElButton>
                 <template #dropdown>
                   <ElDropdownMenu>
-                    <ElDropdownItem command="resetPassword">
-                      重置密码
+                    <ElDropdownItem command="assignRoles">
+                      分配角色
                     </ElDropdownItem>
                     <ElDropdownItem command="delete" divided>
                       删除
@@ -332,7 +341,11 @@ function handleMoreOperating(command: string, row: any) {
     </PageMain>
     <FormMode
       v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
-      v-model="data.formModeProps.visible" :mode="data.formMode" @success="getDataList"
+      v-model="data.formModeProps.visible" :row="data.formModeProps.row" :mode="data.formMode" @success="getDataList"
+    />
+    <Edit
+      v-if="data.editProps.visible" :id="data.editProps.id" v-model="data.editProps.visible" :row="data.editProps"
+      @success="getDataList"
     />
   </div>
 </template>

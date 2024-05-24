@@ -1,33 +1,15 @@
 import api from '../index'
 
 export default {
-  list: (data: {
-    account?: string
-    name?: string
-    mobile?: string
-    sex?: number | string
-    from: number
-    limit: number
-  }) => api.get('setting/user/list', {
-    params: data,
-    baseURL: '/mock/',
-  }),
-
-  detail: (id: number | string) => api.get('setting/user/detail', {
-    params: {
-      id,
-    },
-    baseURL: '/mock/',
-  }),
-
-  create: (data: any) => api.post('setting/user/create', data, {
-    baseURL: '/mock/',
-  }),
-
-  edit: (data: any) => api.post('setting/user/edit', data, {
-    baseURL: '/mock/',
-  }),
-
+  // 获取
+  list: () => api.get('user/get/getUser'),
+  // 新增
+  create: (data: any) => api.post('user/register', data),
+  // 修改
+  edit: (data: any) => api.post('user/update/updateUser', data),
+  // 赋予角色信息
+  setUserRole: (data: any) => api.post('user/update/setUserRole', data),
+  // 删除
   delete: (id: number | string) => api.post('setting/user/delete', {
     id,
   }, {

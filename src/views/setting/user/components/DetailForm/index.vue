@@ -1,37 +1,49 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
-import type { DetailFormProps } from '../../types'
 import apiUser from '@/api/modules/setting_user'
-import apiRole from '@/api/modules/setting_role'
 
-const props = withDefaults(
-  defineProps<DetailFormProps>(),
-  {
-    id: '',
-  },
-)
+const props = defineProps(['id', 'row'])
 
-const roleList = ref<any>([])
 const loading = ref(false)
 const formRef = ref<FormInstance>()
-const form = ref({
-  id: props.id,
-  account: '',
-  name: '',
-  mobile: '',
-  sex: '2',
-  role_id: '',
+const form = ref<any>({
+  id: '',
+  account: '', // 账号
+  name: '', // 昵称
+  password: '', // 密码
+  confirmPassword: '', // 密码
+  phoneNumber: null, // 手机号
+  sex: 2, // 性别
 })
+
 // 校验
 const formRules = ref<FormRules>({
   account: [
     { required: true, message: '请输入帐号', trigger: 'blur' },
   ],
+  password: [
+    { required: true, trigger: 'blur', message: '请输入密码' },
+    { min: 6, max: 18, trigger: 'blur', message: '密码长度为6到18位' },
+  ],
+  confirmPassword: [
+    { required: true, message: '请再次输入密码', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value !== form.value.password) {
+          callback(new Error('两次输入的密码不一致'))
+        }
+        else {
+          callback()
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
   name: [
     { required: true, message: '请输入姓名', trigger: 'blur' },
   ],
-  mobile: [
+  phoneNumber: [
     { required: true, message: '请输入手机号', trigger: 'blur' },
     {
       validator: (rule, value, callback) => {
@@ -39,7 +51,7 @@ const formRules = ref<FormRules>({
           key: string
           value: string
         } = {
-          key: 'mobile',
+          key: 'phoneNumber',
           value,
         }
         if (form.value.id !== '') {
@@ -58,25 +70,11 @@ const formRules = ref<FormRules>({
     },
   ],
 })
-
 onMounted(() => {
-  apiRole.list().then((res: any) => { // 获取角色列表
-    roleList.value = res.data.list
-  })
-  if (form.value.id !== '') {
-    getInfo()
+  if (props.id) {
+    form.value = JSON.parse(props.row)
   }
 })
-// 获取数据
-function getInfo() {
-  loading.value = true
-  apiUser.detail(form.value.id).then((res: any) => {
-    loading.value = false
-    form.value.account = res.data.account
-    form.value.name = res.data.name
-    form.value.mobile = res.data.mobile
-  })
-}
 // 暴露方法
 defineExpose({
   submit() {
@@ -89,6 +87,7 @@ defineExpose({
                 message: '新增成功',
                 center: true,
               })
+              onCancel()
               resolve()
             })
           }
@@ -102,45 +101,51 @@ defineExpose({
                 message: '编辑成功',
                 center: true,
               })
+              onCancel()
               resolve()
             })
           }
         })
       }
     })
-  },
+  }, onCancel,
 })
+// 关闭弹框
+function onCancel() {
+  form.value = {}
+}
 </script>
 
 <template>
   <div v-loading="loading">
-    <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
+    <ElForm ref="formRef" :model="form" :rules="formRules" label-width="130px" label-suffix="：">
       <ElFormItem label="帐号" prop="account">
         <ElInput v-model="form.account" placeholder="请输入帐号" />
+      </ElFormItem>
+      <ElFormItem label="密码" prop="password">
+        <ElInput v-model="form.password" placeholder="请输入帐号" />
+      </ElFormItem>
+      <ElFormItem v-if="form.id" label="确认修改密码" prop="confirmPassword">
+        <ElInput v-model="form.confirmPassword" placeholder="请再次输入密码" />
       </ElFormItem>
       <ElFormItem label="姓名" prop="name">
         <ElInput v-model="form.name" placeholder="请输入姓名" />
       </ElFormItem>
-      <ElFormItem label="手机号" prop="mobile">
-        <ElInput v-model="form.mobile" placeholder="请输入手机号" />
+      <ElFormItem label="手机号" prop="phoneNumber">
+        <ElInput v-model.number="form.phoneNumber" placeholder="请输入手机号" />
       </ElFormItem>
       <ElFormItem label="性别" prop="sex">
         <ElRadioGroup v-model="form.sex">
-          <ElRadioButton label="2">
+          <ElRadioButton :label="2">
             保密
           </ElRadioButton>
-          <ElRadioButton label="1">
+          <ElRadioButton :label="1">
             男
           </ElRadioButton>
-          <ElRadioButton label="0">
+          <ElRadioButton :label="0">
             女
           </ElRadioButton>
         </ElRadioGroup>
-      </ElFormItem>
-      <ElFormItem label="角色" prop="role_id">
-        <ElSelect v-model="form.role_id" placeholder="请选择角色" clearable>
-          <ElOption v-for="item in roleList" :key="item.id" :label="item.role" :value="item.id" />
-        </ElSelect>
       </ElFormItem>
     </ElForm>
   </div>

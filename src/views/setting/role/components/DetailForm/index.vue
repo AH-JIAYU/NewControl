@@ -15,10 +15,14 @@ const menuData = ref<any>([]) // 路由
 const permissionData = ref<any>([]) // 权限
 
 const form = ref<any>({
-  id: props.id,
+  id: props.id ?? null,
   role: '',
   menuId: [],
   permissions: [],
+  page: 1,
+  limit: 10,
+  roleName: '',
+  remark: '',
 })
 // 校验
 const formRules = ref<FormRules>({
