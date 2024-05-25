@@ -248,7 +248,7 @@ function onDel() {
             <el-button size="small" plain type="primary" @click="onEdit(row)">
               编辑
             </el-button>
-            <el-button size="small" plain type="danger" @click="onDel(row)">
+            <el-button size="small" plain type="danger" @click="onDel()">
               删除
             </el-button>
           </template>

@@ -16,7 +16,7 @@ const emit = defineEmits(['success'])
 const editorRef = ref()
 const loading = ref(false)
 const dialogFormVisible = ref(false)
-const formRef = ref<FormInstance>()
+const formRef = ref<any>()
 const title = ref()
 const form = ref<any>({
   id: '',
