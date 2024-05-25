@@ -32,7 +32,6 @@ const columns = ref([
 ])
 const data = ref<any>({
   loading: false,
-
   tableAutoHeight: false, // 表格是否自适应高度
   border: true, // 表格控件-是否展示边框
   stripe: false, // 表格控件-是否展示斑马条
@@ -66,17 +65,6 @@ const data = ref<any>({
 
 onMounted(() => {
   getDataList()
-  if (data.value.formMode === 'router') {
-    eventBus.on('get-data-list', () => {
-      getDataList()
-    })
-  }
-})
-
-onBeforeUnmount(() => {
-  if (data.value.formMode === 'router') {
-    eventBus.off('get-data-list')
-  }
 })
 
 function getDataList() {
@@ -86,10 +74,10 @@ function getDataList() {
     ...(data.value.search.title && { title: data.value.search.title }),
   }
   api.list(params).then((res: any) => {
-    data.value.loading = false
     data.value.dataList = res.data.list
     pagination.value.total = res.data.total
   })
+  data.value.loading = false
 }
 // 重置筛选数据
 function onReset() {
@@ -156,16 +144,16 @@ function onEdit(row: any) {
   }
 }
 // 删除
-function onDel(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.meta.title}」吗？`, '确认信息').then(() => {
-    api.delete({ id: row.id }).then((res: any) => {
-      getDataList()
-      ElMessage[res.status === 1 ? 'success' : 'error']({
-        message: res.status === 1 ? '删除成功' : '请求失败',
-        center: true,
-      })
-    })
-  }).catch(() => { })
+function onDel() {
+  // ElMessageBox.confirm(`确认删除「${row.meta.title}」吗？`, '确认信息').then(() => {
+  //   api.delete().then((res: any) => {
+  //     getDataList()
+  //     ElMessage[res.status === 1 ? 'success' : 'error']({
+  //       message: res.status === 1 ? '删除成功' : '请求失败',
+  //       center: true,
+  //     })
+  //   })
+  // }).catch(() => { })
 }
 </script>
 

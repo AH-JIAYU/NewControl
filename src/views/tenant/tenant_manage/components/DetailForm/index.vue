@@ -44,9 +44,8 @@ onMounted(() => {
 
 function getInfo() {
   loading.value = true
-  api.detail(form.value.id).then((res: any) => {
+  api.detail(form.value.id).then(() => {
     loading.value = false
-    form.value.title = res.data.title
   })
 }
 
