@@ -41,6 +41,21 @@ dependencies:
   floating-vue:
     specifier: 5.2.2
     version: 5.2.2(vue@3.4.21)
+  grapesjs:
+    specifier: ^0.21.7
+    version: 0.21.10
+  grapesjs-advance-components:
+    specifier: ^1.0.7
+    version: 1.0.7
+  grapesjs-blocks-basic:
+    specifier: ^1.0.2
+    version: 1.0.2
+  grapesjs-parser-postcss:
+    specifier: ^1.0.3
+    version: 1.0.3
+  grapesjs-preset-webpage:
+    specifier: ^1.0.3
+    version: 1.0.3
   hotkeys-js:
     specifier: ^3.13.7
     version: 3.13.7
@@ -113,6 +128,9 @@ dependencies:
   vue-router:
     specifier: ^4.3.0
     version: 4.3.0(vue@3.4.21)
+  vuedraggable:
+    specifier: ^4.1.0
+    version: 4.1.0(vue@3.4.21)
 
 devDependencies:
   '@antfu/eslint-config':
@@ -3691,6 +3709,13 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: true
 
+  /@types/backbone@1.4.19:
+    resolution: {integrity: sha512-byyn236JymGByOajKA7mi1k+/jKn162TIvArOB4SHgOGbVlFj8CSfJH4jekP0qo0vJwW5khrrsiiO1Jsos6ZvA==}
+    dependencies:
+      '@types/jquery': 3.5.30
+      '@types/underscore': 1.11.15
+    dev: false
+
   /@types/codemirror@5.60.15:
     resolution: {integrity: sha512-dTOvwEQ+ouKJ/rE9LT1Ue2hmP6H1mZv5+CCnNWu2qtiOe2LQa9lCprEY20HxiDmV/Bxh+dXjywmy5aKvoGjULA==}
     dependencies:
@@ -3749,6 +3774,12 @@ packages:
       '@types/through': 0.0.33
       rxjs: 7.8.1
     dev: true
+
+  /@types/jquery@3.5.30:
+    resolution: {integrity: sha512-nbWKkkyb919DOUxjmRVk8vwtDb0/k8FKncmUKFi+NY+QXqWltooxTrswvz4LspQwxvLdvzBN1TImr6cw3aQx2A==}
+    dependencies:
+      '@types/sizzle': 2.3.8
+    dev: false
 
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -3822,6 +3853,10 @@ packages:
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
     dev: true
 
+  /@types/sizzle@2.3.8:
+    resolution: {integrity: sha512-0vWLNK2D5MT9dg0iOo8GlKguPAU02QjmZitPEsXRuJXU/OGIOt9vT9Fc26wtYuavLxtO45v9PGleoL9Z0k1LHg==}
+    dev: false
+
   /@types/sortablejs@1.15.8:
     resolution: {integrity: sha512-b79830lW+RZfwaztgs1aVPgbasJ8e7AXtZYHTELNXZPsERt4ymJdjV4OccDbHQAvHrCcFpbF78jkm0R6h/pZVg==}
     dev: true
@@ -3843,6 +3878,10 @@ packages:
     dependencies:
       '@types/node': 20.10.5
     dev: true
+
+  /@types/underscore@1.11.15:
+    resolution: {integrity: sha512-HP38xE+GuWGlbSRq9WrZkousaQ7dragtZCruBVMi0oX1migFZavZ3OROKHSkNp/9ouq82zrWtZpg18jFnVN96g==}
+    dev: false
 
   /@types/unist@2.0.10:
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
@@ -5082,6 +5121,20 @@ packages:
       - supports-color
     dev: true
 
+  /backbone-undo@0.2.6:
+    resolution: {integrity: sha512-AsfpNiljLXlk7TcffDUu3EAUq7CxWbyTNwARWrql5XTzN4vh6WzEEBZYaKK4kTTz+iW1tSzqUooaGRIwO83kWA==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+    dependencies:
+      backbone: 1.4.1
+      underscore: 1.13.6
+    dev: false
+
+  /backbone@1.4.1:
+    resolution: {integrity: sha512-ADy1ztN074YkWbHi8ojJVFe3vAanO/lrzMGZWUClIP7oDD/Pjy2vrASraUP+2EVCfIiTtCW4FChVow01XneivA==}
+    dependencies:
+      underscore: 1.13.6
+    dev: false
+
   /bail@2.0.2:
     resolution: {integrity: sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw==}
     dev: true
@@ -5620,6 +5673,10 @@ packages:
     resolution: {integrity: sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==}
     engines: {node: '>=0.8'}
     dev: true
+
+  /codemirror-formatting@1.0.0:
+    resolution: {integrity: sha512-br9yM6eJI3pJHekEnoyHaBEb1B7XxxDjju+vRyBe8QGLp5saTIXXkZ+eFCTqXSAtI8QEZDFVEX2/SOjH2sVWRQ==}
+    dev: false
 
   /codemirror-ssr@0.65.0(@types/codemirror@5.60.15):
     resolution: {integrity: sha512-ofTAfPkQV56SYFfymNMYJ1ELo3+Jnkw3mOLgnIiQjhonwNmNzX1OFvnihAnYRXL0PWl2kT7s0gKrLc2ExshK4g==}
@@ -8071,6 +8128,36 @@ packages:
 
   /graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
+
+  /grapesjs-advance-components@1.0.7:
+    resolution: {integrity: sha512-0slBS7YGPFd298rYOC92TZfvgVQYTY1lW2L2yQFyUwgWAc3lUss5kvlLJEUr7lGPsl0naaipt4sxZiVmruLhuw==}
+    dependencies:
+      grapesjs: 0.21.10
+    dev: false
+
+  /grapesjs-blocks-basic@1.0.2:
+    resolution: {integrity: sha512-SsPKf/CvQkZ+kABOsN01auAPHXh/2J20g0AWYF7fHR3Gw3TZLtdIxT1mk90Qzi76u/7sUYi3CTI+i3ZaTtXHRA==}
+    dev: false
+
+  /grapesjs-parser-postcss@1.0.3:
+    resolution: {integrity: sha512-lfiNRDGdYQT259fUudYD0Z9EKB0DeS9GdCjVqGuJo28rv0WPAdGlpFnvlYgNGurX38ZjIi8qnbEuSSDl8AXFSw==}
+    dev: false
+
+  /grapesjs-preset-webpage@1.0.3:
+    resolution: {integrity: sha512-C0VOKLAdhv0j1f81c6F2uk3JpJvxgXl5DeHUtDa5qGf/HZzaCmQxsvd8Re3Oh5Cah4uUCqoi9uB5FYx3hLND2w==}
+    dev: false
+
+  /grapesjs@0.21.10:
+    resolution: {integrity: sha512-wvOBa8kjBLDeH006p4/krSzGNze2H7Rsncv37LxvDzC6QCQucEjQ7Lb+Fd50jDSWNnxavRRJLJPnXyPTGZYGuQ==}
+    dependencies:
+      '@types/backbone': 1.4.19
+      backbone: 1.4.1
+      backbone-undo: 0.2.6
+      codemirror: 5.65.16
+      codemirror-formatting: 1.0.0
+      promise-polyfill: 8.3.0
+      underscore: 1.13.6
+    dev: false
 
   /graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
@@ -11131,6 +11218,10 @@ packages:
     engines: {node: '>= 0.6.0'}
     dev: true
 
+  /promise-polyfill@8.3.0:
+    resolution: {integrity: sha512-H5oELycFml5yto/atYqmjyigJoAo3+OXwolYiH7OfQuYlAqhxNvTfiNMbV9hsC6Yp83yE5r2KTVmtrG6R9i6Pg==}
+    dev: false
+
   /prompts@2.4.2:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
     engines: {node: '>= 6'}
@@ -11881,6 +11972,10 @@ packages:
       use: 3.1.1
     transitivePeerDependencies:
       - supports-color
+
+  /sortablejs@1.14.0:
+    resolution: {integrity: sha512-pBXvQCs5/33fdN1/39pPL0NZF20LeRbLQ5jtnheIPN9JQAaufGjKdWduZn4U7wCtVuzKhmRkI0DFYHYRbB2H1w==}
+    dev: false
 
   /sortablejs@1.15.2:
     resolution: {integrity: sha512-FJF5jgdfvoKn1MAKSdGs33bIqLi3LmsgVTliuX6iITj834F+JRQZN90Z93yql8h0K2t0RwDPBmxwlbZfDcxNZA==}
@@ -12822,6 +12917,10 @@ packages:
       unplugin: 1.7.1
     dev: false
 
+  /underscore@1.13.6:
+    resolution: {integrity: sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==}
+    dev: false
+
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
@@ -13592,6 +13691,15 @@ packages:
       '@vue/server-renderer': 3.4.21(vue@3.4.21)
       '@vue/shared': 3.4.21
       typescript: 5.4.3
+
+  /vuedraggable@4.1.0(vue@3.4.21):
+    resolution: {integrity: sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww==}
+    peerDependencies:
+      vue: ^3.0.1
+    dependencies:
+      sortablejs: 1.14.0
+      vue: 3.4.21(typescript@5.4.3)
+    dev: false
 
   /wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}

@@ -10,7 +10,6 @@ const globalSettings: Settings.all = {
      */
     style: 'modern',
   },
-
   menu: {
     // 导航栏是否圆角
     isRounded: true,
@@ -21,7 +20,6 @@ const globalSettings: Settings.all = {
      * dot 圆点
      */
     menuActiveStyle: '',
-    menuMode: 'head',
   },
   tabbar: {
     enable: true,

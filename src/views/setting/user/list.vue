@@ -75,7 +75,7 @@ function getDataList() {
   apiUser.list().then((res: any) => {
     data.value.loading = false
     data.value.dataList = res.data
-    pagination.value.total = res.data.length
+    pagination.value.total = res.data?.length
     data.value.dataList.forEach((item: any) => {
       item.statusLoading = false
     })
