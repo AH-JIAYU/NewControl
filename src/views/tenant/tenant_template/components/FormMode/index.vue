@@ -4,10 +4,14 @@ import { ElMessage } from 'element-plus'
 import grapesjs from 'grapesjs'
 import plugin from 'grapesjs-preset-webpage'
 import basic from 'grapesjs-blocks-basic'
+// eslint-disable-next-line ts/ban-ts-comment
+// @ts-expect-error
 import advance from 'grapesjs-advance-components'
 import parserPostCSS from 'grapesjs-parser-postcss'
 import 'grapesjs/dist/css/grapes.min.css'
 import 'grapesjs/dist/grapes.min.js'
+// eslint-disable-next-line ts/ban-ts-comment
+// @ts-expect-error
 import zh from 'grapesjs/locale/zh'
 import { nextTick, onMounted, ref } from 'vue'
 import api from '@/api/modules/tenant_tenantTemplate'
@@ -109,13 +113,7 @@ defineExpose({ showEdit })
 </script>
 
 <template>
-  <el-drawer
-    v-model="dialogFormVisible"
-    :title="title"
-    size="80%"
-    @opened="onDialogOpened"
-    @close="close"
-  >
+  <el-drawer v-model="dialogFormVisible" :title="title" size="80%" @opened="onDialogOpened" @close="close">
     <div ref="formRef" />
     <template #footer>
       <el-button @click="close">
