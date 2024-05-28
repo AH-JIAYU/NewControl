@@ -172,7 +172,7 @@ function assignRoles(row: any) {
 // 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.account}」用户吗？`, '确认信息').then(() => {
-    apiUser.delete(row.id).then(() => {
+    apiUser.delete({ id: row.id }).then(() => {
       getDataList()
       ElMessage.success({
         message: '删除成功',

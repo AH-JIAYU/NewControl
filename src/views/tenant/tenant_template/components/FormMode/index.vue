@@ -24,7 +24,7 @@ const formRef = ref<any>()
 const title = ref()
 const form = ref<any>({
   id: '',
-  title: '',
+  name: '',
   rawdata: {},
 })
 
@@ -38,7 +38,7 @@ function getInfo() {
   loading.value = true
   api.detail(form.value.id).then((res: any) => {
     loading.value = false
-    form.value.title = res.data.title
+    form.value.name = res.data.title
   })
 }
 // 获取传入数据

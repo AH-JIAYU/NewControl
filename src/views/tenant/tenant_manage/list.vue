@@ -143,6 +143,17 @@ function onEdit(row: any) {
     data.value.formModeProps.visible = true
   }
 }
+// 重置密码
+function onResetPassword() {
+  // ElMessageBox.confirm(`确认将「${row.account}」的密码重置为 “123456” 吗？`, '确认信息').then(() => {
+  //   apiManager.passwordReset(row.id).then(() => {
+  //     ElMessage.success({
+  //       message: '模拟重置成功',
+  //       center: true,
+  //     })
+  //   })
+  // }).catch(() => {})
+}
 // 删除
 function onDel() {
   // ElMessageBox.confirm(`确认删除「${row.meta.title}」吗？`, '确认信息').then(() => {
@@ -243,8 +254,11 @@ function onDel() {
           <ElSwitch inline-prompt active-text="启用" inactive-text="禁用" />
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="租户来源" />
-        <el-table-column align="center" prop="i" label="操作" show-overflow-tooltip width="150">
+        <el-table-column align="center" prop="i" label="操作" show-overflow-tooltip width="260">
           <template #default="{ row }">
+            <el-button size="small" plain type="primary" @click="onResetPassword()">
+              重置密码
+            </el-button>
             <el-button size="small" plain type="primary" @click="onEdit(row)">
               编辑
             </el-button>

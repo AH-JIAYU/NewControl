@@ -111,72 +111,6 @@ function dictionaryDelete(node: Node, data: any) {
     })
   })
 }
-// 新增成功后更新树
-function dictionaryAddNode(data: Dict) {
-  if (dictionary.value.currentData) {
-    if (!dictionary.value.currentData.children) {
-      dictionary.value.currentData.children = []
-    }
-    dictionary.value.currentData.children.push({
-      id: data.id,
-      label: data.label,
-      code: data.code,
-    })
-  }
-  else {
-    dictionary.value.tree.push({
-      id: data.id,
-      label: data.label,
-      code: data.code,
-    })
-  }
-  getDictionaryList()
-}
-// 编辑成功后更新树
-function dictionaryEditNode(data: Dict, parentId: string | number) {
-  if (dictionary.value.currentNode && dictionary.value.currentData) {
-    if ((dictionary.value.currentNode.parent.data.id ?? '') === parentId) {
-      // 如果 parentId 一致说明节点位置没有变化，直接更新
-      dictionary.value.currentData.label = data.label
-      dictionary.value.currentData.code = data.code
-    }
-    else {
-      // 先更新原有节点信息
-      const parent = dictionary.value.currentNode.parent
-      const children: Dict[] = parent.data.children || parent.data
-      const index = children.findIndex(item => item.id === data.id)
-      children[index].label = data.label
-      children[index].code = data.code
-      // 然后找到需要移动到的父节点位置，并将原有节点移动过去
-      if (parentId) {
-        const findDictionary: any = (list: Dict[], parentId: number) => {
-          for (const i in list) {
-            if (list[i].id === parentId) {
-              return list[i]
-            }
-            else if (list[i].children) {
-              const temp = findDictionary(list[i].children, parentId)
-              if (temp) {
-                return temp
-              }
-            }
-          }
-        }
-        const targetNode = findDictionary(dictionary.value.tree, parentId)
-        if (!targetNode.children) {
-          targetNode.children = []
-        }
-        targetNode.children.push(children[index])
-      }
-      else {
-        dictionary.value.tree.push(children[index])
-      }
-      // 最后删除原节点
-      children.splice(index, 1)
-    }
-  }
-  getDictionaryList()
-}
 // 字典项详情
 function dictionaryClick(data: Dict) {
   pagination.value.page = 1
@@ -365,8 +299,8 @@ function onDeleteMulti(rows: any[]) {
       </LayoutContainer>
       <DictionaryDialog
         v-if="dictionary.dialog.visible" :id="dictionary.dialog.id" v-model="dictionary.dialog.visible" :row="dictionary.row"
-        :parent-id="dictionary.dialog.parentId" :tree="dictionary.tree" @add-node="dictionaryAddNode"
-        @edit-node="dictionaryEditNode"
+        :parent-id="dictionary.dialog.parentId" :tree="dictionary.tree" @add-node="getDictionaryList"
+        @edit-node="getDictionaryList"
       />
       <DictionaryItemDia
         v-if="dictionaryItem.dialog.visible" :id="dictionaryItem.dialog.id"

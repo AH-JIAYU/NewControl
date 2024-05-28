@@ -135,7 +135,7 @@ function onDel(row: any) {
               <ElInput v-model="data.search.id" placeholder="ID" clearable @keydown.enter="currentChange()" @clear="currentChange()" />
             </ElFormItem>
             <ElFormItem>
-              <el-select v-model="data.search.name" value-key="" placeholder="模板名称" clearable filterable />
+              <ElInput v-model="data.search.name" placeholder="模板名称" clearable @keydown.enter="currentChange()" @clear="currentChange()" />
             </ElFormItem>
             <ElFormItem>
               <el-select v-model="data.search.default" value-key="" placeholder="状态" clearable filterable />
@@ -165,9 +165,6 @@ function onDel(row: any) {
           </el-button>
         </FormLeftPanel>
         <FormRightPanel>
-          <el-button size="default">
-            导出
-          </el-button>
           <TabelControl
             v-model:border="data.border" v-model:tableAutoHeight="data.tableAutoHeight"
             v-model:checkList="data.checkList" v-model:columns="columns" v-model:line-height="data.lineHeight"

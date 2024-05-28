@@ -10,11 +10,7 @@ export default {
   // 赋予角色信息
   setUserRole: (data: any) => api.post('user/update/setUserRole', data),
   // 删除
-  delete: (id: number | string) => api.post('setting/user/delete', {
-    id,
-  }, {
-    baseURL: '/mock/',
-  }),
+  delete: (data: any) => api.post('/user/delete/deleteUser', data),
 
   passwordReset: (id: number | string) => api.post('setting/user/password/reset', {
     id,

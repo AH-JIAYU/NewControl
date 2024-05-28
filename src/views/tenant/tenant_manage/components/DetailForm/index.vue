@@ -10,29 +10,39 @@ const props = withDefaults(
     id: '',
   },
 )
-
+const banben = [
+  {
+    lable: '专业版', value: 1,
+  },
+  {
+    lable: '企业版', value: 2,
+  },
+  {
+    lable: '基础版', value: 3,
+  },
+]
+const password = '创建完成后，请告知用户初始密码：123456'
+// 加载
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const form = ref({
   id: props.id,
-  userName: '',
-  country: '',
-  phoneNumber: '',
-  email: '',
-  password: '',
-  role: 1,
-  time: '',
-  active: true,
+  tenantName: '', // 用户名
+  country: '', // 国家
+  phoneNumber: '', // 手机号码
+  email: '', // 邮箱
+  role: 1, // 按角色
+  version: '', // 按版本
+  time: '', // 时间
+  active: true, // 租户状态
 })
+// 校验
 const formRules = ref<FormRules>({
-  userName: [
+  tenantName: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
   ],
   country: [
     { required: true, message: '请选择国家', trigger: 'blur' },
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
   ],
 })
 
@@ -41,14 +51,13 @@ onMounted(() => {
     getInfo()
   }
 })
-
 function getInfo() {
   loading.value = true
   api.detail(form.value.id).then(() => {
     loading.value = false
   })
 }
-
+// 暴露
 defineExpose({
   submit() {
     return new Promise<void>((resolve) => {
@@ -86,8 +95,8 @@ defineExpose({
 <template>
   <div v-loading="loading">
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
-      <ElFormItem label="用户名" prop="userName">
-        <ElInput v-model="form.userName" placeholder="请输入用户名" />
+      <ElFormItem label="用户名" prop="tenantName">
+        <ElInput v-model="form.tenantName" placeholder="请输入用户名" />
       </ElFormItem>
       <ElFormItem label="国家" prop="country">
         <el-select v-model="form.country" placeholder="请选择国家" />
@@ -98,34 +107,15 @@ defineExpose({
       <ElFormItem label="电子邮箱" prop="email">
         <ElInput v-model="form.email" placeholder="请输入电子邮箱" />
       </ElFormItem>
-      <ElFormItem label="登录密码" prop="password">
-        <ElInput v-model="form.password" placeholder="请输入登录密码" />
+      <ElFormItem label="初始密码" prop="password">
+        <ElInput v-model="password" disabled placeholder="请输入登录密码" />
       </ElFormItem>
-      <ElFormItem label="权限分配" prop="role">
-        <el-radio-group v-model="form.role" class="ml-4">
-          <el-radio :value="1" size="large">
-            按角色
-          </el-radio>
-          <el-radio :value="2" size="large">
-            按版本
-          </el-radio>
-        </el-radio-group>
-      </ElFormItem>
-      <ElFormItem>
-        <el-row style="width: 100%;" :gutter="20">
-          <el-col :span="10">
-            <el-select v-model="form.country" placeholder="请选择" />
-          </el-col>
-          <el-col v-if="form.role === 2" :span="12">
-            <el-date-picker
-              v-model="form.time"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            />
-          </el-col>
-        </el-row>
+      <ElFormItem label="版本分配" prop="role">
+        <el-select v-model="form.version" placeholder="请选择版本">
+          <el-option v-for="item in banben" :key="item.value" :label="item.lable" :value="item.value">
+            {{ item.lable }}
+          </el-option>
+        </el-select>
       </ElFormItem>
       <ElFormItem label="租户状态" prop="active">
         <el-switch

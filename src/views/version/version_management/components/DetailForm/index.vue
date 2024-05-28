@@ -114,6 +114,9 @@ defineExpose({
       <ElFormItem label="版本" prop="name">
         <ElInput v-model="form.name" placeholder="请输入版本" />
       </ElFormItem>
+      <ElFormItem label="版本编码" prop="name">
+        <ElInput v-model="form.code" placeholder="请输入版本编码" />
+      </ElFormItem>
       <ElFormItem label="权限">
         <el-tree
           ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.versionMenuId"
