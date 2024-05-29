@@ -15,11 +15,13 @@ const menuData = ref<any>([]) // 路由
 const permissionData = ref<any>([]) // 权限
 const settingData = ref<any>([])
 const form = ref<any>({
-  id: props.id,
-  name: '',
-  code: '',
-  versionMenuId: [],
-  versionButtonId: [],
+  id: '',
+  name: '', // 版本名称
+  code: '', // 版本编码
+  remark: '', // 备注
+  expirationTime: null, // 备注
+  versionMenuId: [], // 菜单id
+  versionButtonId: [], // 按钮id
 })
 // 校验
 const formRules = ref<FormRules>({
@@ -74,6 +76,7 @@ defineExpose({
     form.value.versionMenuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
+        delete form.value.id
         formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
             loading.value = true
@@ -114,8 +117,14 @@ defineExpose({
       <ElFormItem label="版本" prop="name">
         <ElInput v-model="form.name" placeholder="请输入版本" />
       </ElFormItem>
-      <ElFormItem label="版本编码" prop="name">
+      <ElFormItem label="版本编码" prop="code">
         <ElInput v-model="form.code" placeholder="请输入版本编码" />
+      </ElFormItem>
+      <ElFormItem label="版本时长" prop="expirationTime">
+        <ElInput v-model.number="form.expirationTime" placeholder="请输入版本编码" />
+      </ElFormItem>
+      <ElFormItem label="备注" prop="remark">
+        <ElInput v-model="form.remark" placeholder="请输入备注" />
       </ElFormItem>
       <ElFormItem label="权限">
         <el-tree

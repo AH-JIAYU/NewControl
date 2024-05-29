@@ -51,6 +51,16 @@ api.interceptors.response.use(
         return Promise.reject(response.data)
       }
     }
+    else if (response.data.status === -1) {
+      Message.error(response.data.error, {
+        zIndex: 2000,
+      })
+    }
+    else if (response.data.status === 500) {
+      Message.error(response.data.message, {
+        zIndex: 2000,
+      })
+    }
     else {
       useUserStore().logout()
     }

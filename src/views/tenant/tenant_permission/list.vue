@@ -36,7 +36,9 @@ const data = ref<any>({
     id: '',
   },
   EditProps: {
+    id: '',
     visible: false, // 添加时的弹框
+    row: '',
   },
   // 搜索
   search: {
@@ -66,7 +68,7 @@ function recursion(menus: any[], permissions: any[]) {
     if (!!menuItem.children && menuItem.children.length > 0) {
       menuItem.auths = recursion(menuItem.children, permissions)
     }
-    const data = permissions.filter(item => item.menu === menuItem.name)
+    const data = permissions.filter(item => item.menu === menuItem.path)
     menuItem.auths = data
     return []
   })
