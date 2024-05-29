@@ -11,7 +11,7 @@ const globalSettingsDefault: RecursiveRequired<Settings.all> = {
     enablePermission: false,
     enableProgress: true,
     enableDynamicTitle: false,
-    storagePrefix: 'fa_',
+    storagePrefix: 'control_',
     enableWatermark: false,
     enableErrorLog: false,
     routeBaseOn: 'backend',
