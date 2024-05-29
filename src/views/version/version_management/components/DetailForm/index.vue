@@ -15,7 +15,7 @@ const menuData = ref<any>([]) // 路由
 const permissionData = ref<any>([]) // 权限
 const settingData = ref<any>([])
 const form = ref<any>({
-  id: '',
+  id: props.id,
   name: '', // 版本名称
   code: '', // 版本编码
   remark: '', // 备注
@@ -45,6 +45,7 @@ async function getInfo() { // 编辑时获取该id的具体数据
   settingData.value = JSON.parse(props.row)
   form.value.name = settingData.value.name
   form.value.remark = settingData.value.remark
+  form.value.code = settingData.value.code
   filterId(settingData.value.menuVOList.data)
   versionBtnId(settingData.value.buttonVOList)
   loading.value = false
@@ -120,7 +121,7 @@ defineExpose({
       <ElFormItem label="版本编码" prop="code">
         <ElInput v-model="form.code" placeholder="请输入版本编码" />
       </ElFormItem>
-      <ElFormItem label="版本时长" prop="expirationTime">
+      <ElFormItem v-if="!props.id" label="版本时长" prop="expirationTime">
         <ElInput v-model.number="form.expirationTime" placeholder="请输入版本编码" />
       </ElFormItem>
       <ElFormItem label="备注" prop="remark">
