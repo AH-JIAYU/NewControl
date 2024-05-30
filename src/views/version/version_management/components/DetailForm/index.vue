@@ -28,6 +28,9 @@ const formRules = ref<FormRules>({
   name: [
     { required: true, message: '请输入版本', trigger: 'blur' },
   ],
+  code: [
+    { required: true, message: '请输入版本编码', trigger: 'blur' },
+  ],
 })
 
 onMounted(async () => {
