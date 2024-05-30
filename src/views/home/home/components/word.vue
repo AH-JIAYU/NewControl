@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+// eslint-disable-next-line ts/ban-ts-comment
+// @ts-expect-error
 import * as echarts from 'echarts'
-import 'echarts/extension/bmap/bmap';
-import 'echarts/map/js/world';
+import 'echarts/extension/bmap/bmap'
+import 'echarts/map/js/world'
+
 defineOptions({
   name: 'HomeIndexWord',
 })
 const wordRef = ref<any>()
-let chart1: any;
-const Initecharts = () => {
-  chart1 = echarts.init(wordRef.value);
-  var nameMap: any = {
+let chart1: any
+function Initecharts() {
+  chart1 = echarts.init(wordRef.value)
+  const nameMap: any = {
     'Afghanistan': '阿富汗',
     'Angola': '安哥拉',
     'Albania': '阿尔巴尼亚',
@@ -187,26 +190,24 @@ const Initecharts = () => {
     'Yemen': '也门',
     'South Africa': '南非',
     'Zambia': '赞比亚',
-    'Zimbabwe': '津巴布韦'
+    'Zimbabwe': '津巴布韦',
   }
-  var gMapData = [{
+  const gMapData = [{
     name: 'Afghanistan',
     value: 100,
     latitude: 42.5,
-    longitude: 1.5
+    longitude: 1.5,
   }, {
     name: 'China',
     value: 100,
     latitude: 39.9110666857,
-    longitude: 116.4136103013
+    longitude: 116.4136103013,
   }, {
     name: 'Armenia',
     value: 100,
     latitude: 40.0690990000,
-    longitude: 45.0381890000
-  },];
-
-
+    longitude: 45.0381890000,
+  }]
 
   const option = {
     backgroundColor: '#fff',
@@ -217,14 +218,14 @@ const Initecharts = () => {
       left: 'center',
       top: 'top',
       textStyle: {
-        color: '#e0e6ef'
-      }
+        color: '#e0e6ef',
+      },
     },
     tooltip: {
       trigger: 'item',
-      formatter: function (params:any) {
-        return params.name + '<br/>' + params.value[0] + "," + params.value[1];
-      }
+      formatter(params: any) {
+        return `${params.name}<br/>${params.value[0]},${params.value[1]}`
+      },
     },
     geo: {
       type: 'map',
@@ -232,30 +233,30 @@ const Initecharts = () => {
       roam: false,
       label: {
         emphasis: {
-          show: false
-        }
+          show: false,
+        },
       },
       itemStyle: {
         normal: {
-          areaColor: '#e0e6ef', //区域颜色
-          borderColor: '#ffffff' //区域划分边框颜色
+          areaColor: '#e0e6ef', // 区域颜色
+          borderColor: '#ffffff', // 区域划分边框颜色
         },
         emphasis: {
-          areaColor: '#e7e5e4' //鼠标Havor颜色
-        }
-      }
+          areaColor: '#e7e5e4', // 鼠标Havor颜色
+        },
+      },
 
     },
     series: [{
       type: 'effectScatter',
       coordinateSystem: 'geo',
-      data: gMapData.map(function (itemOpt) {
+      data: gMapData.map((itemOpt) => {
         return {
           name: nameMap[itemOpt.name],
           value: [
             itemOpt.longitude,
             itemOpt.latitude,
-            itemOpt.value
+            itemOpt.value,
           ],
           label: {
             normal: {
@@ -265,45 +266,44 @@ const Initecharts = () => {
 
               textStyle: {
                 color: 'black',
-                fontWeight: 'bold'
-              }
-            }
+                fontWeight: 'bold',
+              },
+            },
           },
           symbolSize: 10,
           showEffectOn: 'render',
           rippleEffect: {
-            brushType: 'stroke'
+            brushType: 'stroke',
           },
           hoverAnimation: true,
           itemStyle: {
             normal: {
               color: '#ff3300',
               shadowBlur: 10,
-              shadowColor: 'black'
-            }
-          }
-        };
-      })
+              shadowColor: 'black',
+            },
+          },
+        }
+      }),
 
-    }]
-  };
-  chart1.setOption(option);
+    }],
+  }
+  chart1.setOption(option)
 }
 onMounted(() => {
   Initecharts()
-  window.addEventListener("resize", () => {
-    chart1.resize();
-  });
+  window.addEventListener('resize', () => {
+    chart1.resize()
+  })
 })
 </script>
 
 <template>
-
   <el-card style="width: 100%;">
     <template #header>
       全球租户分布情况
     </template>
-    <div id="word" ref="wordRef"></div>
+    <div id="word" ref="wordRef" />
   </el-card>
 </template>
 

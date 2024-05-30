@@ -10,13 +10,6 @@ export default {
     baseURL: '/mock/',
   }),
 
-  detail: (id: number | string) => api.get('setting/questionnaire_library/detail', {
-    params: {
-      id,
-    },
-    baseURL: '/mock/',
-  }),
-
   create: (data: any) => api.post('setting/questionnaire_library/create', data, {
     baseURL: '/mock/',
   }),
@@ -24,10 +17,9 @@ export default {
   edit: (data: any) => api.post('setting/questionnaire_library/edit', data, {
     baseURL: '/mock/',
   }),
-
-  delete: (id: number | string) => api.post('setting/questionnaire_library/delete', {
-    id,
-  }, {
+  update: (data: any) => api.post('setting/questionnaire_library/edit', data, {
     baseURL: '/mock/',
   }),
+
+  delete: (data: any) => api.post('setting/questionnaire_library/delete', data),
 }

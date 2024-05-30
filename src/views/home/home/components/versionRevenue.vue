@@ -1,25 +1,28 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+// eslint-disable-next-line ts/ban-ts-comment
+// @ts-expect-error
 import * as echarts from 'echarts'
-import 'echarts/extension/bmap/bmap';
-import 'echarts/map/js/world';
+import 'echarts/extension/bmap/bmap'
+import 'echarts/map/js/world'
+
 defineOptions({
   name: 'HomeIndexWord',
 })
 const radio2 = ref('month')
 const versionRef = ref<any>()
-let chart1: any;
-const Initecharts = () => {
-  chart1 = echarts.init(versionRef.value);
+let chart1: any
+function Initecharts() {
+  chart1 = echarts.init(versionRef.value)
   // 配置数据
   const option = {
     xAxis: {
       type: 'category',
-      data: ['基础班', '高级版', '旗舰版']
+      data: ['基础班', '高级版', '旗舰版'],
     },
     yAxis: {
       type: 'value',
-      boundaryGap: false
+      boundaryGap: false,
     },
     series: [
       {
@@ -27,39 +30,38 @@ const Initecharts = () => {
           {
             value: 120,
             itemStyle: {
-              color: '#000000'
-            }
+              color: '#000000',
+            },
           },
           {
             value: 200,
             itemStyle: {
-              color: '#e2982e'
-            }
+              color: '#e2982e',
+            },
           },
           {
             value: 240,
             itemStyle: {
-              color: '#d10027'
-            }
+              color: '#d10027',
+            },
           },
         ],
         type: 'bar',
         barWidth: '25%',
-      }
-    ]
-  };
-  chart1.setOption(option);
+      },
+    ],
+  }
+  chart1.setOption(option)
 }
 onMounted(() => {
   Initecharts()
-  window.addEventListener("resize", () => {
-    chart1.resize();
-  });
+  window.addEventListener('resize', () => {
+    chart1.resize()
+  })
 })
 </script>
 
 <template>
-
   <el-card style="width: 100%;">
     <template #header>
       <p class="fx-b">
@@ -69,9 +71,8 @@ onMounted(() => {
           <el-radio-button label="年" value="year" />
         </el-radio-group>
       </p>
-
     </template>
-    <div id="word" ref="versionRef"></div>
+    <div id="word" ref="versionRef" />
   </el-card>
 </template>
 

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-import { loadingHide, loadingShow } from '@/components/SpinkitLoading/index' // 加载
+// import { loadingHide, loadingShow } from '@/components/SpinkitLoading/index' // 加载
 import { ElMessage } from 'element-plus'
-import api from '@/api/modules/setting_questionnaireLibrary'
-import useUserStore from '@/store/modules/user'
+// import api from '@/api/modules/setting_questionnaireLibrary'
 
 import 'survey-core/defaultV2.min.css'
 import 'survey-creator-core/survey-creator-core.min.css'
@@ -29,7 +28,6 @@ setLicenseKey(
   'ZjU4MjI0NjMtN2YzYi00ZDMyLWEyYmEtOTliMmVhZmEyODc5OzE9MjAyNS0wMi0yNA==',
 )
 
-const userStore = useUserStore()
 const creatorOptions: ICreatorOptions = {
   showLogicTab: true,
   isAutoSave: false,
@@ -81,33 +79,33 @@ creator.saveSurveyFunc = (saveNo: number, callback: any) => {
 }
 
 onMounted(async () => {
-  loadingShow({
-    type: 'circle-fade',
-    size: 50,
-    color: '#fff',
-    text: '数据加载中……',
-  })
-  const { data } = await api.getSurvey(props.id)
-  creator.text = data.projectJson || ''
-  loadingHide()
+  // loadingShow({
+  //   type: 'circle-fade',
+  //   size: 50,
+  //   color: '#fff',
+  //   text: '数据加载中……',
+  // })
+  // const { data } = await api.getSurvey(props.id)
+  // creator.text = data.projectJson || ''
+  // loadingHide()
 })
 
 defineExpose({
   submit() {
-    return new Promise<void>(async (resolve) => {
+    return new Promise<void>(() => {
       form.value.projectJson = JSON.stringify(creator.JSON)
       const locale = creator.JSON.locale || editorLocalization.currentLocale
-      form.value.addProjectProblemInfoList = await convertData(
+      form.value.addProjectProblemInfoList = convertData(
         creator.JSON.pages,
         locale,
       )
-      api.setSurvey(form.value).then(() => {
-        ElMessage.success({
-          message: '设置成功',
-          center: true,
-        })
-        resolve()
-      })
+      // api.setSurvey(form.value).then(() => {
+      //   ElMessage.success({
+      //     message: '设置成功',
+      //     center: true,
+      //   })
+      //   resolve()
+      // })
     })
   },
 })
