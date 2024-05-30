@@ -86,7 +86,7 @@ function rowKey(value: any) {
 }
 // 提交
 function onSubmit() {
-  form.value.queryForm.permission = `${form.value.queryForm.menu}-${form.value.queryForm.type}-${form.value.queryForm.name}`
+  form.value.queryForm.permissions = `${form.value.queryForm.menu}-${form.value.queryForm.type}-${form.value.queryForm.name}`
   if (!form.value.queryForm.id) {
     formRef.value.validate((valid: any) => {
       if (valid) {

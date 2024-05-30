@@ -66,7 +66,7 @@ function recursion(menus: any[], permissions: any[]) {
     if (!!menuItem.children && menuItem.children.length > 0) {
       menuItem.auths = recursion(menuItem.children, permissions)
     }
-    const data = permissions.filter(item => item.menu === menuItem.name)
+    const data = permissions.filter(item => item.menu === menuItem.path)
     menuItem.auths = data
     return []
   })
@@ -104,7 +104,7 @@ function findObjectById(arr: any, targetId: any) {
 }
 // 新增
 function onCreate() {
-  data.value.EditProps.id = 11
+  data.value.EditProps.id = ''
   data.value.EditProps.visible = true
   data.value.EditProps.row = JSON.stringify({})
 }

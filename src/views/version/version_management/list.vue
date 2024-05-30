@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
 import FormMode from './components/FormMode/index.vue'
+import Detail from './components/Detail/index.vue'
 import eventBus from '@/utils/eventBus'
 import api from '@/api/modules/setting_versionManagement'
 import useSettingsStore from '@/store/modules/settings'
@@ -13,7 +14,7 @@ const router = useRouter()
 const { pagination, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
-
+const detailRef = ref()
 const data = ref({
   loading: false,
   // 表格是否自适应高度
@@ -64,7 +65,7 @@ function getDataList() {
   api.list().then((res: any) => {
     data.value.loading = false
     data.value.dataList = res.data
-    pagination.value.total = res.data.length
+    pagination.value.total = res.data?.length
   })
 }
 // 字段排序
@@ -89,6 +90,10 @@ function onCreate() {
     data.value.formModeProps.id = ''
     data.value.formModeProps.visible = true
   }
+}
+// 详情
+function onDetail(row: any) {
+  detailRef.value.showEdit(row)
 }
 // 修改
 function onEdit(row: any) {
@@ -150,6 +155,9 @@ function onDel(row: any) {
         <ElTableColumn prop="name" label="版本" />
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
+            <ElButton type="primary" size="small" plain @click="onDetail(scope.row)">
+              详情
+            </ElButton>
             <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">
               编辑
             </ElButton>
@@ -164,6 +172,7 @@ function onDel(row: any) {
       v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id" v-model="data.formModeProps.visible"
       :row="data.formModeProps.row" :mode="data.formMode" @success="getDataList"
     />
+    <Detail ref="detailRef" />
   </div>
 </template>
 
