@@ -16,15 +16,15 @@ function Initecharts() {
   const data = [
     {
       value: 100,
-      name: "基础版",
+      name: '基础版',
     },
     {
       value: 20,
-      name: "高级版",
+      name: '高级版',
     },
     {
       value: 30,
-      name: "旗舰版",
+      name: '旗舰版',
     },
   ]
   // 配置数据
@@ -50,12 +50,12 @@ function Initecharts() {
         y: 'center',
         bottom: '20',
         itemGap: 20, // 设置图例图形的宽
-        center: ["50%", "50%"],
-        icon: "pin",
+        center: ['50%', '50%'],
+        icon: 'pin',
         data: [
-          "基础版",
-          "高级版",
-          "旗舰版",
+          '基础版',
+          '高级版',
+          '旗舰版',
         ],
         formatter(name: any) {
           let target
@@ -89,7 +89,6 @@ function Initecharts() {
         center: ['30%', '50%'],
         text: '省市公司',
         data,
-
 
         label: {
           normal: {

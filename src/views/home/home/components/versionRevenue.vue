@@ -18,7 +18,7 @@ function Initecharts() {
   const option = {
     xAxis: {
       type: 'category',
-      data: ['基础版', '高级版', '旗舰版']
+      data: ['基础版', '高级版', '旗舰版'],
     },
     yAxis: {
       type: 'value',
@@ -47,14 +47,14 @@ function Initecharts() {
           },
         ],
         label: {
-        show: true,
-      },
+          show: true,
+        },
         type: 'bar',
         barWidth: '30',
-      }
-    ]
-  };
-  chart1.setOption(option);
+      },
+    ],
+  }
+  chart1.setOption(option)
 }
 onMounted(() => {
   Initecharts()

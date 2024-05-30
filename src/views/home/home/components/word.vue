@@ -223,9 +223,9 @@ function Initecharts() {
     },
     tooltip: {
       trigger: 'item',
-      formatter: function (params: any) {
-        return params.name + '<br/>' + params.value[0] + "," + params.value[1];
-      }
+      formatter(params: any) {
+        return `${params.name}<br/>${params.value[0]},${params.value[1]}`
+      },
     },
     geo: {
       type: 'map',
