@@ -15,7 +15,7 @@ const Initecharts = () => {
   const option = {
     xAxis: {
       type: 'category',
-      data: ['基础班', '高级版', '旗舰版']
+      data: ['基础版', '高级版', '旗舰版']
     },
     yAxis: {
       type: 'value',
@@ -43,8 +43,11 @@ const Initecharts = () => {
             }
           },
         ],
+        label: {
+        show: true,
+      },
         type: 'bar',
-        barWidth: '25%',
+        barWidth: '30',
       }
     ]
   };

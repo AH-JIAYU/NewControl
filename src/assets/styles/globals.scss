@@ -210,7 +210,15 @@ textarea {
 
 .el-card__header {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   height: 70px;
+
+  p.fx-b {
+    flex-shrink: 0;
+    width: 100%;
+  }
 }
 
 .el-card__header::after {
