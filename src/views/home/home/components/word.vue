@@ -223,19 +223,19 @@ function Initecharts() {
     },
     tooltip: {
       trigger: 'item',
-      formatter(params: any) {
-        return `${params.name}<br/>${params.value[0]},${params.value[1]}`
-      },
+      formatter: function (params: any) {
+        return params.name + '<br/>' + params.value[0] + "," + params.value[1];
+      }
     },
     geo: {
       type: 'map',
       map: 'world',
-      roam: false,
       label: {
         emphasis: {
           show: false,
         },
       },
+      roam: true,
       itemStyle: {
         normal: {
           areaColor: '#e0e6ef', // 区域颜色

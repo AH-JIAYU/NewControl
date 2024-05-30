@@ -33,6 +33,7 @@ withDefaults(
     :style="{
       'padding-bottom': '3rem',
       'background-blend-mode': ' color-burn',
+      'text-align': 'center',
       background: `linear-gradient(50deg, ${colorFrom}, ${colorTo}), url('../../../src/assets/images/piano.png') no-repeat center bottom`,
     }">
     <div style="display: flex;align-items: center;justify-content: space-around;">
