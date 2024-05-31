@@ -5,6 +5,7 @@ import api from '@/api/modules/setting_versionManagement'
 import usetenantMenuStore from '@/store/modules/tenantMenu'
 import useTenantButtonPermissionStore from '@/store/modules/tenantButtonPermission'
 
+// 父级传递数据
 const props = defineProps(['id', 'row'])
 const tenantMenuStore = usetenantMenuStore() // 路由 store
 const tenantButtonPer = useTenantButtonPermissionStore() // 按钮权限store

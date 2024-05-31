@@ -2,7 +2,7 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import apiUser from '@/api/modules/setting_user'
-
+// 父级传递数据
 const props = defineProps(['id', 'row'])
 
 const loading = ref(false)

@@ -33,7 +33,7 @@ const dictionary = ref({
   row: '',
   loading: false,
 })
-
+// 分页配置
 const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 pagination.value.size = 20
 pagination.value.sizes = [20, 50, 100]

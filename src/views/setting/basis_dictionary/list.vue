@@ -36,7 +36,7 @@ const dictionary = ref({
   row: '',
   loading: false,
 })
-
+// 分页
 const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 pagination.value.size = 20
 pagination.value.sizes = [20, 50, 100]
@@ -70,6 +70,7 @@ function getDictionaryList() {
 onMounted(() => {
   getDictionaryList()
 })
+// 监听数据变化
 watch(() => dictionary.value.search, (val) => {
   dictionaryRef.value!.filter(val)
 })

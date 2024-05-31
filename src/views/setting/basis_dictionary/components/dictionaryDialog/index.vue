@@ -33,7 +33,7 @@ const emits = defineEmits<{
     parentId: string | number,
   ]
 }>()
-
+// 弹框
 const visible = defineModel<boolean>({
   default: false,
 })
@@ -62,6 +62,7 @@ function formatTree(tree: any[], id: string | number, childrenDisabled = false) 
 
   return data
 }
+// 树形数据
 const myTree = computed(() => formatTree(props.tree, props.id))
 
 const formRef = ref<FormInstance>()

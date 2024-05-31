@@ -15,6 +15,7 @@ defineOptions({
 })
 
 const router = useRouter()
+// 分页配置
 const { pagination, getParams, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
@@ -66,7 +67,7 @@ const data = ref<any>({
 onMounted(() => {
   getDataList()
 })
-
+// 获取数据
 function getDataList() {
   data.value.loading = true
   const params = {

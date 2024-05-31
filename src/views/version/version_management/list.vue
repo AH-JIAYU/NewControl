@@ -11,6 +11,7 @@ defineOptions({
 })
 
 const router = useRouter()
+// 分页配置
 const { pagination, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()

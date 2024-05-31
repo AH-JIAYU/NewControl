@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DetailForm from '../DetailForm/index.vue'
-
+// 父级传递数据
 const props = defineProps(['id', 'mode', 'row'])
 
 const emits = defineEmits<{
@@ -12,7 +12,7 @@ const visible = defineModel<boolean>({
 })
 
 const formRef = ref()
-
+// 标题
 const title = computed(() => props.id === '' ? '新增用户' : '编辑用户')
 // 提交
 function onSubmit() {

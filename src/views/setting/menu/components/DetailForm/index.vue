@@ -13,7 +13,7 @@ import useRouteStore from '@/store/modules/route'
 defineOptions({
   name: 'PagesExampleMenuDetail',
 })
-
+// 传递父级数据
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
 const routeStore = useRouteStore() // 路由 store
 const loading = ref(false)

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import DetailForm from '../DetailForm/index.vue'
 
+// 获取父级数据
 const props = defineProps(['id', 'parentId', 'modelValue', 'menuLevel', 'row'])
-
+// 更新
 const emits = defineEmits<{
   success: []
 }>()
@@ -10,7 +11,6 @@ const emits = defineEmits<{
 const visible = defineModel<boolean>({
   default: false,
 })
-
 const formRef = ref()
 const title = computed(() => props.id === '' ? '新增角色' : '编辑角色')
 // 提交数据

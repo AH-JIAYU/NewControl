@@ -25,7 +25,7 @@ const formRules = ref<any>({
   name: [{ required: true, message: '请输入key标识', trigger: 'blur' }],
   label: [{ required: true, message: '请输入名称', trigger: 'blur' }],
 })
-
+// 弹窗
 const visible: any = defineModel({
   default: false,
 })

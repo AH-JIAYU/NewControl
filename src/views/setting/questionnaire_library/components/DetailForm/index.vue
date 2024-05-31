@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-// import { loadingHide, loadingShow } from '@/components/SpinkitLoading/index' // 加载
 import { ElMessage } from 'element-plus'
-// import api from '@/api/modules/setting_questionnaireLibrary'
-
 import 'survey-core/defaultV2.min.css'
 import 'survey-creator-core/survey-creator-core.min.css'
 
@@ -18,6 +15,8 @@ import { SurveyCreatorModel, editorLocalization } from 'survey-creator-core'
 import 'survey-creator-core/i18n/french'
 import 'survey-creator-core/i18n/simplified-chinese'
 import 'survey-creator-core/survey-creator-core.i18n'
+import api from '@/api/modules/setting_questionnaireLibrary'
+import { loadingHide, loadingShow } from '@/components/SpinkitLoading/index' // 加载
 
 const props = defineProps(['id', 'details'])
 const emits = defineEmits(['onSubmit'])
@@ -79,33 +78,33 @@ creator.saveSurveyFunc = (saveNo: number, callback: any) => {
 }
 
 onMounted(async () => {
-  // loadingShow({
-  //   type: 'circle-fade',
-  //   size: 50,
-  //   color: '#fff',
-  //   text: '数据加载中……',
-  // })
+  loadingShow({
+    type: 'circle-fade',
+    size: 50,
+    color: '#fff',
+    text: '数据加载中……',
+  })
   // const { data } = await api.getSurvey(props.id)
   // creator.text = data.projectJson || ''
-  // loadingHide()
+  loadingHide()
 })
 
 defineExpose({
   submit() {
-    return new Promise<void>(() => {
+    return new Promise<void>((resolve: any) => {
       form.value.projectJson = JSON.stringify(creator.JSON)
       const locale = creator.JSON.locale || editorLocalization.currentLocale
       form.value.addProjectProblemInfoList = convertData(
         creator.JSON.pages,
         locale,
       )
-      // api.setSurvey(form.value).then(() => {
-      //   ElMessage.success({
-      //     message: '设置成功',
-      //     center: true,
-      //   })
-      //   resolve()
-      // })
+      api.setSurvey(form.value).then(() => {
+        ElMessage.success({
+          message: '设置成功',
+          center: true,
+        })
+        resolve()
+      })
     })
   },
 })

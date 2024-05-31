@@ -13,7 +13,7 @@ const formRules = ref<any>({
   name: [{ required: true, message: '请输入key标识', trigger: 'blur' }],
   label: [{ required: true, message: '请输入名称', trigger: 'blur' }],
 })
-
+// loading
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const authsTableRef = ref<any>()
@@ -50,19 +50,20 @@ watch(
     deep: true,
   },
 )
+// 获取数据
 function getInfo() {
   loading.value = true
   form.value.data = JSON.parse(props.auths)
-  // form.value.menu = props.path
   form.value.flat = !!form.value.data.length // 数组为空 确定时走添加接口
   loading.value = false
 }
-
+// 修改
 function onEdit(row: any) {
   EditProps.value.id = row.id
   EditProps.value.row = JSON.stringify(row)
   EditProps.value.visible = true
 }
+// 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.label}」吗？`, '确认信息')
     .then(() => {

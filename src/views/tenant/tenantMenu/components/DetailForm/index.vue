@@ -13,7 +13,7 @@ import useRouteStore from '@/store/modules/route'
 defineOptions({
   name: 'PagesExampleMenuDetail',
 })
-
+// 获取父级数据
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
 const routeStore = useRouteStore() // 路由 store
 const loading = ref(false)
@@ -146,7 +146,7 @@ onMounted(() => {
     getInfo()
   }
 })
-
+// 获取数据
 function getInfo() {
   loading.value = true
   // id存在为编辑 不存为添加
@@ -206,7 +206,7 @@ function onInputNoCacheConfirm() {
   inputNoCacheVisible.value = false
   inputNoCache.value = ''
 }
-
+// 暴露
 defineExpose({
   submit() {
     return new Promise<void>((resolve) => {

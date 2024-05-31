@@ -41,6 +41,7 @@ onMounted(async () => {
     getInfo()
   }
 })
+// 监听
 watch(
   () => props.auths,
   (newValue: any) => {
@@ -50,6 +51,7 @@ watch(
     deep: true,
   },
 )
+// 获取数据
 function getInfo() {
   loading.value = true
   form.value.data = JSON.parse(props.auths)
@@ -57,12 +59,13 @@ function getInfo() {
   form.value.flat = !!form.value.data.length // 数组为空 确定时走添加接口
   loading.value = false
 }
-
+// 修改
 function onEdit(row: any) {
   EditProps.value.id = row.id
   EditProps.value.row = JSON.stringify(row)
   EditProps.value.visible = true
 }
+// 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.label}」吗？`, '确认信息')
     .then(() => {

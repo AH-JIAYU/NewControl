@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 import api from '@/api/modules/setting_role'
 import useRouteStore from '@/store/modules/route'
 import userButtonPer from '@/store/modules/buttonPermission'
-
+// 父级传递数据
 const props = defineProps(['id', 'row'])
 const routeStore = useRouteStore() // 路由 store
 const buttonPer = userButtonPer() // 按钮权限store
@@ -13,14 +13,10 @@ const formRef = ref<FormInstance>()
 const treeRef = ref<any>() // tree ref
 const menuData = ref<any>([]) // 路由
 const permissionData = ref<any>([]) // 权限
-
 const form = ref<any>({
   id: props.id ?? null,
-  role: '',
   menuId: [],
   permissions: [],
-  page: 1,
-  limit: 10,
   roleName: '',
   remark: '',
 })
@@ -50,7 +46,6 @@ async function getInfo() { // 编辑时获取该id的具体数据
 function rowPermission(permissionID: any) {
   return permissionData?.value.filter((item: any) => permissionID === item.menuId)
 }
-
 // 暴露
 defineExpose({
   submit() {
@@ -90,8 +85,8 @@ defineExpose({
 <template>
   <div v-loading="loading">
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
-      <ElFormItem label="角色码" prop="role">
-        <ElInput v-model="form.role" placeholder="请输入角色码" />
+      <ElFormItem label="角色码" prop="roleName">
+        <ElInput v-model="form.roleName" placeholder="请输入角色码" />
       </ElFormItem>
       <ElFormItem label="权限">
         <el-tree
@@ -104,9 +99,9 @@ defineExpose({
                 {{ data.meta.title }}
               </div>
               <div class="permission">
-                <div v-if="rowPermission(data.id).length" class="permissions" @click.stop>
+                <div v-if="rowPermission(data.id).length" class="permissions">
                   <ElCheckboxGroup v-model="form.permissions">
-                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.Permission" :value="auth.key">
+                    <ElCheckbox v-for="auth in rowPermission(data.id)" :key="auth.id" :value="auth.id">
                       {{ auth.label }}
                     </ElCheckbox>
                   </ElCheckboxGroup>

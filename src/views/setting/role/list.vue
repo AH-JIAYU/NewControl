@@ -118,7 +118,7 @@ function onEdit(row: any) {
 }
 // 删除
 function onDel(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.title}」吗？`, '确认信息').then(() => {
+  ElMessageBox.confirm(`确认删除「${row.roleName}」吗？`, '确认信息').then(() => {
     api.delete(row.id).then(() => {
       getDataList()
       ElMessage.success({
@@ -146,8 +146,8 @@ function onDel(row: any) {
         height="100%" @sort-change="sortChange" @selection-change="data.batch.selectionDataList = $event"
       >
         <ElTableColumn v-if="data.batch.enable" type="selection" align="center" fixed />
-        <ElTableColumn prop="id" label="id" />
-        <ElTableColumn prop="role" label="角色码" />
+        <ElTableColumn prop="id" width="200" align="center" label="id" />
+        <ElTableColumn prop="roleName" align="center" label="角色码" />
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
             <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">

@@ -292,6 +292,13 @@ function handleMoreOperating(command: string, row: any) {
             </ElTag>
           </template>
         </ElTableColumn>
+        <ElTableColumn prop="role" align="center" width="150" label="角色">
+          <template #default="{ row }">
+            <el-text class="mx-1">
+              {{ row.role ? row.role : '暂无数据' }}
+            </el-text>
+          </template>
+        </ElTableColumn>
         <ElTableColumn prop="mobile" label="手机号" width="150" align="center">
           <template #default="{ row }">
             <el-text class="mx-1">

@@ -10,7 +10,7 @@ import userButtonPer from '@/store/modules/buttonPermission'
 defineOptions({
   name: 'SettingPermissionsList',
 })
-const buttonPer = userButtonPer()
+const buttonPer = userButtonPer() // 按钮store
 const routeStore = useRouteStore() // 路由 store
 const router = useRouter()
 const tabbar = useTabbar()

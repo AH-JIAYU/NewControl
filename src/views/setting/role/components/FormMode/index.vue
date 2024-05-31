@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import DetailForm from '../DetailForm/index.vue'
-
+// 父级传递数据
 const props = defineProps(['id', 'row', 'mode'])
 
 const emits = defineEmits<{
   success: []
 }>()
-
+// 弹窗
 const visible = defineModel<boolean>({
   default: false,
 })

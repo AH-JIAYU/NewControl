@@ -11,8 +11,7 @@ defineOptions({
 })
 
 const router = useRouter()
-const { pagination, getParams, onSizeChange, onCurrentChange, onSortChange }
-  = usePagination()
+const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
 
@@ -66,28 +65,22 @@ onBeforeUnmount(() => {
     eventBus.off('get-data-list')
   }
 })
-
+// 获取数据
 function getDataList() {
   data.value.loading = true
-  const params = {
-    ...getParams(),
-    ...(data.value.search.countryId && {
-      countryId: data.value.search.countryId,
-    }),
-  }
-  api.list(params).then((res: any) => {
+  api.list({}).then((res: any) => {
     data.value.loading = false
-    data.value.dataList = res.data.getCountryListInfoList
-    pagination.value.total = res.data.getCountryListInfoList.length
+    data.value.dataList = res.data
+    pagination.value.total = res.data.length
   })
 }
 // 分页 后端(刘)这块不好做分页，所有返回全部数据，前端做分页
-const DataList = computed(() => {
-  return data.value.dataList.slice(
-    (pagination.value.page - 1) * pagination.value.size,
-    pagination.value.page * pagination.value.size,
-  )
-})
+// const DataList = computed(() => {
+//   return data.value.dataList.slice(
+//     (pagination.value.page - 1) * pagination.value.size,
+//     pagination.value.page * pagination.value.size,
+//   )
+// })
 
 // 每页数量切换
 function sizeChange(size: number) {
@@ -115,16 +108,6 @@ function onEdit(row: any) {
   data.value.editProps.id = row.projectProblemCategoryId
   data.value.editProps.row = JSON.stringify(row)
   data.value.editProps.visible = true
-}
-// 修改默认
-async function changeIsDefault(item: any) {
-  const { status } = await api.update(item)
-  status === 1
-  && ElMessage.success({
-    message: '修改「默认国家」成功',
-    center: true,
-  })
-  getDataList()
 }
 // 修改状态
 async function changeStatus(item: any) {
@@ -184,7 +167,7 @@ function onDelProject(row: any) {
   ElMessageBox.confirm(`确认删除「${row.categoryName}」吗？`, '确认信息')
     .then(() => {
       api
-        .delete({ projectProblemCategoryId: row.projectProblemCategoryId })
+        .delete({ id: row.projectProblemCategoryId })
         .then(() => {
           getDataList()
           ElMessage.success({
@@ -246,33 +229,12 @@ function onDelProject(row: any) {
           </template>
           新增前置问卷库
         </ElButton>
-        <ElButton
-          v-if="data.batch.enable"
-          size="default"
-          :disabled="!data.batch.selectionDataList.length"
-        >
-          单个批量操作按钮
-        </ElButton>
-        <ElButtonGroup v-if="data.batch.enable">
-          <ElButton
-            size="default"
-            :disabled="!data.batch.selectionDataList.length"
-          >
-            批量操作按钮组1
-          </ElButton>
-          <ElButton
-            size="default"
-            :disabled="!data.batch.selectionDataList.length"
-          >
-            批量操作按钮组2
-          </ElButton>
-        </ElButtonGroup>
       </ElSpace>
       <ElTable
         v-loading="data.loading"
         class="my-4"
 
-        :data="DataList"
+        :data="data.dataList"
         stripe highlight-current-row border
         height="100%"
         @sort-change="sortChange"
@@ -289,9 +251,7 @@ function onDelProject(row: any) {
                 highlight-current-row
                 class="hide-table-header"
               >
-                <!-- <el-table-column width="55" /> -->
                 <el-table-column prop="categoryName" label="标题" />
-                <!-- <ElTableColumn label="默认"> </ElTableColumn> -->
                 <ElTableColumn prop="status" label="状态">
                   <template #default="scope">
                     <ElSwitch
@@ -340,29 +300,7 @@ function onDelProject(row: any) {
             </div>
           </template>
         </el-table-column>
-        <!-- <ElTableColumn prop="categoryName" label="标题" /> -->
-        <ElTableColumn prop="countryId" label="国家" />
-        <ElTableColumn prop="isDefault" label="默认">
-          <template #default="scope">
-            <ElSwitch
-              v-model="scope.row.isDefault"
-              :active-value="1"
-              :inactive-value="2"
-              @change="changeIsDefault(scope.row)"
-            />
-          </template>
-        </ElTableColumn>
-        <!-- <ElTableColumn prop="status" label="状态">
-          <template #default="scope">
-            <ElSwitch
-              v-if="scope.row.status"
-              @change="changeIsDefault(scope.row)"
-              v-model="scope.row.status"
-              :active-value="1"
-              :inactive-value="2"
-            />
-          </template>
-        </ElTableColumn> -->
+        <ElTableColumn prop="categoryName" label="国家" />
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
             <ElButton
