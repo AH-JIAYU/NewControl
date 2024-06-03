@@ -66,12 +66,6 @@ creator.onUploadFile.add((_, options) => {
     })
 })
 
-// creator.onValueChanged.add((sender: any, options: any) => {
-//   // 当问题的值发生变化时，这里会执行你的代码
-//   console.log(`Question '${options.name}' value changed to: ${options.value}`)
-// })
-// console.log('props', props.id)
-
 const loading = ref(false)
 const form = ref({
   projectProblemCategoryId: Number.parseInt(props.id),
@@ -83,12 +77,6 @@ creator.saveSurveyFunc = (saveNo: number, callback: any) => {
   callback(saveNo, true)
   emits('onSubmit')
 }
-// creator.onQuestionAdded.add((_, options) => {
-// })
-// creator.onItemValueAdded.add((_, options) => {
-// })
-// creator.onSurveyPropertyValueChanged.add((_, options: any) => {
-// })
 
 onMounted(async () => {
   // loadingShow({

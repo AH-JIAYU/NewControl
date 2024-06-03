@@ -8,14 +8,14 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
 import apiMenu from '@/api/modules/tenant_tenantMenu'
-import useRouteStore from '@/store/modules/route'
+import usetenantMenuStore from '@/store/modules/tenantMenu'
 
 defineOptions({
   name: 'PagesExampleMenuDetail',
 })
 // 获取父级数据
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
-const routeStore = useRouteStore() // 路由 store
+const tenantMenuStore = usetenantMenuStore() // 路由 store
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const showParent = ref<any>(false) // 是否显示父级id
@@ -137,8 +137,8 @@ function selectparentid(menuLevel: any) {
   }
 }
 
-onMounted(() => {
-  list.value = routeStore.routesRaw // 从store获取原始路由
+onMounted(async () => {
+  list.value = await tenantMenuStore.gettenantMenu // 从store获取原始路由
   choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel) // 根据路由等级 筛选路由
   // 第一次进入时id和parentid都为空时 显示父级导航
   showParent.value = !!(!form.value.id && !form.value.parentId)

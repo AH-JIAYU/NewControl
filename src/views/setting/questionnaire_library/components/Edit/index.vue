@@ -46,7 +46,6 @@ async function onSubmit() {
     // 新增
     formRef.value && formRef.value.validate(async (valid: any) => {
       if (valid) {
-        form.value.countryId = Number.parseInt(form.value.countryId)
         const { status } = await api.create(form.value)
         status === 1
         && ElMessage.success({

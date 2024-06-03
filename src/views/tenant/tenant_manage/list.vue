@@ -190,12 +190,12 @@ function onDel() {
             <ElFormItem>
               <el-select v-model="data.search.title" value-key="" placeholder="版本" clearable filterable />
             </ElFormItem>
-            <ElFormItem v-show="!fold">
+            <!-- <ElFormItem v-show="!fold">
               <el-select v-model="data.search.title" value-key="" placeholder="角色" clearable filterable />
             </ElFormItem>
             <ElFormItem v-show="!fold">
               <el-select v-model="data.search.title" value-key="" placeholder="租户来源" clearable filterable />
-            </ElFormItem>
+            </ElFormItem> -->
             <ElFormItem>
               <ElButton type="primary" @click="currentChange()">
                 <template #icon>
@@ -209,7 +209,7 @@ function onDel() {
                 </template>
                 重置
               </ElButton>
-              <ElButton link @click="toggle">
+              <ElButton disabled link @click="toggle">
                 <template #icon>
                   <SvgIcon :name="fold ? 'i-ep:caret-bottom' : 'i-ep:caret-top'" />
                 </template>
@@ -246,7 +246,6 @@ function onDel() {
         <ElTableColumn show-overflow-tooltip align="center" prop="" width="80" label="租户ID" />
         <ElTableColumn show-overflow-tooltip align="center" prop="title" label="租户名称" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="版本" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="" label="角色" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="国家" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="邮箱" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="手机号码" />
@@ -254,7 +253,7 @@ function onDel() {
         <ElTableColumn align="center" show-overflow-tooltip prop="" label="状态">
           <ElSwitch inline-prompt active-text="启用" inactive-text="禁用" />
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip align="center" prop="" label="租户来源" />
+        <!-- <ElTableColumn show-overflow-tooltip align="center" prop="" label="租户来源" /> -->
         <el-table-column align="center" prop="i" label="操作" show-overflow-tooltip width="260">
           <template #default="{ row }">
             <el-button size="small" plain type="primary" @click="onResetPassword()">

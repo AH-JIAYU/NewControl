@@ -113,13 +113,19 @@ function onEdit(row: any) {
 }
 // 修改状态
 async function changeStatus(item: any) {
-  const { status } = await api.edit(item)
-  status === 1
-  && ElMessage.success({
-    message: '修改「状态」成功',
-    center: true,
-  })
-  getDataList()
+  ElMessageBox.confirm(`确认将状态修改成「${item.status === 1 ? '启用' : '禁用'}」吗？`, '确认信息')
+    .then(async () => {
+      const { status } = await api.edit(item)
+      status === 1
+      && ElMessage.success({
+        message: '修改「状态」成功',
+        center: true,
+      })
+      getDataList()
+    })
+    .catch(() => {
+      getDataList()
+    })
 }
 // 设计模板
 function EditSurvey(row: any) {
@@ -152,7 +158,7 @@ function EditSurvey(row: any) {
 }
 // 删除国家
 function onDelCountry(row: any) {
-  ElMessageBox.confirm(`确认删除「${row.countryId}」吗？`, '确认信息')
+  ElMessageBox.confirm(`确认删除「${row.countryName}」吗？`, '确认信息')
     .then(() => {
       api.delete({ countryId: row.countryId }).then(() => {
         getDataList()
@@ -258,6 +264,9 @@ function onDelProject(row: any) {
                   <template #default="scope">
                     <ElSwitch
                       v-model="scope.row.status"
+                      active-text="启用"
+                      inactive-text="禁用"
+                      inline-prompt
                       :active-value="1"
                       :inactive-value="2"
                       @change="changeStatus(scope.row)"
