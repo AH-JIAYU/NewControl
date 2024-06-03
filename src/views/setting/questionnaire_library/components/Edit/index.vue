@@ -3,13 +3,14 @@ import { ElMessage } from 'element-plus'
 import type { DetailFormProps } from '../../types'
 import api from '@/api/modules/setting_questionnaireLibrary'
 import useCountryStore from '@/store/modules/country'
-
+// 父级传递数据
 const props = defineProps(['id', 'row'])
-
+// 更新
 const emits = defineEmits<{
   success: []
 }>()
 const countryStore = useCountryStore()
+// 关闭弹框
 const visible = defineModel<boolean>({
   default: false,
 })
@@ -20,8 +21,9 @@ const form = ref<any>({
   countryId: null,
   status: 2,
 })
+// 校验
 const formRules = ref<any>({
-  categoryName: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+  categoryName: [{ required: true, message: '请输入问卷名称', trigger: 'blur' }],
   countryId: [{ required: true, message: '请选择国家', trigger: 'blur' }],
 })
 onMounted(async () => {
@@ -30,41 +32,51 @@ onMounted(async () => {
 const title = computed(() => {
   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
   form.value = {} // 默认form为空
+  // 有id form为row
   if (props.id) {
-    // 有id form为row
     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
     form.value = JSON.parse(props.row)
   }
   return props.id === '' ? '新增' : '编辑'
 })
 
+// 提交
 async function onSubmit() {
   if (!props.id) {
     // 新增
-    form.value.countryId = Number.parseInt(form.value.countryId)
-    const { status } = await api.create(form.value)
-    status === 1
-    && ElMessage.success({
-      message: '新增成功',
-      center: true,
+    formRef.value && formRef.value.validate(async (valid: any) => {
+      if (valid) {
+        form.value.countryId = Number.parseInt(form.value.countryId)
+        const { status } = await api.create(form.value)
+        status === 1
+        && ElMessage.success({
+          message: '新增成功',
+          center: true,
+        })
+        onCancel()
+        emits('success')
+      }
     })
   }
   else {
     // 编辑
-    const { status } = await api.edit(form.value)
-    status === 1
-    && ElMessage.success({
-      message: '编辑成功',
-      center: true,
+    formRef.value && formRef.value.validate(async (valid: any) => {
+      if (valid) {
+        const { status } = await api.edit(form.value)
+        status === 1
+        && ElMessage.success({
+          message: '编辑成功',
+          center: true,
+        })
+        onCancel()
+        emits('success')
+      }
     })
   }
-  onCancel()
-  emits('success')
 }
-
+// 关闭弹框
 function onCancel() {
   visible.value = false
-  form.value = {}
 }
 </script>
 
@@ -103,6 +115,9 @@ function onCancel() {
             v-model="form.status"
             :active-value="1"
             :inactive-value="2"
+            inline-prompt
+            active-text="开启"
+            inactive-text="禁用"
             placeholder="请输入状态"
           />
         </ElFormItem>

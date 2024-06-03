@@ -1,5 +1,5 @@
 import '@/utils/system.copyright'
-
+import ElementPlus from 'element-plus'
 import FloatingVue from 'floating-vue'
 import 'floating-vue/dist/style.css'
 
@@ -10,6 +10,8 @@ import VWave from 'v-wave'
 
 import 'overlayscrollbars/overlayscrollbars.css'
 
+import { surveyPlugin } from 'survey-vue3-ui'
+import { surveyCreatorPlugin } from 'survey-creator-vue'
 import App from './App.vue'
 import pinia from './store'
 import router from './router'
@@ -44,6 +46,7 @@ app.use(pinia)
 app.use(router)
 app.use(ui)
 app.use(setupI18n())
+app.use(ElementPlus).use(surveyPlugin).use(surveyCreatorPlugin)
 directive(app)
 errorLog(app)
 if (icons.isOfflineUse) {

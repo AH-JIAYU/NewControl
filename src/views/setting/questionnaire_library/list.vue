@@ -71,7 +71,7 @@ function getDataList() {
   api.list({}).then((res: any) => {
     data.value.loading = false
     data.value.dataList = res.data
-    pagination.value.total = res.data.length
+    pagination.value.total = res.data?.length
   })
 }
 // 分页 后端(刘)这块不好做分页，所有返回全部数据，前端做分页
@@ -105,7 +105,9 @@ function onCreate() {
 }
 // 编辑国家标题
 function onEdit(row: any) {
-  data.value.editProps.id = row.projectProblemCategoryId
+  // console.log('row', row)
+
+  data.value.editProps.id = row.id
   data.value.editProps.row = JSON.stringify(row)
   data.value.editProps.visible = true
 }
@@ -247,7 +249,7 @@ function onDelProject(row: any) {
                 <h2>该国家下所有问卷</h2>
               </div>
               <el-table
-                :data="row.getProjectProblemCategoryInfoList"
+                :data="row.categories"
                 highlight-current-row
                 class="hide-table-header"
               >
@@ -300,7 +302,7 @@ function onDelProject(row: any) {
             </div>
           </template>
         </el-table-column>
-        <ElTableColumn prop="categoryName" label="国家" />
+        <ElTableColumn prop="countryName" label="国家" />
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
             <ElButton
@@ -335,10 +337,10 @@ function onDelProject(row: any) {
     />
     <FormMode
       v-if="data.formMode === 'dialog' || data.formMode === 'drawer'"
-      :id="data.formModeProps.id"
+      :id="data.editProps.id"
       v-model="data.formModeProps.visible"
       :mode="data.formMode"
-      :details="data.formModeProps.details"
+      :details="data.editProps.row"
       @success="getDataList"
     />
   </div>

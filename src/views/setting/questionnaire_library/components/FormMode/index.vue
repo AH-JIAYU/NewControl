@@ -1,25 +1,20 @@
 <script setup lang="ts">
 import type { DetailFormProps } from '../../types'
 import DetailForm from '../DetailForm/index.vue'
-
-const props = defineProps<
-  {
-    mode: 'dialog' | 'drawer'
-  } & DetailFormProps
->()
-
+// 父级传递数据
+const props = defineProps(['id', 'row', 'mode'])
+// 更新
 const emits = defineEmits<{
   success: []
 }>()
-
+// 弹窗
 const visible = defineModel<boolean>({
   default: false,
 })
-
 const formRef = ref()
-
+// 标题
 const title = computed(() => (props.id === '' ? '新增前置问卷库' : '编辑前置问卷库'))
-
+// 提交数据
 function onSubmit() {
   // submit() 为组件内部方法
   formRef.value.submit().then(() => {
@@ -27,7 +22,7 @@ function onSubmit() {
     onCancel()
   })
 }
-
+// 关闭弹框
 function onCancel() {
   visible.value = false
 }

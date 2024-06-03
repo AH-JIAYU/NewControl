@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
+// import { loadingHide, loadingShow } from '@/components/SpinkitLoading/index' // 加载
 import { ElMessage } from 'element-plus'
+import api from '@/api/modules/setting_questionnaireLibrary'
+// import useUserStore from '@/store/modules/user'
 import 'survey-core/defaultV2.min.css'
 import 'survey-creator-core/survey-creator-core.min.css'
-
 import {
   ComponentCollection,
   Serializer,
@@ -15,10 +17,8 @@ import { SurveyCreatorModel, editorLocalization } from 'survey-creator-core'
 import 'survey-creator-core/i18n/french'
 import 'survey-creator-core/i18n/simplified-chinese'
 import 'survey-creator-core/survey-creator-core.i18n'
-import api from '@/api/modules/setting_questionnaireLibrary'
-import { loadingHide, loadingShow } from '@/components/SpinkitLoading/index' // 加载
 
-const props = defineProps(['id', 'details'])
+const props = defineProps(['id', 'row'])
 const emits = defineEmits(['onSubmit'])
 editorLocalization.currentLocale = 'zh-cn'
 surveyLocalization.supportedLocales = ['en', 'fr', 'zh-cn'] // 语言可以用字典接口的语言
@@ -27,6 +27,7 @@ setLicenseKey(
   'ZjU4MjI0NjMtN2YzYi00ZDMyLWEyYmEtOTliMmVhZmEyODc5OzE9MjAyNS0wMi0yNA==',
 )
 
+// const userStore = useUserStore()
 const creatorOptions: ICreatorOptions = {
   showLogicTab: true,
   isAutoSave: false,
@@ -65,10 +66,16 @@ creator.onUploadFile.add((_, options) => {
     })
 })
 
+// creator.onValueChanged.add((sender: any, options: any) => {
+//   // 当问题的值发生变化时，这里会执行你的代码
+//   console.log(`Question '${options.name}' value changed to: ${options.value}`)
+// })
+// console.log('props', props.id)
+
 const loading = ref(false)
 const form = ref({
-  projectProblemCategoryId: props.id,
-  addProjectProblemInfoList: [], // 问卷对象 后端用
+  projectProblemCategoryId: Number.parseInt(props.id),
+  problemInfoList: [], // 问卷对象 后端用
   projectJson: '', // 问卷json 前端用
 })
 
@@ -76,25 +83,32 @@ creator.saveSurveyFunc = (saveNo: number, callback: any) => {
   callback(saveNo, true)
   emits('onSubmit')
 }
+// creator.onQuestionAdded.add((_, options) => {
+// })
+// creator.onItemValueAdded.add((_, options) => {
+// })
+// creator.onSurveyPropertyValueChanged.add((_, options: any) => {
+// })
 
 onMounted(async () => {
-  loadingShow({
-    type: 'circle-fade',
-    size: 50,
-    color: '#fff',
-    text: '数据加载中……',
-  })
+  // loadingShow({
+  //   type: 'circle-fade',
+  //   size: 50,
+  //   color: '#fff',
+  //   text: '数据加载中……',
+  // })
   // const { data } = await api.getSurvey(props.id)
-  // creator.text = data.projectJson || ''
-  loadingHide()
+  creator.text = ''
+  // loadingHide()
 })
 
 defineExpose({
   submit() {
-    return new Promise<void>((resolve: any) => {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<void>(async (resolve) => {
       form.value.projectJson = JSON.stringify(creator.JSON)
       const locale = creator.JSON.locale || editorLocalization.currentLocale
-      form.value.addProjectProblemInfoList = convertData(
+      form.value.problemInfoList = await convertData(
         creator.JSON.pages,
         locale,
       )
@@ -121,15 +135,12 @@ function convertData(originalData: any, locale: any) {
       const questionType = typeMap[element.type] || 0
       let question = element.name
       if (element.title) {
-        question
-          = element?.title.default || element?.title[locale] || element.name
+        question = element?.title.default || element?.title[locale] || element.name
       }
       // 新增一个问题，默认标题为name 改变标题后 字段在title里
-
-      let addProjectAnswerInfoList = []
-
+      let answerInfoList = []
       if (Array.isArray(element.choices)) {
-        addProjectAnswerInfoList = element.choices.map((choice: any) => {
+        answerInfoList = element.choices.map((choice: any) => {
           const answerValue = choice.value || choice
           let anotherName = ''
           if (typeof choice === 'object') {
@@ -156,7 +167,7 @@ function convertData(originalData: any, locale: any) {
       return {
         question,
         questionType,
-        addProjectAnswerInfoList,
+        answerInfoList,
       }
     })
   })
