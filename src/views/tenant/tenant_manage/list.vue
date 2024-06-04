@@ -16,7 +16,7 @@ defineOptions({
 
 const router = useRouter()
 // 分页配置
-const { pagination, getParams, onSizeChange, onCurrentChange, onSortChange } = usePagination()
+const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
 
@@ -70,15 +70,11 @@ onMounted(() => {
 // 获取数据
 function getDataList() {
   data.value.loading = true
-  const params = {
-    ...getParams(),
-    ...(data.value.search.title && { title: data.value.search.title }),
-  }
-  api.list(params).then((res: any) => {
-    data.value.dataList = res.data.list
-    pagination.value.total = res.data.total
+  api.list({ page: 1, limit: 10 }).then((res: any) => {
+    data.value.loading = false
+    data.value.dataList = res.data.records
+    pagination.value.total = Number.parseInt(res.data.total)
   })
-  data.value.loading = false
 }
 // 重置筛选数据
 function onReset() {
@@ -96,12 +92,6 @@ function sizeChange(size: number) {
 function currentChange(page = 1) {
   onCurrentChange(page).then(() => getDataList())
 }
-
-// 字段排序
-function sortChange({ prop, order }: { prop: string, order: string }) {
-  onSortChange(prop, order).then(() => getDataList())
-}
-
 // 新增
 function onCreate() {
   data.value.formModeProps.id = ''
@@ -177,25 +167,17 @@ function onDel() {
           <ElForm :model="data.search" size="default" label-width="100px" inline-message inline class="search-form">
             <ElFormItem>
               <ElInput
-                v-model="data.search.title" placeholder="租户ID" clearable @keydown.enter="currentChange()"
-                @clear="currentChange()"
+                v-model="data.search.title" placeholder="租户ID" clearable
               />
             </ElFormItem>
             <ElFormItem>
               <ElInput
-                v-model="data.search.title" placeholder="租户名称" clearable @keydown.enter="currentChange()"
-                @clear="currentChange()"
+                v-model="data.search.title" placeholder="租户名称" clearable
               />
             </ElFormItem>
             <ElFormItem>
               <el-select v-model="data.search.title" value-key="" placeholder="版本" clearable filterable />
             </ElFormItem>
-            <!-- <ElFormItem v-show="!fold">
-              <el-select v-model="data.search.title" value-key="" placeholder="角色" clearable filterable />
-            </ElFormItem>
-            <ElFormItem v-show="!fold">
-              <el-select v-model="data.search.title" value-key="" placeholder="租户来源" clearable filterable />
-            </ElFormItem> -->
             <ElFormItem>
               <ElButton type="primary" @click="currentChange()">
                 <template #icon>
@@ -239,21 +221,26 @@ function onDel() {
       </el-row>
       <ElTable
         v-loading="data.loading" :border="data.border" :size="data.lineHeight" :stripe="data.stripe" class="my-4"
-        :data="data.dataList" highlight-current-row height="100%" @sort-change="sortChange"
+        :data="data.dataList" highlight-current-row height="100%" @sort-change="onSortChange"
         @selection-change="data.batch.selectionDataList = $event"
       >
         <el-table-column align="center" prop="a" show-overflow-tooltip type="selection" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" width="80" label="租户ID" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="title" label="租户名称" />
+        <ElTableColumn show-overflow-tooltip align="center" prop="name" label="租户名称" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="版本" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="国家" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="邮箱" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="手机号码" />
         <ElTableColumn show-overflow-tooltip align="center" prop="" label="期限" />
-        <ElTableColumn align="center" show-overflow-tooltip prop="" label="状态">
-          <ElSwitch inline-prompt active-text="启用" inactive-text="禁用" />
+        <ElTableColumn align="center" show-overflow-tooltip prop="active" label="状态">
+          <ElSwitch
+            inline-prompt
+            active-text="开启"
+            inactive-text="关闭"
+            :active-value="1"
+            :inactive-value="2"
+          />
         </ElTableColumn>
-        <!-- <ElTableColumn show-overflow-tooltip align="center" prop="" label="租户来源" /> -->
         <el-table-column align="center" prop="i" label="操作" show-overflow-tooltip width="260">
           <template #default="{ row }">
             <el-button size="small" plain type="primary" @click="onResetPassword()">

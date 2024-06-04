@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import useProblemStore from '@/store/modules/problem.ts'
 import type { FormInstance, FormRules } from 'element-plus'
 // import { loadingHide, loadingShow } from '@/components/SpinkitLoading/index' // 加载
 import { ElMessage } from 'element-plus'
@@ -17,67 +18,89 @@ import { SurveyCreatorModel, editorLocalization } from 'survey-creator-core'
 import 'survey-creator-core/i18n/french'
 import 'survey-creator-core/i18n/simplified-chinese'
 import 'survey-creator-core/survey-creator-core.i18n'
+import {
+  customComponents,
+  toolType,
+  tooltoxcategory,
+} from '@/utils/surveyjsToolbox'
 
 const props = defineProps(['id', 'row'])
 const emits = defineEmits(['onSubmit'])
+const loading = ref(true)
 editorLocalization.currentLocale = 'zh-cn'
 surveyLocalization.supportedLocales = ['en', 'fr', 'zh-cn'] // 语言可以用字典接口的语言
 
 setLicenseKey(
   'ZjU4MjI0NjMtN2YzYi00ZDMyLWEyYmEtOTliMmVhZmEyODc5OzE9MjAyNS0wMi0yNA==',
 )
-
+let creator: any
+const problemStore = useProblemStore()
 // const userStore = useUserStore()
-const creatorOptions: ICreatorOptions = {
-  showLogicTab: true,
-  isAutoSave: false,
-  showTranslationTab: true,
-}
 
-const creator = new SurveyCreatorModel(creatorOptions)
-// 以下代码将调查左侧的工具箱进行类型分类。
-// 通过https://surveyjs.io/form-library/documentation/api-reference/question#getType 来查看工具类名称
-creator.toolbox.allowExpandMultipleCategories = true // 允许用户展开多个类别
-creator.toolbox.showCategoryTitles = true // 分类显示
-creator.text = ''
-creator.saveSurveyFunc = (saveNo: number, callback: any) => {
-  window.localStorage.setItem('survey-json', creator.text)
-  callback(saveNo, true)
-}
-creator.onUploadFile.add((_, options) => {
-  const formData = new FormData()
-  options.files.forEach((file: File) => {
-    formData.append(file.name, file)
-  })
-  fetch('https://example.com/uploadFiles', {
-    method: 'post',
-    body: formData,
-  })
-    .then(response => response.json())
-    .then((result) => {
-      options.callback(
-        'success',
-        // A link to the uploaded file
-        `https://example.com/files?name=${result[options.files[0].name]}`,
-      )
-    })
-    .catch((error) => {
-      options.callback(error, 'error')
-    })
-})
-
-const loading = ref(false)
 const form = ref({
   projectProblemCategoryId: Number.parseInt(props.id),
   problemInfoList: [], // 问卷对象 后端用
   projectJson: '', // 问卷json 前端用
 })
 
-creator.saveSurveyFunc = (saveNo: number, callback: any) => {
-  callback(saveNo, true)
-  emits('onSubmit')
-}
-
+onBeforeMount(async () => {
+  if (props.id) {
+    problemStore.country = JSON.parse(props.row)
+    const res = await customComponents()
+    res.forEach((component: any) => {
+      // 使用Serializer.findClass来检查组件是否已注册
+      if (!Serializer.findClass(component.name)) {
+        ComponentCollection.Instance.add({
+          name: component.name,
+          title: component.title,
+          questionJSON: component.questionJSON,
+        })
+      }
+    })
+    loading.value = false
+    const creatorOptions: ICreatorOptions = {
+      showLogicTab: true,
+      isAutoSave: false,
+      showTranslationTab: true,
+    }
+    creator = new SurveyCreatorModel(creatorOptions)
+    // 以下代码将调查左侧的工具箱进行类型分类。
+    creator.toolbox.changeCategories(tooltoxcategory)
+    // 通过https://surveyjs.io/form-library/documentation/api-reference/question#getType 来查看工具类名称
+    creator.toolbox.allowExpandMultipleCategories = true // 允许用户展开多个类别
+    creator.toolbox.showCategoryTitles = true // 分类显示
+    creator.text = ''
+    creator.saveSurveyFunc = (saveNo: number, callback: any) => {
+      window.localStorage.setItem('survey-json', creator.text)
+      callback(saveNo, true)
+    }
+    creator.onUploadFile.add((_: any, options: any) => {
+      const formData = new FormData()
+      options.files.forEach((file: File) => {
+        formData.append(file.name, file)
+      })
+      fetch('https://example.com/uploadFiles', {
+        method: 'post',
+        body: formData,
+      })
+        .then(response => response.json())
+        .then((result) => {
+          options.callback(
+            'success',
+            // A link to the uploaded file
+            `https://example.com/files?name=${result[options.files[0].name]}`,
+          )
+        })
+        .catch((error) => {
+          options.callback(error, 'error')
+        })
+    })
+    creator.saveSurveyFunc = (saveNo: number, callback: any) => {
+      callback(saveNo, true)
+      emits('onSubmit')
+    }
+  }
+})
 onMounted(async () => {
   // loadingShow({
   //   type: 'circle-fade',
@@ -164,16 +187,9 @@ function convertData(originalData: any, locale: any) {
 </script>
 
 <template>
-  <div
-    v-loading="loading"
-    style="width: 100%; height: 93%; margin-bottom: 80px;"
-  >
+  <div v-loading="loading" style="width: 100%; height: 93%; margin-bottom: 80px;">
     <div style="width: 100%; height: 100%;">
-      <survey-creator-component :model="creator" />
+      <survey-creator-component v-if="!loading" :model="creator" />
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-// scss
-</style>

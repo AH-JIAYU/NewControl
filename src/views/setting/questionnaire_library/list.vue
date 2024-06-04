@@ -5,11 +5,12 @@ import Edit from './components/Edit/index.vue'
 import eventBus from '@/utils/eventBus'
 import api from '@/api/modules/setting_questionnaireLibrary'
 import useSettingsStore from '@/store/modules/settings'
+import useProblemStore from '@/store/modules/problem.ts'
 
 defineOptions({
   name: 'SettingQuestionnaireLibraryList',
 })
-
+const problemStore = useProblemStore()
 const router = useRouter()
 const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 const tabbar = useTabbar()
@@ -30,7 +31,7 @@ const data = ref({
   formModeProps: {
     visible: false,
     id: '',
-    details: '',
+    row: '',
   },
   // 新增
   editProps: {
@@ -151,8 +152,9 @@ function EditSurvey(row: any) {
     }
   }
   else {
-    data.value.formModeProps.id = row.projectProblemCategoryId
-    data.value.formModeProps.details = row.details
+    data.value.formModeProps.id = row.id
+    data.value.formModeProps.row = JSON.stringify(row)
+    problemStore.country = row
     data.value.formModeProps.visible = true
   }
 }
@@ -339,17 +341,19 @@ function onDelProject(row: any) {
       />
     </PageMain>
     <Edit
+      v-if="data.editProps.visible"
       :id="data.editProps.id"
       v-model="data.editProps.visible"
       :row="data.editProps.row"
       @success="getDataList"
     />
+    {{ data.formModeProps.visible }}
     <FormMode
-      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'"
-      :id="data.editProps.id"
+      v-if="data.formModeProps.visible"
+      :id="data.formModeProps.id"
       v-model="data.formModeProps.visible"
       :mode="data.formMode"
-      :details="data.editProps.row"
+      :row="data.formModeProps.row"
       @success="getDataList"
     />
   </div>

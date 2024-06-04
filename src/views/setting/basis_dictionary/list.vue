@@ -124,13 +124,13 @@ watch(() => dictionaryItem.value.search.dictionaryId, () => {
 // 获取字典项
 function getDictionaryItemList() {
   dictionaryItem.value.loading = true
-  apiDictionary.itemList(dictionaryItem.value.search.dictionaryId).then((res: any) => {
+  apiDictionary.itemList({ page: 1, limit: 10, id: dictionaryItem.value.search.dictionaryId }).then((res: any) => {
     dictionaryItem.value.loading = false
-    dictionaryItem.value.dataList = res.data
+    dictionaryItem.value.dataList = res.data.records
     dictionaryItem.value.dataList.forEach((item: any) => {
       item.enableLoading = false
     })
-    pagination.value.total = res.data.length
+    pagination.value.total = Number.parseInt(res.data.total)
   })
 }
 

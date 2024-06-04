@@ -3,6 +3,8 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import type { DetailFormProps } from '../../types'
 import api from '@/api/modules/tenant_tenantManage'
+import useCountryStore from '@/store/modules/country'
+import useVersionStore from '@/store/modules/version'
 
 const props = withDefaults(
   defineProps<DetailFormProps>(),
@@ -10,35 +12,30 @@ const props = withDefaults(
     id: '',
   },
 )
-const banben = [
-  {
-    lable: '专业版', value: 1,
-  },
-  {
-    lable: '企业版', value: 2,
-  },
-  {
-    lable: '基础版', value: 3,
-  },
-]
+// 国家
+const countryStore = useCountryStore()
+// 版本
+const versionStore = useVersionStore()
 const password = '创建完成后，请告知用户初始密码：123456'
 // 加载
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const form = ref({
   id: props.id,
-  tenantName: '', // 用户名
+  name: '', // 用户名
   country: '', // 国家
   phoneNumber: '', // 手机号码
   email: '', // 邮箱
-  role: 1, // 按角色
   version: '', // 按版本
-  time: '', // 时间
-  active: true, // 租户状态
+  active: 1, // 租户状态
+  registerType: 'phone', // 注册方式
 })
+// 国家
+const country = ref<any>([])
+const version = ref<any>([])
 // 校验
 const formRules = ref<FormRules>({
-  tenantName: [
+  name: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
   ],
   country: [
@@ -46,23 +43,32 @@ const formRules = ref<FormRules>({
   ],
 })
 
-onMounted(() => {
-  if (form.value.id !== '') {
-    getInfo()
-  }
-})
-function getInfo() {
+onMounted(async () => {
+  // if (form.value.id !== '') {
+  //   getInfo()
+  // }
   loading.value = true
-  api.detail(form.value.id).then(() => {
-    loading.value = false
-  })
-}
+  country.value = await countryStore.getCountry
+  version.value = await versionStore.getVersion
+  loading.value = false
+  console.log('version.value ', country.value)
+})
+// function getInfo() {
+//   loading.value = true
+//   api.detail(form.value.id).then(() => {
+//     loading.value = false
+//   })
+// }
 // 暴露
 defineExpose({
   submit() {
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid) => {
+          form.value.registerType = form.value.country === '343' ? 'phone' : 'email'
+          console.log('form.value', form.value)
+
+          return
           if (valid) {
             api.create(form.value).then(() => {
               ElMessage.success({
@@ -95,16 +101,23 @@ defineExpose({
 <template>
   <div v-loading="loading">
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
-      <ElFormItem label="用户名" prop="tenantName">
-        <ElInput v-model="form.tenantName" placeholder="请输入用户名" />
+      <ElFormItem label="用户名" prop="name">
+        <ElInput v-model="form.name" placeholder="请输入用户名" />
       </ElFormItem>
       <ElFormItem label="国家" prop="country">
-        <el-select v-model="form.country" placeholder="请选择国家" />
+        <el-select v-model="form.country" value-key="" placeholder="请选择国家" clearable filterable>
+          <el-option
+            v-for="item in country.records"
+            :key="item.id"
+            :label="item.chineseName"
+            :value="item.id"
+          />
+        </el-select>
       </ElFormItem>
-      <ElFormItem label="手机号码" prop="phoneNumber">
+      <ElFormItem v-if="form.country === '343'" label="手机号码" prop="phoneNumber">
         <ElInput v-model="form.phoneNumber" placeholder="请输入手机号码" />
       </ElFormItem>
-      <ElFormItem label="电子邮箱" prop="email">
+      <ElFormItem v-if="form.country !== '343'" label="电子邮箱" prop="email">
         <ElInput v-model="form.email" placeholder="请输入电子邮箱" />
       </ElFormItem>
       <ElFormItem label="初始密码" prop="password">
@@ -112,9 +125,7 @@ defineExpose({
       </ElFormItem>
       <ElFormItem label="版本分配" prop="role">
         <el-select v-model="form.version" placeholder="请选择版本">
-          <el-option v-for="item in banben" :key="item.value" :label="item.lable" :value="item.value">
-            {{ item.lable }}
-          </el-option>
+          <el-option v-for="item in version" :key="item.id" :label="item.name" :value="item.code" />
         </el-select>
       </ElFormItem>
       <ElFormItem label="租户状态" prop="active">
@@ -123,6 +134,8 @@ defineExpose({
           inline-prompt
           active-text="开启"
           inactive-text="关闭"
+          :active-value="1"
+          :inactive-value="2"
         />
       </ElFormItem>
     </ElForm>

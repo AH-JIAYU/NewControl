@@ -129,8 +129,8 @@ function sortChange({ prop, order }: { prop: string, order: string }) {
           <ElInput v-model="dictionary.search" placeholder="请输入关键词筛选字典" clearable class="search" />
           <ElScrollbar class="tree">
             <ElTree
-              ref="dictionaryRef" v-loading="dictionary.loading" :data="dictionary.tree" :filter-node-method="dictionaryFilter as any"
-              default-expand-all @node-click="dictionaryClick"
+              ref="dictionaryRef" v-loading="dictionary.loading" :data="dictionary.tree"
+              :filter-node-method="dictionaryFilter as any" default-expand-all @node-click="dictionaryClick"
             >
               <template #default="{ node, data }">
                 <div class="custom-tree-node">
@@ -170,6 +170,7 @@ function sortChange({ prop, order }: { prop: string, order: string }) {
               </template>
             </ElTableColumn>
           </ElTable>
+
           <ElPagination
             :current-page="pagination.page" :total="pagination.total" :page-size="pagination.size"
             :page-sizes="pagination.sizes" :layout="pagination.layout" :hide-on-single-page="false" class="pagination"
@@ -186,127 +187,127 @@ function sortChange({ prop, order }: { prop: string, order: string }) {
   </div>
 </template>
 
-  <style lang="scss" scoped>
-  .absolute-container {
-    position: absolute;
+<style lang="scss" scoped>
+.absolute-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+  .page-header {
+    margin-bottom: 0;
+  }
+
+  .page-main {
+    // 让 page-main 的高度自适应
+    flex: 1;
+    overflow: auto;
+
+    .flex-container {
+      position: static;
+    }
+  }
+}
+
+.flex-container {
+  :deep(.left-side) {
     display: flex;
     flex-direction: column;
+    height: 100%;
+
+    .btns {
+      display: inline-flex;
+      width: 100%;
+
+      .add {
+        width: 100%;
+      }
+    }
+
+    .search {
+      margin: 15px 0;
+    }
+
+    .tree {
+      flex: 1;
+      overflow-y: auto;
+
+      .el-tree {
+        .el-tree-node__content {
+          height: 60px;
+        }
+
+        .is-current > .el-tree-node__content {
+          background-color: var(--el-color-primary-light-9);
+        }
+
+        .custom-tree-node {
+          position: relative;
+          display: flex;
+          flex: 1;
+          flex-direction: column;
+          justify-content: center;
+          width: 0;
+          height: 100%;
+
+          .label {
+            width: calc(100% - 10px);
+            color: var(--el-text-color-primary);
+
+            @include text-overflow;
+          }
+
+          .code {
+            width: calc(100% - 10px);
+            color: var(--el-text-color-placeholder);
+
+            @include text-overflow;
+          }
+
+          &:hover {
+            .actions {
+              display: block;
+            }
+          }
+
+          .actions {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            display: none;
+            transform: translateY(-50%);
+
+            .el-button {
+              padding: 5px 8px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  :deep(.main) {
+    display: flex;
+    justify-content: center;
+  }
+
+  .dictionary-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     width: 100%;
     height: 100%;
 
-    .page-header {
-      margin-bottom: 0;
+    .empty {
+      font-size: 32px;
+      color: var(--el-text-color-placeholder);
+      text-align: center;
     }
 
-    .page-main {
-      // 让 page-main 的高度自适应
-      flex: 1;
-      overflow: auto;
-
-      .flex-container {
-        position: static;
-      }
+    .el-table {
+      margin: 15px 0;
     }
   }
-
-  .flex-container {
-    :deep(.left-side) {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-
-      .btns {
-        display: inline-flex;
-        width: 100%;
-
-        .add {
-          width: 100%;
-        }
-      }
-
-      .search {
-        margin: 15px 0;
-      }
-
-      .tree {
-        flex: 1;
-        overflow-y: auto;
-
-        .el-tree {
-          .el-tree-node__content {
-            height: 60px;
-          }
-
-          .is-current > .el-tree-node__content {
-            background-color: var(--el-color-primary-light-9);
-          }
-
-          .custom-tree-node {
-            position: relative;
-            display: flex;
-            flex: 1;
-            flex-direction: column;
-            justify-content: center;
-            width: 0;
-            height: 100%;
-
-            .label {
-              width: calc(100% - 10px);
-              color: var(--el-text-color-primary);
-
-              @include text-overflow;
-            }
-
-            .code {
-              width: calc(100% - 10px);
-              color: var(--el-text-color-placeholder);
-
-              @include text-overflow;
-            }
-
-            &:hover {
-              .actions {
-                display: block;
-              }
-            }
-
-            .actions {
-              position: absolute;
-              top: 50%;
-              right: 10px;
-              display: none;
-              transform: translateY(-50%);
-
-              .el-button {
-                padding: 5px 8px;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    :deep(.main) {
-      display: flex;
-      justify-content: center;
-    }
-
-    .dictionary-container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-
-      .empty {
-        font-size: 32px;
-        color: var(--el-text-color-placeholder);
-        text-align: center;
-      }
-
-      .el-table {
-        margin: 15px 0;
-      }
-    }
-  }
-  </style>
+}
+</style>

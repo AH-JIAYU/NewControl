@@ -29,15 +29,10 @@ function onCancel() {
 </script>
 
 <template>
-  <div>
+  <div v-if="visible">
     <ElDialog
-      v-if="props.mode === 'dialog'"
-      v-model="visible"
-      :title="title"
-      width="80%"
-      :close-on-click-modal="false"
-      append-to-body
-      destroy-on-close
+      v-if="props.mode === 'dialog'" v-model="visible" :title="title" width="80%" :close-on-click-modal="false"
+      append-to-body destroy-on-close
     >
       <DetailForm ref="formRef" v-bind="props" @on-submit="onSubmit" />
       <template #footer>
@@ -50,12 +45,8 @@ function onCancel() {
       </template>
     </ElDialog>
     <ElDrawer
-      v-else-if="props.mode === 'drawer'"
-      v-model="visible"
-      :title="title"
-      size="80%"
-      :close-on-click-modal="false"
-      destroy-on-close
+      v-else-if="props.mode === 'drawer'" v-model="visible" :title="title" size="80%"
+      :close-on-click-modal="false" destroy-on-close
     >
       <DetailForm ref="formRef" v-bind="props" @on-submit="onSubmit" />
       <template #footer>

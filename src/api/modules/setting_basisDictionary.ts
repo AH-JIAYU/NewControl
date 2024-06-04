@@ -12,7 +12,7 @@ export default {
     id,
   }),
   // 获取字典项
-  itemList: (id: any) => api.get(`/dict/get/getDictDataSourceByDictId/${id}`),
+  itemList: (data: any) => api.post(`/dict/get/getDictDataSourceByDictId`, data),
   // 新增字典项
   itemCreate: (data: any) => api.post('/dict/insert/insertDictDataSource', data),
   // 修改字典项
