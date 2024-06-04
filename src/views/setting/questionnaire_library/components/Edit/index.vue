@@ -102,7 +102,7 @@ function onCancel() {
         <ElFormItem label="国家" prop="countryId">
           <el-select v-model="form.countryId" value-key="" placeholder="请选择国家" clearable filterable>
             <el-option
-              v-for="item in country"
+              v-for="item in country.records"
               :key="item.id"
               :label="item.chineseName"
               :value="item.id"

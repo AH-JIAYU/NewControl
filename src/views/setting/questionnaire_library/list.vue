@@ -106,8 +106,6 @@ function onCreate() {
 }
 // 编辑国家标题
 function onEdit(row: any) {
-  // console.log('row', row)
-
   data.value.editProps.id = row.id
   data.value.editProps.row = JSON.stringify(row)
   data.value.editProps.visible = true
@@ -347,7 +345,6 @@ function onDelProject(row: any) {
       :row="data.editProps.row"
       @success="getDataList"
     />
-    {{ data.formModeProps.visible }}
     <FormMode
       v-if="data.formModeProps.visible"
       :id="data.formModeProps.id"
@@ -360,17 +357,6 @@ function onDelProject(row: any) {
 </template>
 
 <style lang="scss" scoped>
-:deep {
-  // .hide-table-header {
-  //   .el-table__header-wrapper {
-  //     display: none !important;
-  //   }
-  // }
-  // .el-table__cell.el-table__expanded-cell {
-  //     padding: 0;
-  //   }
-}
-
 .absolute-container {
   position: absolute;
   display: flex;

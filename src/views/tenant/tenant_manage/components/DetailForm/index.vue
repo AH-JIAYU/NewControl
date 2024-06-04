@@ -44,21 +44,11 @@ const formRules = ref<FormRules>({
 })
 
 onMounted(async () => {
-  // if (form.value.id !== '') {
-  //   getInfo()
-  // }
   loading.value = true
   country.value = await countryStore.getCountry
   version.value = await versionStore.getVersion
   loading.value = false
-  console.log('version.value ', country.value)
 })
-// function getInfo() {
-//   loading.value = true
-//   api.detail(form.value.id).then(() => {
-//     loading.value = false
-//   })
-// }
 // 暴露
 defineExpose({
   submit() {
@@ -66,9 +56,6 @@ defineExpose({
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid) => {
           form.value.registerType = form.value.country === '343' ? 'phone' : 'email'
-          console.log('form.value', form.value)
-
-          return
           if (valid) {
             api.create(form.value).then(() => {
               ElMessage.success({
