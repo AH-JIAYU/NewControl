@@ -75,13 +75,6 @@ function getDataList() {
     pagination.value.total = res.data?.length
   })
 }
-// 分页 后端(刘)这块不好做分页，所有返回全部数据，前端做分页
-// const DataList = computed(() => {
-//   return data.value.dataList.slice(
-//     (pagination.value.page - 1) * pagination.value.size,
-//     pagination.value.page * pagination.value.size,
-//   )
-// })
 
 // 每页数量切换
 function sizeChange(size: number) {

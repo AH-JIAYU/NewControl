@@ -111,18 +111,7 @@ onBeforeMount(async () => {
     }
   }
 })
-onMounted(async () => {
-  // loadingShow({
-  //   type: 'circle-fade',
-  //   size: 50,
-  //   color: '#fff',
-  //   text: '数据加载中……',
-  // })
-  // const { data } = await api.getSurvey(props.id)
-  // creator.text = ''
-  // loadingHide()
-})
-
+// 暴露
 defineExpose({
   submit() {
     // eslint-disable-next-line no-async-promise-executor
