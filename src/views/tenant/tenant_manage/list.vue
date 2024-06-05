@@ -72,7 +72,7 @@ function getDataList() {
   data.value.loading = true
   api.list({ page: 1, limit: 10 }).then((res: any) => {
     data.value.loading = false
-    data.value.dataList = res.data.records
+    data.value.dataList = res.data
     pagination.value.total = Number.parseInt(res.data.total)
   })
 }
@@ -91,6 +91,41 @@ function sizeChange(size: number) {
 // 当前页码切换（翻页）
 function currentChange(page = 1) {
   onCurrentChange(page).then(() => getDataList())
+}
+// 导出
+async function onExport() {
+  try {
+    const { data } = await api.export({ page: 1, limit: 10, id: '', name: '', versionId: '' })
+    // 将数据转换为 Blob 对象
+    const blob = new Blob([data], { type: 'application/octet-stream' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = '租户管理.xlsx'
+    // 模拟点击下载
+    a.click()
+    // 清理工作
+    window.URL.revokeObjectURL(url)
+  }
+  catch (error) {
+    console.error('导出失败', error)
+  }
+}
+// 修改状态
+async function changeStatus(row: any) {
+  ElMessageBox.confirm(`确认将状态修改成「${row.active === 1 ? '启用' : '禁用'}」吗？`, '确认信息')
+    .then(async () => {
+      const { status } = await api.edit({ id: row.id, active: row.active })
+      status === 1
+      && ElMessage.success({
+        message: '修改「状态」成功',
+        center: true,
+      })
+      getDataList()
+    })
+    .catch(() => {
+      getDataList()
+    })
 }
 // 新增
 function onCreate() {
@@ -129,33 +164,21 @@ function onEdit(row: any) {
   }
   else {
     data.value.formModeProps.id = row.id
-    data.value.formModeProps.menulev = row.menuLevel
-    data.value.formModeProps.auths = JSON.stringify(row.auths)
+    data.value.formModeProps.row = JSON.stringify(row)
     data.value.formModeProps.visible = true
   }
 }
 // 重置密码
-function onResetPassword() {
-  // ElMessageBox.confirm(`确认将「${row.account}」的密码重置为 “123456” 吗？`, '确认信息').then(() => {
-  //   apiManager.passwordReset(row.id).then(() => {
-  //     ElMessage.success({
-  //       message: '模拟重置成功',
-  //       center: true,
-  //     })
-  //   })
-  // }).catch(() => {})
-}
-// 删除
-function onDel() {
-  // ElMessageBox.confirm(`确认删除「${row.meta.title}」吗？`, '确认信息').then(() => {
-  //   api.delete().then((res: any) => {
-  //     getDataList()
-  //     ElMessage[res.status === 1 ? 'success' : 'error']({
-  //       message: res.status === 1 ? '删除成功' : '请求失败',
-  //       center: true,
-  //     })
-  //   })
-  // }).catch(() => { })
+function onResetPassword(row: any) {
+  ElMessageBox.confirm(`确认将「${row.name}」的密码重置为 “123456” 吗？`, '确认信息').then(() => {
+    api.reset({ id: row.id }).then(() => {
+      ElMessage.success({
+        message: '重置成功',
+        center: true,
+      })
+      getDataList()
+    })
+  }).catch(() => {})
 }
 </script>
 
@@ -166,14 +189,10 @@ function onDel() {
         <template #default="{ fold, toggle }">
           <ElForm :model="data.search" size="default" label-width="100px" inline-message inline class="search-form">
             <ElFormItem>
-              <ElInput
-                v-model="data.search.title" placeholder="租户ID" clearable
-              />
+              <ElInput v-model="data.search.title" placeholder="租户ID" clearable />
             </ElFormItem>
             <ElFormItem>
-              <ElInput
-                v-model="data.search.title" placeholder="租户名称" clearable
-              />
+              <ElInput v-model="data.search.title" placeholder="租户名称" clearable />
             </ElFormItem>
             <ElFormItem>
               <el-select v-model="data.search.title" value-key="" placeholder="版本" clearable filterable />
@@ -209,7 +228,7 @@ function onDel() {
           </el-button>
         </FormLeftPanel>
         <FormRightPanel>
-          <el-button size="default">
+          <el-button size="default" @click="onExport">
             导出
           </el-button>
           <TabelControl
@@ -225,32 +244,45 @@ function onDel() {
         @selection-change="data.batch.selectionDataList = $event"
       >
         <el-table-column align="center" prop="a" show-overflow-tooltip type="selection" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="" width="80" label="租户ID" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="name" label="租户名称" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="" label="版本" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="" label="国家" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="" label="邮箱" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="" label="手机号码" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="" label="期限" />
+        <ElTableColumn show-overflow-tooltip align="center" prop="id" width="80" label="租户ID" />
+        <ElTableColumn show-overflow-tooltip align="center" prop="name" label="租户名称">
+          <template #default="{ row }">
+            {{ row.name ? row.name : '暂无数据' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip align="center" prop="version" label="版本" />
+        <ElTableColumn show-overflow-tooltip align="center" prop="countryName" label="国家">
+          <template #default="{ row }">
+            {{ row.countryName ? row.countryName : '暂无数据' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip align="center" prop="email" label="邮箱">
+          <template #default="{ row }">
+            {{ row.email ? row.email : '暂无数据' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip align="center" prop="phone" label="手机号码">
+          <template #default="{ row }">
+            {{ row.phone ? row.phone : '暂无数据' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip align="center" prop="date" label="期限" />
         <ElTableColumn align="center" show-overflow-tooltip prop="active" label="状态">
-          <ElSwitch
-            inline-prompt
-            active-text="开启"
-            inactive-text="关闭"
-            :active-value="1"
-            :inactive-value="2"
-          />
+          <template #default="{ row }">
+            <ElSwitch
+              v-model="row.active" inline-prompt active-text="开启" inactive-text="关闭" :active-value="1"
+              :inactive-value="2"
+              @change="changeStatus(row)"
+            />
+          </template>
         </ElTableColumn>
         <el-table-column align="center" prop="i" label="操作" show-overflow-tooltip width="260">
           <template #default="{ row }">
-            <el-button size="small" plain type="primary" @click="onResetPassword()">
+            <el-button size="small" plain type="primary" @click="onResetPassword(row)">
               重置密码
             </el-button>
             <el-button size="small" plain type="primary" @click="onEdit(row)">
               编辑
-            </el-button>
-            <el-button size="small" plain type="danger" @click="onDel()">
-              删除
             </el-button>
           </template>
         </el-table-column>
@@ -261,57 +293,60 @@ function onDel() {
         background @size-change="sizeChange" @current-change="currentChange"
       />
     </PageMain>
-    <FormMode v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id" v-model="data.formModeProps.visible" :mode="data.formMode" @success="getDataList" />
+    <FormMode
+      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
+      v-model="data.formModeProps.visible" :row="data.formModeProps.row" :mode="data.formMode" @success="getDataList"
+    />
   </div>
 </template>
 
-  <style lang="scss" scoped>
-  .absolute-container {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
+<style lang="scss" scoped>
+.absolute-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 
-    .page-header {
-      margin-bottom: 0;
-    }
-
-    .page-main {
-      flex: 1;
-      overflow: auto;
-
-      :deep(.main-container) {
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        overflow: auto;
-      }
-    }
+  .page-header {
+    margin-bottom: 0;
   }
 
   .page-main {
-    .search-form {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-      margin-bottom: -18px;
+    flex: 1;
+    overflow: auto;
 
-      :deep(.el-form-item) {
-        grid-column: auto / span 1;
+    :deep(.main-container) {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      overflow: auto;
+    }
+  }
+}
 
-        &:last-child {
-          grid-column-end: -1;
+.page-main {
+  .search-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    margin-bottom: -18px;
 
-          .el-form-item__content {
-            justify-content: flex-end;
-          }
+    :deep(.el-form-item) {
+      grid-column: auto / span 1;
+
+      &:last-child {
+        grid-column-end: -1;
+
+        .el-form-item__content {
+          justify-content: flex-end;
         }
       }
     }
-
-    .el-divider {
-      width: calc(100% + 40px);
-      margin-inline: -20px;
-    }
   }
+
+  .el-divider {
+    width: calc(100% + 40px);
+    margin-inline: -20px;
+  }
+}
 </style>

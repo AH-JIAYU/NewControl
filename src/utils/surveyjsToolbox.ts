@@ -28,15 +28,15 @@ export async function customComponents() {
     ),
     // await questionFun('age', '出生日期', 'text', 'placeholder', '', '', 1, 'date'),
     await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20'),
-    await questionFun('AHI', '家庭收入', 'radiogroup', 'placeholder', '4', '25', 2),
-    await questionFun('education', '教育程度', 'radiogroup', 'placeholder', '2', '23'),
-    await questionFun('marriage', '婚姻状况', 'radiogroup', 'placeholder', '3', '24'),
-    await questionFun('industry', '行业', 'radiogroup', 'placeholder', '5', '26', 2),
-    await questionFun('department', '部门', 'radiogroup', 'placeholder', '6', '27'),
-    await questionFun('title', '职位', 'radiogroup', 'placeholder', '8', '28'),
+    // await questionFun('AHI', '家庭收入', 'radiogroup', 'placeholder', '4', '25', 2),
+    // await questionFun('education', '教育程度', 'radiogroup', 'placeholder', '2', '23'),
+    // await questionFun('marriage', '婚姻状况', 'radiogroup', 'placeholder', '3', '24'),
+    // await questionFun('industry', '行业', 'radiogroup', 'placeholder', '5', '26', 2),
+    // await questionFun('department', '部门', 'radiogroup', 'placeholder', '6', '27'),
+    // await questionFun('title', '职位', 'radiogroup', 'placeholder', '8', '28'),
     // await questionFun('race', '种族', 'radiogroup', 'placeholder', '28', '21'),
-    await questionFun('size', '公司人数', 'radiogroup', 'placeholder', '9', '29', 2),
-    await questionFun('revenue', '公司年收入', 'radiogroup', 'placeholder', '10', '30'),
+    // await questionFun('size', '公司人数', 'radiogroup', 'placeholder', '9', '29', 2),
+    // await questionFun('revenue', '公司年收入', 'radiogroup', 'placeholder', '10', '30'),
   ]
 }
 export const toolType = 'c类'
@@ -96,6 +96,7 @@ async function questionFun(
   question.title.default = problemStore.country.countryId === '343' ? row.chineseName : row.englishName
   question.title['zh-cn'] = row.chineseName
   question.title.en = row.englishName
+  question.id = row.otherId
   // 左侧块(问题模板)的标题
   title = problemStore.country.countryId === '343' ? title : row.englishName
 
@@ -111,6 +112,7 @@ async function questionFun(
         it.text.default = problemStore.country.countryId === '343' ? item.chineseName : item.englishName
         it.text['zh-cn'] = item.chineseName
         it.text.en = item.englishName
+        it.text.id = item.otherId
       }
     })
   })

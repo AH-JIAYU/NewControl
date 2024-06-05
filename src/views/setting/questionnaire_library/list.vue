@@ -112,19 +112,24 @@ function onEdit(row: any) {
 }
 // 修改状态
 async function changeStatus(item: any) {
-  ElMessageBox.confirm(`确认将状态修改成「${item.status === 1 ? '启用' : '禁用'}」吗？`, '确认信息')
-    .then(async () => {
-      const { status } = await api.edit(item)
-      status === 1
-      && ElMessage.success({
-        message: '修改「状态」成功',
-        center: true,
+  try {
+    ElMessageBox.confirm(`确认将状态修改成「${item.status === 1 ? '启用' : '禁用'}」吗？`, '确认信息')
+      .then(async () => {
+        const { status } = await api.edit(item)
+        status === 1
+        && ElMessage.success({
+          message: '修改「状态」成功',
+          center: true,
+        })
+        getDataList()
       })
-      getDataList()
-    })
-    .catch(() => {
-      getDataList()
-    })
+      .catch(() => {
+        getDataList()
+      })
+  }
+  catch (error) {
+    console.error(error)
+  }
 }
 // 设计模板
 function EditSurvey(row: any) {
@@ -168,7 +173,7 @@ function onDelCountry(row: any) {
         })
       })
     })
-    .catch(() => {})
+    .catch(() => { })
 }
 // 删除标题
 function onDelProject(row: any) {
@@ -184,7 +189,7 @@ function onDelProject(row: any) {
           })
         })
     })
-    .catch(() => {})
+    .catch(() => { })
 }
 </script>
 
@@ -193,21 +198,11 @@ function onDelProject(row: any) {
     <PageMain>
       <SearchBar :show-toggle="false">
         <template #default="{ fold, toggle }">
-          <ElForm
-            :model="data.search"
-            size="default"
-            label-width="100px"
-            inline-message
-            inline
-            class="search-form"
-          >
+          <ElForm :model="data.search" size="default" label-width="100px" inline-message inline class="search-form">
             <ElFormItem label="国家">
               <ElInput
-                v-model="data.search.countryId"
-                placeholder="请输入国家，支持模糊查询"
-                clearable
-                @keydown.enter="currentChange()"
-                @clear="currentChange()"
+                v-model="data.search.countryId" placeholder="请输入国家，支持模糊查询" clearable
+                @keydown.enter="currentChange()" @clear="currentChange()"
               />
             </ElFormItem>
             <ElFormItem>
@@ -219,9 +214,7 @@ function onDelProject(row: any) {
               </ElButton>
               <ElButton link disabled @click="toggle">
                 <template #icon>
-                  <SvgIcon
-                    :name="fold ? 'i-ep:caret-bottom' : 'i-ep:caret-top'"
-                  />
+                  <SvgIcon :name="fold ? 'i-ep:caret-bottom' : 'i-ep:caret-top'" />
                 </template>
                 {{ fold ? "展开" : "收起" }}
               </ElButton>
@@ -239,14 +232,8 @@ function onDelProject(row: any) {
         </ElButton>
       </ElSpace>
       <ElTable
-        v-loading="data.loading"
-        class="my-4"
-
-        :data="data.dataList"
-        stripe highlight-current-row border
-        height="100%"
-        @sort-change="sortChange"
-        @selection-change="data.batch.selectionDataList = $event"
+        v-loading="data.loading" class="my-4" :data="data.dataList" stripe highlight-current-row border
+        height="100%" @sort-change="sortChange" @selection-change="data.batch.selectionDataList = $event"
       >
         <el-table-column type="expand" width="55">
           <template #default="{ row }">
@@ -254,55 +241,26 @@ function onDelProject(row: any) {
               <div m="4">
                 <h2>该国家下所有问卷</h2>
               </div>
-              <el-table
-                :data="row.categories"
-                highlight-current-row
-                class="hide-table-header"
-              >
+              <el-table :data="row.categories" highlight-current-row class="hide-table-header">
                 <el-table-column prop="categoryName" label="标题" />
                 <ElTableColumn prop="status" label="状态">
                   <template #default="scope">
                     <ElSwitch
-                      v-model="scope.row.status"
-                      active-text="启用"
-                      inactive-text="禁用"
-                      inline-prompt
-                      :active-value="1"
-                      :inactive-value="2"
-                      @change="changeStatus(scope.row)"
+                      v-model="scope.row.status" active-text="启用" inactive-text="禁用" inline-prompt
+                      :active-value="1" :inactive-value="2" @change="changeStatus(scope.row)"
                     />
                   </template>
                 </ElTableColumn>
                 <el-table-column prop="createTime" label="创建时间" />
-                <ElTableColumn
-                  width="250"
-                  align="center"
-                  label="操作"
-                  fixed="right"
-                >
+                <ElTableColumn width="250" align="center" label="操作" fixed="right">
                   <template #default="scope">
-                    <ElButton
-                      type="primary"
-                      size="small"
-                      plain
-                      @click="onEdit(scope.row)"
-                    >
+                    <ElButton type="primary" size="small" plain @click="onEdit(scope.row)">
                       编辑
                     </ElButton>
-                    <ElButton
-                      type="primary"
-                      size="small"
-                      plain
-                      @click="EditSurvey(scope.row)"
-                    >
+                    <ElButton type="primary" size="small" plain @click="EditSurvey(scope.row)">
                       设计问卷
                     </ElButton>
-                    <ElButton
-                      type="danger"
-                      size="small"
-                      plain
-                      @click="onDelProject(scope.row)"
-                    >
+                    <ElButton type="danger" size="small" plain @click="onDelProject(scope.row)">
                       删除
                     </ElButton>
                   </template>
@@ -314,44 +272,25 @@ function onDelProject(row: any) {
         <ElTableColumn prop="countryName" label="国家" />
         <ElTableColumn label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
-            <ElButton
-              type="danger"
-              size="small"
-              plain
-              @click="onDelCountry(scope.row)"
-            >
+            <ElButton type="danger" size="small" plain @click="onDelCountry(scope.row)">
               删除
             </ElButton>
           </template>
         </ElTableColumn>
       </ElTable>
       <ElPagination
-        :current-page="pagination.page"
-        :total="pagination.total"
-        :page-size="pagination.size"
-        :page-sizes="pagination.sizes"
-        :layout="pagination.layout"
-        :hide-on-single-page="false"
-        class="pagination"
-        background
-        @size-change="sizeChange"
-        @current-change="currentChange"
+        :current-page="pagination.page" :total="pagination.total" :page-size="pagination.size"
+        :page-sizes="pagination.sizes" :layout="pagination.layout" :hide-on-single-page="false" class="pagination"
+        background @size-change="sizeChange" @current-change="currentChange"
       />
     </PageMain>
     <Edit
-      v-if="data.editProps.visible"
-      :id="data.editProps.id"
-      v-model="data.editProps.visible"
-      :row="data.editProps.row"
-      @success="getDataList"
+      v-if="data.editProps.visible" :id="data.editProps.id" v-model="data.editProps.visible"
+      :row="data.editProps.row" @success="getDataList"
     />
     <FormMode
-      v-if="data.formModeProps.visible"
-      :id="data.formModeProps.id"
-      v-model="data.formModeProps.visible"
-      :mode="data.formMode"
-      :row="data.formModeProps.row"
-      @success="getDataList"
+      v-if="data.formModeProps.visible" :id="data.formModeProps.id" v-model="data.formModeProps.visible"
+      :mode="data.formMode" :row="data.formModeProps.row" @success="getDataList"
     />
   </div>
 </template>

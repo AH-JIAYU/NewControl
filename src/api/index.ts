@@ -34,7 +34,7 @@ api.interceptors.request.use(
 )
 
 api.interceptors.response.use(
-  (response) => {
+  (response: any) => {
     /**
      * 全局拦截请求发送后返回的数据，如果数据有报错则在这做全局的错误提示
      * 假设返回数据格式为：{ status: 1, error: '', data: '' }
@@ -42,31 +42,22 @@ api.interceptors.response.use(
      * 请求出错时 error 会返回错误信息
      */
     if (response.data.status === 1) {
-      if (response.data.error !== 'success' && response.data.error !== '') {
-      // if (response.data.error !== '' ) {
-        // 错误提示
-        Message.error(response.data.error, {
-          zIndex: 2000,
-        })
-        return Promise.reject(response.data)
-      }
+      return Promise.resolve(response.data)
     }
     else if (response.data.status === -1) {
       Message.error(response.data.error, {
         zIndex: 2000,
       })
     }
-    else if (response.data.status === 500) {
-      Message.error(response.data.message, {
+    else if (response.data.status === 0) {
+      Message.warning(response.data.error, {
         zIndex: 2000,
       })
-    }
-    else {
       useUserStore().logout()
     }
     return Promise.resolve(response.data)
   },
-  (error) => {
+  (error: any) => {
     let message = error.message
     if (message === 'Network Error') {
       message = '后端网络故障'

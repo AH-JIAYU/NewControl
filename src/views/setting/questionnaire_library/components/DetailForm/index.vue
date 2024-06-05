@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import useProblemStore from '@/store/modules/problem.ts'
 import type { FormInstance, FormRules } from 'element-plus'
 // import { loadingHide, loadingShow } from '@/components/SpinkitLoading/index' // 加载
 import { ElMessage } from 'element-plus'
-import api from '@/api/modules/setting_questionnaireLibrary'
 // import useUserStore from '@/store/modules/user'
 import 'survey-core/defaultV2.min.css'
 import 'survey-creator-core/survey-creator-core.min.css'
@@ -18,6 +16,8 @@ import { SurveyCreatorModel, editorLocalization } from 'survey-creator-core'
 import 'survey-creator-core/i18n/french'
 import 'survey-creator-core/i18n/simplified-chinese'
 import 'survey-creator-core/survey-creator-core.i18n'
+import api from '@/api/modules/setting_questionnaireLibrary'
+import useProblemStore from '@/store/modules/problem.ts'
 import {
   customComponents,
   toolType,
@@ -33,19 +33,23 @@ surveyLocalization.supportedLocales = ['en', 'fr', 'zh-cn'] // 语言可以用�
 setLicenseKey(
   'ZjU4MjI0NjMtN2YzYi00ZDMyLWEyYmEtOTliMmVhZmEyODc5OzE9MjAyNS0wMi0yNA==',
 )
+// 添加属性id
+Serializer.addProperty('question', { name: 'id' })
+Serializer.addProperty('itemvalue', { name: 'id' })
 let creator: any
+const cClassArray: any = []
 const problemStore = useProblemStore()
-// const userStore = useUserStore()
-
 const form = ref({
-  projectProblemCategoryId: Number.parseInt(props.id),
+  projectProblemCategoryId: props.id,
   problemInfoList: [], // 问卷对象 后端用
   projectJson: '', // 问卷json 前端用
 })
-
 onBeforeMount(async () => {
   if (props.id) {
     problemStore.country = JSON.parse(props.row)
+    // 接受传递的数据
+    const problem = JSON.parse(props.row)
+    // 将处理好的字典数据加到问卷中
     const res = await customComponents()
     res.forEach((component: any) => {
       // 使用Serializer.findClass来检查组件是否已注册
@@ -69,7 +73,13 @@ onBeforeMount(async () => {
     // 通过https://surveyjs.io/form-library/documentation/api-reference/question#getType 来查看工具类名称
     creator.toolbox.allowExpandMultipleCategories = true // 允许用户展开多个类别
     creator.toolbox.showCategoryTitles = true // 分类显示
-    creator.text = ''
+    creator.text = problem.projectJson || ''
+    const cClassData: any = creator.toolbox.categories.find(
+      (item: any) => item.propertyHash.name === toolType,
+    )
+    cClassData.propertyHash.items.forEach((item: any) => {
+      cClassArray.push(item.name)
+    })
     creator.saveSurveyFunc = (saveNo: number, callback: any) => {
       window.localStorage.setItem('survey-json', creator.text)
       callback(saveNo, true)
@@ -109,7 +119,7 @@ onMounted(async () => {
   //   text: '数据加载中……',
   // })
   // const { data } = await api.getSurvey(props.id)
-  creator.text = ''
+  // creator.text = ''
   // loadingHide()
 })
 
@@ -117,19 +127,30 @@ defineExpose({
   submit() {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve) => {
-      form.value.projectJson = JSON.stringify(creator.JSON)
-      const locale = creator.JSON.locale || editorLocalization.currentLocale
-      form.value.problemInfoList = await convertData(
-        creator.JSON.pages,
-        locale,
-      )
-      api.setSurvey(form.value).then(() => {
-        ElMessage.success({
-          message: '设置成功',
-          center: true,
+      try {
+        const toolboxJSON = ComponentCollection.Instance
+        const toolbox = creator.JSON
+        proces(toolbox, toolboxJSON)
+        form.value.projectJson = JSON.stringify(toolbox)
+        const locale = creator.JSON.locale || editorLocalization.currentLocale
+        form.value.problemInfoList = await convertData(
+          toolbox.pages,
+          locale,
+        )
+        api.setSurvey(form.value).then(() => {
+          ElMessage.success({
+            message: '设置成功',
+            center: true,
+          })
+          resolve()
         })
-        resolve()
-      })
+      }
+      catch (err) {
+        ElMessage({
+          message: '至少需要一条问题和答案!',
+          type: 'warning',
+        })
+      }
     })
   },
 })
@@ -139,12 +160,27 @@ const typeMap: any = {
   checkbox: 3, // 复选
   dropdown: 4, // 下拉
 }
+// 处理数据
+function proces(toolbox: any, toolboxJSON: any) {
+  toolbox.pages.forEach((item: any) => {
+    item.elements.forEach((value: any) => {
+      const data = toolboxJSON.customQuestionValues.find((ite: any) => ite.name === value.type)
+      if (data) {
+        value.tool = value.type
+        delete value.type
+        value = Object.assign(value, data.json.questionJSON)
+      }
+    })
+  })
+  toolbox.pages[0].cClass = cClassArray
+}
 // 转换数据
 function convertData(originalData: any, locale: any) {
   const transformedData = originalData.flatMap((item: any) => {
     return item.elements.map((element: any) => {
       const questionType = typeMap[element.type] || 0
       let question = element.name
+      const id = element.id || ''
       if (element.title) {
         question = element?.title.default || element?.title[locale] || element.name
       }
@@ -154,12 +190,14 @@ function convertData(originalData: any, locale: any) {
         answerInfoList = element.choices.map((choice: any) => {
           const answerValue = choice.value || choice
           let anotherName = ''
+          let id = ''
           if (typeof choice === 'object') {
             // choice为对象说明至少改了显示文本
             // choice.text为对象 说明他改变了语言或者配置了译文 改变语言choice.text里没default字段
             if (typeof choice.text === 'object') {
               // 默认为default 如果default不存在说明他一开始就切换了语言
               anotherName = choice.text.default || choice.text[locale]
+              id = choice.text.id || ''
             }
             else {
               anotherName = choice.text
@@ -171,12 +209,14 @@ function convertData(originalData: any, locale: any) {
           return {
             answerValue,
             anotherName,
+            id,
           }
         })
       }
 
       return {
         question,
+        id,
         questionType,
         answerInfoList,
       }
