@@ -3,20 +3,29 @@ import { ElForm, ElMessage } from 'element-plus'
 import api from '@/api/modules/setting_permissions'
 import useRouteStore from '@/store/modules/route'
 
-// 路由 store
+// 父级传递数据
 const props = defineProps(['id', 'path', 'keys', 'row', 'menulev'])
+// 更新数据
 const emits = defineEmits(['success'])
+// 路由 store
 const routeStore = useRouteStore()
+// 更新数据
 const success = inject<any>('success')
-const formRef = ref<any>() // form ref
+// form ref
+const formRef = ref<any>()
+// 定义表单
 const form = ref<any>({
-  menulev: props.menulev, // 父级路由等级
+  // 父级路由等级
+  menulev: props.menulev,
   keys: props.keys || [],
-  menuData: [], // 全部路由
-  choiceMenuData: [], // 展示的选择路由
+  // 全部路由
+  menuData: [],
+  // 展示的选择路由
+  choiceMenuData: [],
+  // 最后传输的数据 载荷
   queryForm: {
     id: props.id || '',
-  }, // 最后传输的数据 载荷
+  },
 })
 // 表单校验
 const formRules = ref<any>({
@@ -29,9 +38,10 @@ const formRules = ref<any>({
 const visible: any = defineModel({
   default: false,
 })
+// 标题
 const title = computed(() => (props.id === '' ? '新增权限' : '编辑权限'))
+// 路由等级  1，2级路由不需要控制按钮权限
 const munulevs = ref([
-  // 路由等级  1，2级路由不需要控制按钮权限
   {
     value: 3,
     label: '三级导航',
@@ -81,8 +91,10 @@ function rowKey(value: any) {
   const data = form.value.choiceMenuData.find(
     (item: any) => item.path === value,
   )
-  form.value.keys = data.key // 获取接口的数组
-  form.value.queryForm.menuId = data.id // 设置路由id
+  // 获取接口的数组
+  form.value.keys = data.key
+  // 设置路由id
+  form.value.queryForm.menuId = data.id
 }
 // 提交
 function onSubmit() {
@@ -95,7 +107,8 @@ function onSubmit() {
             message: '新增成功',
             center: true,
           })
-          emits('success') // 新增时 是通过list.value 打开的直接调用父传子的方法
+          // 新增时 是通过list.value 打开的直接调用父传子的方法
+          emits('success')
           onCancel()
         })
       }
@@ -110,7 +123,8 @@ function onSubmit() {
             message: '编辑成功',
             center: true,
           })
-          success() // 新增时 祖先通信 通过provide和inject
+          // 新增时 祖先通信 通过provide和inject
+          success()
           onCancel()
         })
       }
@@ -122,11 +136,13 @@ onMounted(async () => {
   if (form.value.queryForm.id !== '') {
     form.value.queryForm = JSON.parse(props.row)
   }
-  form.value.menuData = routeStore.routesRaw // 从store获取原始路由
+  // 从store获取原始路由
+  form.value.menuData = routeStore.routesRaw
+  // 筛选路由
   form.value.choiceMenuData = findItemsByLevel(
     form.value.menuData,
     form.value.menulev,
-  ) // 筛选路由
+  )
 })
 // 关闭弹框
 function onCancel() {

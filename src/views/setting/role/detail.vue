@@ -6,12 +6,11 @@ import useSettingsStore from '@/store/modules/settings'
 defineOptions({
   name: 'SettingRoleDetail',
 })
-
+// 路由
 const route = useRoute()
 const router = useRouter()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
-
 const formRef = ref()
 // 提交
 function onSubmit() {

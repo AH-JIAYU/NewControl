@@ -67,6 +67,7 @@ function getDictionaryList() {
 onMounted(() => {
   getDictionaryList()
 })
+// 监听数据
 watch(() => dictionary.value.search, (val) => {
   dictionaryRef.value!.filter(val)
 })

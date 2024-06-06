@@ -41,7 +41,6 @@ function getDataList() {
     data.value.dataList = res.data
   })
 }
-
 // 添加id赋值给parentId
 function onCreate(row?: any) {
   data.value.formModeProps.id = '' // 添加时不应有id 组件里 prop为只读 通过父置空id

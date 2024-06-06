@@ -133,17 +133,14 @@ function getDictionaryItemList() {
     pagination.value.total = Number.parseInt(res.data.total)
   })
 }
-
 // 每页数量切换
 function sizeChange(size: number) {
   onSizeChange(size).then(() => getDictionaryItemList())
 }
-
 // 当前页码切换（翻页）
 function currentChange(page = 1) {
   onCurrentChange(page).then(() => getDictionaryItemList())
 }
-
 // 字段排序
 function sortChange({ prop, order }: { prop: string, order: string }) {
   onSortChange(prop, order).then(() => getDictionaryItemList())

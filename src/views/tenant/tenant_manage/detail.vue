@@ -6,26 +6,25 @@ import useSettingsStore from '@/store/modules/settings'
 defineOptions({
   name: 'TenantTenantManageDetail',
 })
-
+// 路由
 const route = useRoute()
 const router = useRouter()
 const tabbar = useTabbar()
-
 const settingsStore = useSettingsStore()
-
+// form ref
 const formRef = ref()
 
+// 提交数据
 function onSubmit() {
   formRef.value.submit().then(() => {
     eventBus.emit('get-data-list')
     goBack()
   })
 }
-
+// 关闭弹框
 function onCancel() {
   goBack()
 }
-
 // 返回列表页
 function goBack() {
   if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {

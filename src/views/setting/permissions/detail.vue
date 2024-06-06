@@ -8,6 +8,7 @@ defineOptions({
 })
 
 const route = useRoute()
+// 路由
 const router = useRouter()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
@@ -23,7 +24,6 @@ function onSubmit() {
 function onCancel() {
   goBack()
 }
-
 // 返回列表页
 function goBack() {
   if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {

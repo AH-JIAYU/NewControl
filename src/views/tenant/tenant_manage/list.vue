@@ -9,17 +9,21 @@ import { onMounted, ref } from 'vue'
 import FormMode from './components/FormMode/index.vue'
 import api from '@/api/modules/tenant_tenantManage'
 import useSettingsStore from '@/store/modules/settings'
+import useVersionStore from '@/store/modules/version'
 
 defineOptions({
   name: 'SurveyBillManagementList',
 })
-
+// 路由
 const router = useRouter()
+// 版本
+const versionStore = useVersionStore()
+// 查询版本
+const version = ref()
 // 分页配置
 const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
-
 // 表格控件-展示列
 const columns = ref([
   // 表格控件-展示列
@@ -27,16 +31,23 @@ const columns = ref([
     label: '等级名称',
     prop: 'a',
     sortable: true,
-    disableCheck: false, // 不可更改
-    checked: true, // 默认展示
+    // 不可更改
+    disableCheck: false,
+    // 默认展示
+    checked: true,
   },
 ])
+// 定义数据
 const data = ref<any>({
   loading: false,
-  tableAutoHeight: false, // 表格是否自适应高度
-  border: true, // 表格控件-是否展示边框
-  stripe: false, // 表格控件-是否展示斑马条
-  lineHeight: 'default', // 表格控件-控制表格大小
+  // 表格是否自适应高度
+  tableAutoHeight: false,
+  // 表格控件-是否展示边框
+  border: true,
+  // 表格控件-是否展示斑马条
+  stripe: false,
+  // 表格控件-控制表格大小
+  lineHeight: 'default',
   checkList: [],
   /**
    * 详情展示模式
@@ -53,7 +64,11 @@ const data = ref<any>({
   },
   // 搜索
   search: {
-    title: '',
+    page: 1,
+    limit: 10,
+    version: '',
+    name: '',
+    id: '',
   },
   // 批量操作
   batch: {
@@ -68,9 +83,19 @@ onMounted(() => {
   getDataList()
 })
 // 获取数据
-function getDataList() {
+async function getDataList() {
   data.value.loading = true
+  version.value = await versionStore.getVersion
   api.list({ page: 1, limit: 10 }).then((res: any) => {
+    data.value.loading = false
+    data.value.dataList = res.data.result
+    pagination.value.total = Number.parseInt(res.data.total)
+  })
+}
+// 查询
+function queryData() {
+  data.value.loading = true
+  api.list(data.value.search).then((res: any) => {
     data.value.loading = false
     data.value.dataList = res.data
     pagination.value.total = Number.parseInt(res.data.total)
@@ -79,7 +104,11 @@ function getDataList() {
 // 重置筛选数据
 function onReset() {
   Object.assign(data.value.search, {
-    title: '',
+    page: 1,
+    limit: 10,
+    version: '',
+    name: '',
+    id: '',
   })
   getDataList()
 }
@@ -87,7 +116,6 @@ function onReset() {
 function sizeChange(size: number) {
   onSizeChange(size).then(() => getDataList())
 }
-
 // 当前页码切换（翻页）
 function currentChange(page = 1) {
   onCurrentChange(page).then(() => getDataList())
@@ -115,7 +143,7 @@ async function onExport() {
 async function changeStatus(row: any) {
   ElMessageBox.confirm(`确认将状态修改成「${row.active === 1 ? '启用' : '禁用'}」吗？`, '确认信息')
     .then(async () => {
-      const { status } = await api.edit({ id: row.id, active: row.active })
+      const { status } = await api.edit({ id: row.id, active: row.active, phone: row.phone, email: row.email })
       status === 1
       && ElMessage.success({
         message: '修改「状态」成功',
@@ -144,9 +172,12 @@ function onEdit(row: any) {
         name: 'multilevel_menu_examplePermissionsEdit',
         params: {
           id: row.id,
-          menulev: row.menuLevel, // 回显菜单等级
-          path: row.path, // 回显菜单
-          auths: JSON.stringify(row.auths), // 回显权限
+          // 回显菜单等级
+          menulev: row.menuLevel,
+          // 回显菜单
+          path: row.path,
+          // 回显权限
+          auths: JSON.stringify(row.auths),
         },
       })
     }
@@ -155,9 +186,12 @@ function onEdit(row: any) {
         name: 'multilevel_menu_examplePermissionsEdit',
         params: {
           id: row.id,
-          menulev: row.menuLevel, // 回显菜单等级
-          path: row.path, // 回显菜单
-          auths: JSON.stringify(row.auths), // 回显权限
+          // 回显菜单等级
+          menulev: row.menuLevel,
+          // 回显菜单
+          path: row.path,
+          // 回显权限
+          auths: JSON.stringify(row.auths),
         },
       })
     }
@@ -189,16 +223,18 @@ function onResetPassword(row: any) {
         <template #default="{ fold, toggle }">
           <ElForm :model="data.search" size="default" label-width="100px" inline-message inline class="search-form">
             <ElFormItem>
-              <ElInput v-model="data.search.title" placeholder="租户ID" clearable />
+              <ElInput v-model="data.search.id" placeholder="租户ID" clearable />
             </ElFormItem>
             <ElFormItem>
-              <ElInput v-model="data.search.title" placeholder="租户名称" clearable />
+              <ElInput v-model="data.search.name" placeholder="租户名称" clearable />
             </ElFormItem>
             <ElFormItem>
-              <el-select v-model="data.search.title" value-key="" placeholder="版本" clearable filterable />
+              <el-select v-model="data.search.version" placeholder="请选择版本">
+                <el-option v-for="item in version" :key="item.id" :label="item.name" :value="item.code" />
+              </el-select>
             </ElFormItem>
             <ElFormItem>
-              <ElButton type="primary" @click="currentChange()">
+              <ElButton type="primary" @click="queryData()">
                 <template #icon>
                   <SvgIcon name="i-ep:search" />
                 </template>
@@ -245,9 +281,19 @@ function onResetPassword(row: any) {
       >
         <el-table-column align="center" prop="a" show-overflow-tooltip type="selection" />
         <ElTableColumn show-overflow-tooltip align="center" prop="id" width="80" label="租户ID" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="name" label="租户名称">
+        <ElTableColumn show-overflow-tooltip align="center" prop="companyType" label="账户类型">
+          <template #default="{ row }">
+            {{ row.companyType ? row.companyType : '暂无数据' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip align="center" prop="name" label="用户名">
           <template #default="{ row }">
             {{ row.name ? row.name : '暂无数据' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip align="center" prop="companyName" label="公司名称">
+          <template #default="{ row }">
+            {{ row.companyName ? row.companyName : '暂无数据' }}
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip align="center" prop="version" label="版本" />
@@ -276,7 +322,8 @@ function onResetPassword(row: any) {
             />
           </template>
         </ElTableColumn>
-        <el-table-column align="center" prop="i" label="操作" show-overflow-tooltip width="260">
+        <ElTableColumn show-overflow-tooltip align="center" prop="registerFrom" label="租户来源" />
+        <el-table-column align="center" prop="i" label="操作" show-overflow-tooltip width="180">
           <template #default="{ row }">
             <el-button size="small" plain type="primary" @click="onResetPassword(row)">
               重置密码

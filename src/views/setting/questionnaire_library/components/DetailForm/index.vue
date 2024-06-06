@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import type { FormInstance, FormRules } from 'element-plus'
-// import { loadingHide, loadingShow } from '@/components/SpinkitLoading/index' // 加载
 import { ElMessage } from 'element-plus'
-// import useUserStore from '@/store/modules/user'
 import 'survey-core/defaultV2.min.css'
 import 'survey-creator-core/survey-creator-core.min.css'
 import {
@@ -24,11 +21,15 @@ import {
   tooltoxcategory,
 } from '@/utils/surveyjsToolbox'
 
+// 父级传递数据
 const props = defineProps(['id', 'row'])
+// 更新
 const emits = defineEmits(['onSubmit'])
+// 加载
 const loading = ref(true)
 editorLocalization.currentLocale = 'zh-cn'
-surveyLocalization.supportedLocales = ['en', 'fr', 'zh-cn'] // 语言可以用字典接口的语言
+// 语言可以用字典接口的语言
+surveyLocalization.supportedLocales = ['en', 'fr', 'zh-cn']
 
 setLicenseKey(
   'ZjU4MjI0NjMtN2YzYi00ZDMyLWEyYmEtOTliMmVhZmEyODc5OzE9MjAyNS0wMi0yNA==',
@@ -39,10 +40,13 @@ Serializer.addProperty('itemvalue', { name: 'id' })
 let creator: any
 const cClassArray: any = []
 const problemStore = useProblemStore()
+// 定义问卷字段
 const form = ref({
   projectProblemCategoryId: props.id,
-  problemInfoList: [], // 问卷对象 后端用
-  projectJson: '', // 问卷json 前端用
+  // 问卷对象 后端用
+  problemInfoList: [],
+  // 问卷json 前端用
+  projectJson: '',
 })
 onBeforeMount(async () => {
   if (props.id) {
@@ -119,13 +123,17 @@ defineExpose({
       try {
         const toolboxJSON = ComponentCollection.Instance
         const toolbox = creator.JSON
+        // 处理数据
         proces(toolbox, toolboxJSON)
+        // 赋值JSON
         form.value.projectJson = JSON.stringify(toolbox)
         const locale = creator.JSON.locale || editorLocalization.currentLocale
+        // 将处理好的数据赋值
         form.value.problemInfoList = await convertData(
           toolbox.pages,
           locale,
         )
+        // 请求接口
         api.setSurvey(form.value).then(() => {
           ElMessage.success({
             message: '设置成功',
@@ -135,6 +143,7 @@ defineExpose({
         })
       }
       catch (err) {
+        // 如果没有选择问题提示
         ElMessage({
           message: '至少需要一条问题和答案!',
           type: 'warning',
@@ -144,10 +153,14 @@ defineExpose({
   },
 })
 const typeMap: any = {
-  text: 1, // 输入框
-  radiogroup: 2, // 单选
-  checkbox: 3, // 复选
-  dropdown: 4, // 下拉
+  // 输入框
+  text: 1,
+  // 单选
+  radiogroup: 2,
+  // 复选
+  checkbox: 3,
+  // 下拉
+  dropdown: 4,
 }
 // 处理数据
 function proces(toolbox: any, toolboxJSON: any) {

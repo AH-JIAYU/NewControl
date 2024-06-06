@@ -7,11 +7,13 @@ const props = defineProps(['mode', 'id', 'auths', 'menulev'])
 const visible = defineModel<boolean>({
   default: false,
 })
+// form ref
 const formRef = ref()
 // 标题
 const title = computed(() =>
   props.id === '' ? '新增权限管理' : '编辑权限管理',
 )
+
 // 提交
 function onSubmit() {
   onCancel()

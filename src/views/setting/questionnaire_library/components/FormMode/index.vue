@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DetailFormProps } from '../../types'
 import DetailForm from '../DetailForm/index.vue'
+
 // 父级传递数据
 const props = defineProps(['id', 'row', 'mode'])
 // 更新

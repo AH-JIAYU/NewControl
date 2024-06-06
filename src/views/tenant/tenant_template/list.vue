@@ -18,18 +18,27 @@ const columns = ref([
     label: '等级名称',
     prop: 'a',
     sortable: true,
-    disableCheck: false, // 不可更改
-    checked: true, // 默认展示
+    // 不可更改
+    disableCheck: false,
+    // 默认展示
+    checked: true,
   },
 ])
+// ref
 const detailRef = ref()
 const editRef = ref()
+// 定义数据
 const data = ref<any>({
+  // 加载
   loading: false,
-  tableAutoHeight: false, // 表格是否自适应高度
-  border: true, // 表格控件-是否展示边框
-  stripe: false, // 表格控件-是否展示斑马条
-  lineHeight: 'default', // 表格控件-控制表格大小
+  // 表格是否自适应高度
+  tableAutoHeight: false,
+  // 表格控件-是否展示边框
+  border: true,
+  // 表格控件-是否展示斑马条
+  stripe: false,
+  // 表格控件-控制表格大小
+  lineHeight: 'default',
   checkList: [],
   /**
    * 详情展示模式

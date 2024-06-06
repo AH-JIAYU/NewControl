@@ -13,6 +13,7 @@ defineOptions({
 })
 
 const route = useRoute()
+// 路由
 const router = useRouter()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()

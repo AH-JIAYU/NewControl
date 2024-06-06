@@ -4,9 +4,13 @@ import type { FormRules } from 'element-plus'
 import { ref } from 'vue'
 import api from '@/api/modules/tenant_tenantTemplate'
 
+// 更新
 const emit = defineEmits(['success'])
+// form ref
 const formRef = ref()
+// 弹框开关
 const dialogFormVisible = ref()
+// 定义表单数据
 const form = ref<any>({
   name: '',
   title: '',

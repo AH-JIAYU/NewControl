@@ -15,7 +15,6 @@ const formRef = ref()
 const title = computed(() => props.id === '' ? '新增角色' : '编辑角色')
 // 提交数据
 async function onSubmit() {
-  // // submit() 为组件内部方法
   formRef.value.submit().then(() => {
     emits('success')
     onCancel()

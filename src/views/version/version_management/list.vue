@@ -9,13 +9,14 @@ import useSettingsStore from '@/store/modules/settings'
 defineOptions({
   name: 'VersionVersionManagementList',
 })
-
+// 路由
 const router = useRouter()
 // 分页配置
 const { pagination, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
 const detailRef = ref()
+// 定义数据
 const data = ref({
   loading: false,
   // 表格是否自适应高度

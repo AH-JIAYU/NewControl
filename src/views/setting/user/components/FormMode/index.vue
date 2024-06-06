@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import DetailForm from '../DetailForm/index.vue'
+
 // 父级传递数据
 const props = defineProps(['id', 'mode', 'row'])
-
+// 更新
 const emits = defineEmits<{
   success: []
 }>()

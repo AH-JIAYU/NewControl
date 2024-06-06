@@ -3,12 +3,16 @@ import { ElForm, ElMessage } from 'element-plus'
 import api from '@/api/modules/setting_user'
 import useRoleStore from '@/store/modules/role'
 
-// 路由 store
+// 父级传递数据
 const props = defineProps(['id', 'row'])
+// 更新
 const emits = defineEmits(['success'])
+// 路由 store
 const roleStore = useRoleStore()
-const loading = ref()
-const formRef = ref<any>() // form ref
+// 加载
+const loading = ref(false)
+// form ref
+const formRef = ref<any>()
 // 表单
 const form = ref<any>({
   id: props.row.id,
@@ -19,12 +23,14 @@ const form = ref<any>({
 const formRules = ref<any>({
   role: [{ required: true, message: '请选择角色码', trigger: 'blur' }],
 })
+// 路由
 const munulevs = ref()
 // 弹窗
 const visible: any = defineModel({
   default: false,
 })
 form.value.account = props.row.account
+// 标题
 const title = '分配角色'
 // 提交
 function onSubmit() {
@@ -36,7 +42,8 @@ function onSubmit() {
             message: res.status === 1 ? '角色赋予成功' : '接口异常',
             center: true,
           })
-          emits('success') // 新增时 是通过list.value 打开的直接调用父传子的方法
+          // 新增时 是通过list.value 打开的直接调用父传子的方法
+          emits('success')
           onCancel()
         })
       }
@@ -46,7 +53,8 @@ function onSubmit() {
 
 onMounted(async () => {
   loading.value = true
-  munulevs.value = await roleStore.getRole // 从store获取原始路由
+  // 从store获取原始路由
+  munulevs.value = await roleStore.getRole
   loading.value = false
 })
 // 关闭弹框

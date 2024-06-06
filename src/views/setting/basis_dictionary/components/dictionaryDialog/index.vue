@@ -64,7 +64,6 @@ function formatTree(tree: any[], id: string | number, childrenDisabled = false) 
 }
 // 树形数据
 const myTree = computed(() => formatTree(props.tree, props.id))
-
 const formRef = ref<FormInstance>()
 // 表单
 const form = ref({

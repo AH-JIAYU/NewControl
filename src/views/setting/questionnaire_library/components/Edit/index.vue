@@ -1,21 +1,24 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import type { DetailFormProps } from '../../types'
 import api from '@/api/modules/setting_questionnaireLibrary'
 import useCountryStore from '@/store/modules/country'
+
 // 父级传递数据
 const props = defineProps(['id', 'row'])
 // 更新
 const emits = defineEmits<{
   success: []
 }>()
+// 国家
 const countryStore = useCountryStore()
 // 关闭弹框
 const visible = defineModel<boolean>({
   default: false,
 })
+// 存国家数据
 const country = ref<any>([])
 const formRef = ref<any>()
+// 定义表单
 const form = ref<any>({
   categoryName: '',
   countryId: null,
@@ -27,11 +30,13 @@ const formRules = ref<any>({
   countryId: [{ required: true, message: '请选择国家', trigger: 'blur' }],
 })
 onMounted(async () => {
+  // 获取国家数据
   country.value = await countryStore.getCountry
 })
 const title = computed(() => {
+  // 默认form为空
   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-  form.value = {} // 默认form为空
+  form.value = {}
   // 有id form为row
   if (props.id) {
     // eslint-disable-next-line vue/no-side-effects-in-computed-properties

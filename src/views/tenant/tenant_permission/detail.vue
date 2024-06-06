@@ -6,12 +6,14 @@ import useSettingsStore from '@/store/modules/settings'
 defineOptions({
   name: 'SettingPermissionsDetail',
 })
-
 const route = useRoute()
+// 路由
 const router = useRouter()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
+// form ref
 const formRef = ref()
+
 // 提交
 function onSubmit() {
   formRef.value.submit().then(() => {
@@ -23,7 +25,6 @@ function onSubmit() {
 function onCancel() {
   goBack()
 }
-
 // 返回列表页
 function goBack() {
   if (settingsStore.settings.tabbar.enable && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu') {

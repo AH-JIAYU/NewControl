@@ -6,26 +6,23 @@ import useSettingsStore from '@/store/modules/settings'
 defineOptions({
   name: 'SettingQuestionnaireLibraryDetail',
 })
-
+// 路由
 const route = useRoute()
 const router = useRouter()
 const tabbar = useTabbar()
-
 const settingsStore = useSettingsStore()
-
 const formRef = ref()
-
+// 提交
 function onSubmit() {
   formRef.value.submit().then(() => {
     eventBus.emit('get-data-list')
     goBack()
   })
 }
-
+// 取消
 function onCancel() {
   goBack()
 }
-
 // 返回列表页
 function goBack() {
   if (

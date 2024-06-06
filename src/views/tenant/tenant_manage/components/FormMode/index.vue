@@ -3,19 +3,19 @@ import DetailForm from '../DetailForm/index.vue'
 
 // 父级传递数据
 const props = defineProps(['id', 'row', 'mode'])
-
+// 更新
 const emits = defineEmits<{
   success: []
 }>()
-
+// 弹框开关
 const visible = defineModel<boolean>({
   default: false,
 })
-
+// form ref
 const formRef = ref()
-
+// 标题
 const title = computed(() => props.id === '' ? '新增租户' : '编辑租户')
-
+// 提交数据
 function onSubmit() {
   // submit() 为组件内部方法
   formRef.value.submit().then(() => {
@@ -23,7 +23,7 @@ function onSubmit() {
     onCancel()
   })
 }
-
+// 关闭弹框
 function onCancel() {
   visible.value = false
 }

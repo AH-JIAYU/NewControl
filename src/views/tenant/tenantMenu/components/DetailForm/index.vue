@@ -15,13 +15,20 @@ defineOptions({
 })
 // 获取父级数据
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
-const tenantMenuStore = usetenantMenuStore() // 路由 store
+// 租户路由 store
+const tenantMenuStore = usetenantMenuStore()
+// 加载
 const loading = ref(false)
+// form ref
 const formRef = ref<FormInstance>()
-const showParent = ref<any>(false) // 是否显示父级id
-const list = ref() // 导航列表
-const choiceMenuData = ref<any>([]) // 展示的选择路由
-const munulevs = ref([// 路由等级
+// 是否显示父级id
+const showParent = ref<any>(false)
+// 导航列表
+const list = ref()
+// 展示的选择路由
+const choiceMenuData = ref<any>([])
+// 路由等级
+const munulevs = ref([
   {
     value: 1,
     label: '一级导航',
@@ -37,8 +44,11 @@ const munulevs = ref([// 路由等级
     value: 4,
     label: '内置页面',
   }])
-const inputTag = ref('') // tag的输入框绑定的值
-const inputVisible = ref(false) // tag新增输入框显隐
+// tag的输入框绑定的值
+const inputTag = ref('')
+// tag新增输入框显隐
+const inputVisible = ref(false)
+// 定义数据
 const form = ref<any>({
   id: props.id ?? '',
   parentId: props.parentId ?? '',
@@ -70,7 +80,9 @@ const form = ref<any>({
     paddingBottom: '0px',
   },
 })
-const InputRef = ref<any>() // tag 添加输入框ref
+
+// tag 添加输入框ref
+const InputRef = ref<any>()
 // tag
 function handleClose(tag: string) {
   form.value.key.splice(form.value.key.indexOf(tag), 1)
@@ -138,8 +150,10 @@ function selectparentid(menuLevel: any) {
 }
 
 onMounted(async () => {
-  list.value = await tenantMenuStore.gettenantMenu // 从store获取原始路由
-  choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel) // 根据路由等级 筛选路由
+  // 从store获取原始路由
+  list.value = await tenantMenuStore.gettenantMenu
+  // 根据路由等级 筛选路由
+  choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel)
   // 第一次进入时id和parentid都为空时 显示父级导航
   showParent.value = !!(!form.value.id && !form.value.parentId)
   if (form.value.id !== '') {
@@ -213,7 +227,8 @@ defineExpose({
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
-            form.value.menuLevel = Number(form.value.menuLevel) + 1 // 菜单等级自增一
+            // 菜单等级自增一
+            form.value.menuLevel = Number(form.value.menuLevel) + 1
             apiMenu.create(form.value).then(() => {
               ElMessage.success({
                 message: '新增成功',

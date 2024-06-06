@@ -4,9 +4,13 @@ import { ref } from 'vue'
 defineOptions({
   name: 'Edit',
 })
+// 分页配置
 const { pagination, onSizeChange, onCurrentChange } = usePagination()
+// tabs默认选中
 const activeName = ref('first')
+// 加载
 const loading = ref(false)
+
 const data = [
   { id: 1, name: 'admin' },
   { id: 12, name: 'admin' },
@@ -38,7 +42,6 @@ function currentChange(page = 1) {
 function closeHandler() {
   // 移除校验
   // formRef.value.resetFields()
-
   // delete formData.id
   // // 重置表单
   // Object.assign(formData, defaultState)

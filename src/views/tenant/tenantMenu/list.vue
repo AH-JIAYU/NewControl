@@ -13,8 +13,11 @@ import usetenantMenuStore from '@/store/modules/tenantMenu'
 defineOptions({
   name: 'TenantMenuList',
 })
-const tenantMenuStore = usetenantMenuStore() // 路由 store
+// 租户路由 store
+const tenantMenuStore = usetenantMenuStore()
+// 定义数据
 const data = ref<any>({
+  // 加载
   loading: false,
   // 表格是否自适应高度
   tableAutoHeight: true,
@@ -35,7 +38,8 @@ onMounted(() => {
 function getDataList() {
   data.value.loading = true
   apiMenu.list({ type: 'normal' }).then((res: any) => {
-    tenantMenuStore.tenantMenu = res.data // 更新store
+    // 更新store
+    tenantMenuStore.tenantMenu = res.data
     data.value.loading = false
     data.value.dataList = res.data
   })
@@ -43,17 +47,22 @@ function getDataList() {
 
 // 添加id赋值给parentId
 function onCreate(row?: any) {
-  data.value.formModeProps.id = '' // 添加时不应有id 组件里 prop为只读 通过父置空id
+  // 添加时不应有id 组件里 prop为只读 通过父置空id
+  data.value.formModeProps.id = ''
   data.value.formModeProps.parentId = row.id ?? ''
-  data.value.formModeProps.menuLevel = row.menuLevel ?? '' // 菜单等级 传当前值 走添加接口前自增1
+  // 菜单等级 传当前值 走添加接口前自增1
+  data.value.formModeProps.menuLevel = row.menuLevel ?? ''
   data.value.formModeProps.visible = true
 }
 // 编辑时id赋值给id 通过id请求 parentId
 function onEdit(row: any) {
   data.value.formModeProps.id = row.id ?? ''
-  data.value.formModeProps.menuLevel = row.menuLevel - 1 // 传路由等级 编辑时回显路由
-  data.value.formModeProps.row = JSON.stringify(row) // 修改时给整个对象传过去
-  data.value.formModeProps.parentId = row.parentId ?? '' // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
+  // 传路由等级 编辑时回显路由
+  data.value.formModeProps.menuLevel = row.menuLevel - 1
+  // 修改时给整个对象传过去
+  data.value.formModeProps.row = JSON.stringify(row)
+  // 添加时不应有parentId 组件里 prop为只读 通过父置空parentId
+  data.value.formModeProps.parentId = row.parentId ?? ''
   data.value.formModeProps.visible = true
 }
 // 删除

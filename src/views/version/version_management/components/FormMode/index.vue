@@ -4,17 +4,14 @@ import DetailForm from '../DetailForm/index.vue'
 // 父级传递数据
 const props = defineProps(['id', 'row', 'mode'])
 // 更新
-const emits = defineEmits<{
-  success: []
-}>()
+const emits = defineEmits<{ success: [] }>()
 // 弹框
-const visible = defineModel<boolean>({
-  default: false,
-})
-
+const visible = defineModel<boolean>({ default: false })
+// form ref
 const formRef = ref()
 // 标题
 const title = computed(() => props.id === '' ? '新增版本' : '编辑版本')
+
 // 提交
 function onSubmit() {
   // submit() 为组件内部方法

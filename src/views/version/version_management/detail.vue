@@ -6,13 +6,15 @@ import useSettingsStore from '@/store/modules/settings'
 defineOptions({
   name: 'SettingVersionManagementDetail',
 })
-
+// 路由
 const route = useRoute()
 const router = useRouter()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
+// form ref
 const formRef = ref()
 // 提交
+
 function onSubmit() {
   formRef.value.submit().then(() => {
     eventBus.emit('get-data-list')

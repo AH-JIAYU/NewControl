@@ -8,12 +8,13 @@ import useSettingsStore from '@/store/modules/settings'
 defineOptions({
   name: 'SettingRoleList',
 })
-
+// 路由
 const router = useRouter()
+// 分页
 const { pagination, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
-
+// 定义表单
 const data = ref({
   loading: false,
   // 表格是否自适应高度

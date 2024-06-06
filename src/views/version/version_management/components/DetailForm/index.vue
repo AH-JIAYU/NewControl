@@ -7,22 +7,37 @@ import useTenantButtonPermissionStore from '@/store/modules/tenantButtonPermissi
 
 // 父级传递数据
 const props = defineProps(['id', 'row'])
-const tenantMenuStore = usetenantMenuStore() // 路由 store
-const tenantButtonPer = useTenantButtonPermissionStore() // 按钮权限store
+// 租户路由 store
+const tenantMenuStore = usetenantMenuStore()
+// 按钮权限store
+const tenantButtonPer = useTenantButtonPermissionStore()
+// 加载
 const loading = ref(false)
+// form ref
 const formRef = ref<FormInstance>()
-const treeRef = ref<any>() // tree ref
-const menuData = ref<any>([]) // 路由
-const permissionData = ref<any>([]) // 权限
+// tree ref
+const treeRef = ref<any>()
+// 路由
+const menuData = ref<any>([])
+// 权限
+const permissionData = ref<any>([])
+// 传入数据
 const settingData = ref<any>([])
+// 定义数据
 const form = ref<any>({
   id: props.id,
-  name: '', // 版本名称
-  code: '', // 版本编码
-  remark: '', // 备注
-  expirationTime: null, // 备注
-  versionMenuId: [], // 菜单id
-  versionButtonId: [], // 按钮id
+  // 版本名称
+  name: '',
+  // 版本编码
+  code: '',
+  // 备注
+  remark: '',
+  // 到期时间
+  expirationTime: null,
+  // 菜单id
+  versionMenuId: [],
+  // 按钮id
+  versionButtonId: [],
 })
 // 校验
 const formRules = ref<FormRules>({
@@ -38,13 +53,16 @@ onMounted(async () => {
   if (form.value.id !== '') {
     await getInfo()
   }
-  menuData.value = await tenantMenuStore.gettenantMenu // 从store获取原始路由
-  permissionData.value = await tenantButtonPer.getTenantPermissions // 调用store的方法获取按钮权限，如果没有就调接口
+  loading.value = true
+  // 从store获取原始路由
+  menuData.value = await tenantMenuStore.gettenantMenu
+  // 调用store的方法获取按钮权限，如果没有就调接口
+  permissionData.value = await tenantButtonPer.getTenantPermissions
   loading.value = false
 })
 
-// 获取
-async function getInfo() { // 编辑时获取该id的具体数据
+// 编辑时获取该id的具体数据
+async function getInfo() {
   loading.value = true
   settingData.value = JSON.parse(props.row)
   form.value.name = settingData.value.name
@@ -77,8 +95,10 @@ function rowPermission(permissionID: any) {
 
 // 暴露
 defineExpose({
+  // 提交
   submit() {
-    form.value.versionMenuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
+    // 同步选中的路由id
+    form.value.versionMenuId = treeRef.value!.getCheckedKeys(false)
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
         delete form.value.id

@@ -14,10 +14,10 @@ import apiUser from '@/api/modules/setting_user'
 defineOptions({
   name: 'SettingUserList',
 })
-
+// 分页
 const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 const tabbar = useTabbar()
-
+// 定义表单
 const data = ref({
   loading: false,
   // 表格是否自适应高度
@@ -91,17 +91,14 @@ function onReset() {
   })
   getDataList()
 }
-
 // 每页数量切换
 function sizeChange(size: number) {
   onSizeChange(size).then(() => getDataList())
 }
-
 // 当前页码切换（翻页）
 function currentChange(page = 1) {
   onCurrentChange(page).then(() => getDataList())
 }
-
 // 字段排序
 function sortChange({ prop, order }: { prop: string, order: string }) {
   onSortChange(prop, order).then(() => getDataList())

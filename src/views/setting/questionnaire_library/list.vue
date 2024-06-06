@@ -10,12 +10,15 @@ import useProblemStore from '@/store/modules/problem.ts'
 defineOptions({
   name: 'SettingQuestionnaireLibraryList',
 })
+// 问题
 const problemStore = useProblemStore()
+// 路由
 const router = useRouter()
+// 分页
 const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
-
+// 定义表单
 const data = ref({
   loading: false,
   // 表格是否自适应高度
@@ -75,22 +78,18 @@ function getDataList() {
     pagination.value.total = res.data?.length
   })
 }
-
 // 每页数量切换
 function sizeChange(size: number) {
   onSizeChange(size)
 }
-
 // 当前页码切换（翻页）
 function currentChange(page = 1) {
   onCurrentChange(page)
 }
-
 // 字段排序
 function sortChange({ prop, order }: { prop: string, order: string }) {
   onSortChange(prop, order)
 }
-
 // 添加国家标题
 function onCreate() {
   data.value.editProps.id = ''
@@ -225,7 +224,7 @@ function onDelProject(row: any) {
         </ElButton>
       </ElSpace>
       <ElTable
-        v-loading="data.loading" class="my-4" :data="data.dataList" stripe highlight-current-row border
+        v-loading="data.loading" class="my-4" :data="data.dataList" highlight-current-row stripe border
         height="100%" @sort-change="sortChange" @selection-change="data.batch.selectionDataList = $event"
       >
         <el-table-column type="expand" width="55">

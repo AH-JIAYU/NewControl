@@ -2,19 +2,27 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import apiUser from '@/api/modules/setting_user'
+
 // 父级传递数据
 const props = defineProps(['id', 'row'])
-
+// 加载
 const loading = ref(false)
 const formRef = ref<FormInstance>()
+// 定义表单
 const form = ref<any>({
   id: '',
-  account: '', // 账号
-  name: '', // 昵称
-  password: '', // 密码
-  confirmPassword: '', // 密码
-  phoneNumber: null, // 手机号
-  sex: 2, // 性别
+  // 账号
+  account: '',
+  // 昵称
+  name: '',
+  // 密码
+  password: '',
+  // 密码
+  confirmPassword: '',
+  // 手机号
+  phoneNumber: null,
+  // 性别
+  sex: 2,
 })
 
 // 校验
@@ -45,29 +53,6 @@ const formRules = ref<FormRules>({
   ],
   phoneNumber: [
     { required: true, message: '请输入手机号', trigger: 'blur' },
-    {
-      validator: (rule, value, callback) => {
-        const params: Record<string, any> & {
-          key: string
-          value: string
-        } = {
-          key: 'phoneNumber',
-          value,
-        }
-        if (form.value.id !== '') {
-          params.id = form.value.id
-        }
-        apiUser.check(params).then((res: any) => {
-          if (res.data.exist) {
-            callback(new Error('手机号已存在'))
-          }
-          else {
-            callback()
-          }
-        })
-      },
-      trigger: 'blur',
-    },
   ],
 })
 onMounted(() => {

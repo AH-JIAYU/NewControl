@@ -4,15 +4,23 @@ import { ElMessage } from 'element-plus'
 import api from '@/api/modules/setting_role'
 import useRouteStore from '@/store/modules/route'
 import userButtonPer from '@/store/modules/buttonPermission'
+
 // 父级传递数据
 const props = defineProps(['id', 'row'])
-const routeStore = useRouteStore() // 路由 store
-const buttonPer = userButtonPer() // 按钮权限store
+// 路由 store
+const routeStore = useRouteStore()
+// 按钮权限store
+const buttonPer = userButtonPer()
+// 加载
 const loading = ref(false)
 const formRef = ref<FormInstance>()
-const treeRef = ref<any>() // tree ref
-const menuData = ref<any>([]) // 路由
-const permissionData = ref<any>([]) // 权限
+// tree ref
+const treeRef = ref<any>()
+// 路由
+const menuData = ref<any>([])
+// 权限
+const permissionData = ref<any>([])
+// 定义表单
 const form = ref<any>({
   id: props.id ?? null,
   menuId: [],
@@ -31,13 +39,18 @@ onMounted(async () => {
   if (form.value.id !== '') {
     await getInfo()
   }
-  menuData.value = routeStore.routesRaw // 从store获取原始路由
-  permissionData.value = await buttonPer.getPermissions // 调用store的方法获取按钮权限，如果没有就调接口
+  loading.value = true
+  // 从store获取原始路由
+  menuData.value = routeStore.routesRaw
+  // 调用store的方法获取按钮权限，如果没有就调接口
+  permissionData.value = await buttonPer.getPermissions
   loading.value = false
 })
+
 // 获取
-async function getInfo() { // 编辑时获取该id的具体数据
+async function getInfo() {
   loading.value = true
+  // 编辑时获取该id的具体数据
   form.value = JSON.parse(props.row)
   loading.value = false
 }
@@ -49,7 +62,8 @@ function rowPermission(permissionID: any) {
 // 暴露
 defineExpose({
   submit() {
-    form.value.menuId = treeRef.value!.getCheckedKeys(false) // 同步选中的路由id
+    // 同步选中的路由id
+    form.value.menuId = treeRef.value!.getCheckedKeys(false)
     return new Promise<void>((resolve) => {
       if (form.value.id === '') {
         formRef.value && formRef.value.validate((valid: any) => {

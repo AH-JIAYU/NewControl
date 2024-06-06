@@ -15,13 +15,19 @@ defineOptions({
 })
 // 传递父级数据
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
-const routeStore = useRouteStore() // 路由 store
+// 路由 store
+const routeStore = useRouteStore()
+// 加载
 const loading = ref(false)
 const formRef = ref<FormInstance>()
-const showParent = ref<any>(false) // 是否显示父级id
-const list = ref() // 导航列表
-const choiceMenuData = ref<any>([]) // 展示的选择路由
-const munulevs = ref([// 路由等级
+// 是否显示父级id
+const showParent = ref<any>(false)
+// 导航列表
+const list = ref()
+// 展示的选择路由
+const choiceMenuData = ref<any>([])
+// 路由等级
+const munulevs = ref([
   {
     value: 1,
     label: '一级导航',
@@ -37,8 +43,11 @@ const munulevs = ref([// 路由等级
     value: 4,
     label: '内置页面',
   }])
-const inputTag = ref('') // tag的输入框绑定的值
-const inputVisible = ref(false) // tag新增输入框显隐
+// tag的输入框绑定的值
+const inputTag = ref('')
+// tag新增输入框显隐
+const inputVisible = ref(false)
+// 定义表单
 const form = ref<any>({
   id: props.id ?? '',
   parentId: props.parentId ?? '',
@@ -138,8 +147,10 @@ function selectparentid(menuLevel: any) {
 }
 
 onMounted(() => {
-  list.value = routeStore.routesRaw // 从store获取原始路由
-  choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel) // 根据路由等级 筛选路由
+  // 从store获取原始路由
+  list.value = routeStore.routesRaw
+  // 根据路由等级 筛选路由
+  choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel)
   // 第一次进入时id和parentid都为空时 显示父级导航
   showParent.value = !!(!form.value.id && !form.value.parentId)
   if (form.value.id !== '') {
@@ -206,7 +217,7 @@ function onInputNoCacheConfirm() {
   inputNoCacheVisible.value = false
   inputNoCache.value = ''
 }
-
+// 暴露
 defineExpose({
   submit() {
     return new Promise<void>((resolve) => {

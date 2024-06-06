@@ -10,12 +10,16 @@ import userButtonPer from '@/store/modules/buttonPermission'
 defineOptions({
   name: 'SettingPermissionsList',
 })
-const buttonPer = userButtonPer() // 按钮store
-const routeStore = useRouteStore() // 路由 store
+// 按钮store
+const buttonPer = userButtonPer()
+// 路由 store
+const routeStore = useRouteStore()
 const router = useRouter()
 const tabbar = useTabbar()
 const settingsStore = useSettingsStore()
+// 通信
 provide('success', getDataList)
+// 定义数据
 const data = ref<any>({
   loading: false,
   // 表格是否自适应高度
@@ -30,13 +34,17 @@ const data = ref<any>({
   // 详情
   formModeProps: {
     visible: false,
-    menulev: 1, // 菜单等级
-    path: '', // 菜单
-    auths: [], // 权限
+    // 菜单等级
+    menulev: 1,
+    // 菜单
+    path: '',
+    // 权限
+    auths: [],
     id: '',
   },
   EditProps: {
-    visible: false, // 添加时的弹框
+    // 添加时的弹框
+    visible: false,
   },
   // 搜索
   search: {
@@ -75,8 +83,10 @@ function recursion(menus: any[], permissions: any[]) {
 async function getDataList() {
   data.value.loading = true
   const permissions = await api.list()
-  buttonPer.permissions = permissions.data // 存store
-  const menus: any = routeStore.routesRaw // 从store获取原始路由
+  // 存store
+  buttonPer.permissions = permissions.data
+  // 从store获取原始路由
+  const menus: any = routeStore.routesRaw
   // 处理数据 将权限里的menu和路由里的name相同的数据添加到路由的permissions里
   recursion(menus, permissions.data)
   data.value.dataList = menus
@@ -119,9 +129,12 @@ function onEdit(row: any) {
         name: 'multilevel_menu_examplePermissionsEdit',
         params: {
           id: row.id,
-          menulev: row.menuLevel, // 回显菜单等级
-          path: row.path, // 回显菜单
-          auths: JSON.stringify(row.auths), // 回显权限
+          // 回显菜单等级
+          menulev: row.menuLevel,
+          // 回显菜单
+          path: row.path,
+          // 回显权限
+          auths: JSON.stringify(row.auths),
         },
       })
     }
@@ -130,9 +143,12 @@ function onEdit(row: any) {
         name: 'multilevel_menu_examplePermissionsEdit',
         params: {
           id: row.id,
-          menulev: row.menuLevel, // 回显菜单等级
-          path: row.path, // 回显菜单
-          auths: JSON.stringify(row.auths), // 回显权限
+          // 回显菜单等级
+          menulev: row.menuLevel,
+          // 回显菜单
+          path: row.path,
+          // 回显权限
+          auths: JSON.stringify(row.auths),
         },
       })
     }

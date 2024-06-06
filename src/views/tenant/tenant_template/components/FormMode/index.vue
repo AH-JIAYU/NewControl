@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import grapesjs from 'grapesjs'
 import plugin from 'grapesjs-preset-webpage'
@@ -16,12 +15,18 @@ import zh from 'grapesjs/locale/zh'
 import { nextTick, onMounted, ref } from 'vue'
 import api from '@/api/modules/tenant_tenantTemplate'
 
+// 更新
 const emit = defineEmits(['success'])
 const editorRef = ref()
+// 加载
 const loading = ref(false)
+// 弹框开关
 const dialogFormVisible = ref(false)
+// form ref
 const formRef = ref<any>()
+// 标题
 const title = ref()
+// 定义表单
 const form = ref<any>({
   id: '',
   name: '',
@@ -33,7 +38,7 @@ onMounted(() => {
     getInfo()
   }
 })
-
+// 获取数据
 function getInfo() {
   loading.value = true
   api.detail(form.value.id).then((res: any) => {
@@ -87,19 +92,27 @@ async function onDialogOpened() {
 }
 // 提交数据
 async function onSubmit() {
+  // 获取html结构
   const html = editorRef.value.getHtml()
+  // 获取css结构
   const css = editorRef.value.getCss()
+  // css样式
   const rawdata = editorRef.value.getProjectData()
+  // 合并到form里面
   form.value = { ...form.value, html, css, rawdata }
+  // 请求接口
   await api.edit(form.value)
+  // 成功后提示信息
   ElMessage.success({
     message: '修改成功',
     center: true,
   })
+  // 更新数据
   emit('success')
+  // 关闭弹框
   close()
 }
-// 关闭
+// 关闭弹框
 function close() {
   if (editorRef.value) {
     editorRef.value.destroy()

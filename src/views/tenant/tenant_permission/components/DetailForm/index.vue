@@ -1,11 +1,13 @@
-<!-- eslint-disable prefer-promise-reject-errors -->
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import Edit from '../Edit/index.vue'
 import api from '@/api/modules/tenant_tenantPermission'
+
 // 父级传递数据
 const props = defineProps(['id', 'auths', 'menulev'])
+// 更新
+const success = inject<any>('success')
 // 校验
 const formRules = ref<any>({
   menu: [{ required: true, message: '请选择路由地址', trigger: 'blur' }],
@@ -15,8 +17,10 @@ const formRules = ref<any>({
 })
 // loading
 const loading = ref(false)
+// form ref
 const formRef = ref<FormInstance>()
 const authsTableRef = ref<any>()
+// 传入数据
 const EditProps = ref<any>({
   // 组件数据
   visible: false,
@@ -25,22 +29,31 @@ const EditProps = ref<any>({
   keys: [],
   row: {},
 })
-const success = inject<any>('success')
+// 定义表单
 const form = ref<any>({
   id: props.id,
-  menulev: props.menulev, // 路由等级
+  // 路由等级
+  menulev: props.menulev,
+  // 标题
   title: '',
-  flat: false, // 判断添加还是编辑接口
-  menu: '', // 选择路由
-  data: [], // 权限数组
-  menuData: [], // 全部路由
-  choiceMenuData: [], // 展示的选择路由
+  // 判断添加还是编辑接口
+  flat: false,
+  // 选择路由
+  menu: '',
+  // 权限数组
+  data: [],
+  // 全部路由
+  menuData: [],
+  // 展示的选择路由
+  choiceMenuData: [],
 })
+
 onMounted(async () => {
   if (form.value.id !== '') {
     getInfo()
   }
 })
+// 监听数据变化
 watch(
   () => props.auths,
   (newValue: any) => {
@@ -54,7 +67,8 @@ watch(
 function getInfo() {
   loading.value = true
   form.value.data = JSON.parse(props.auths)
-  form.value.flat = !!form.value.data.length // 数组为空 确定时走添加接口
+  // 数组为空 确定时走添加接口
+  form.value.flat = !!form.value.data.length
   loading.value = false
 }
 // 修改
@@ -73,7 +87,8 @@ function onDel(row: any) {
           message: '删除成功',
           center: true,
         })
-        success() // 祖先组件提供的success
+        // 祖先组件提供的success
+        success()
         loading.value = false
       })
     })
