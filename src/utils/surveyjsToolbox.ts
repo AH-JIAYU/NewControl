@@ -26,9 +26,9 @@ export async function customComponents() {
       '22',
       2,
     ),
-    // await questionFun('age', '出生日期', 'text', 'placeholder', '', '', 1, 'date'),
+    await questionFun('age', '出生日期', 'text', 'placeholder', '14', '', 1, 'date'),
     await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20'),
-    // await questionFun('AHI', '家庭收入', 'radiogroup', 'placeholder', '4', '25', 2),
+    await questionFun('AHI', '家庭收入', 'radiogroup', 'placeholder', '4', '25', 2),
     // await questionFun('education', '教育程度', 'radiogroup', 'placeholder', '2', '23'),
     // await questionFun('marriage', '婚姻状况', 'radiogroup', 'placeholder', '3', '24'),
     // await questionFun('industry', '行业', 'radiogroup', 'placeholder', '5', '26', 2),
@@ -80,9 +80,11 @@ async function questionFun(
   const { data } = await apiDictionary.itemList(countryType)
   // 答案
   const answer: any = data?.records
+  // 请求的问题
   const res = await problemStore.getProblem
   // 问题 对应国家下的问题
   const problem: any = res[0].children[problemStore.country.countryId === '343' ? 0 : 1].children
+  // 定义需要的数据格式
   const question: any = {
     title: {},
     type,
@@ -91,35 +93,46 @@ async function questionFun(
     colCount,
     inputType,
   }
+  // 如果请求接口返回当前问题为空数组,那就让他比对对于请求的id
+  const problemType: any = problemStore.country.countryId === '343' ? zhID : enID
   //  根据字典的答案查询对应的问题
-  const row: any = problem.find((item: any) => item.id === data?.records[0].catalogueId)
+  const row: any = problem.find((item: any) => item.id === data?.records[0]?.catalogueId || item.id === problemType)
   question.title.default = problemStore.country.countryId === '343' ? row.chineseName : row.englishName
   question.title['zh-cn'] = row.chineseName
   question.title.en = row.englishName
   question.id = row.otherId
   // 左侧块(问题模板)的标题
   title = problemStore.country.countryId === '343' ? title : row.englishName
-
-  answer?.forEach((item: any, index: number) => {
-    if (question.choices.length < answer?.length) {
-      question.choices.push({ text: {} })
-      question.choices[index].value = item.code
-    }
-  })
-  answer?.forEach((item: any) => {
-    question.choices.forEach((it: any) => {
-      if (item.code === it.value) {
-        it.text.default = problemStore.country.countryId === '343' ? item.chineseName : item.englishName
-        it.text['zh-cn'] = item.chineseName
-        it.text.en = item.englishName
-        it.text.id = item.otherId
+  if (answer.length > 0) {
+    answer?.forEach((item: any, index: number) => {
+      if (question.choices.length < answer?.length) {
+        question.choices.push({ text: {} })
+        question.choices[index].value = item.code
       }
     })
-  })
-  return {
-    name,
-    title,
-    questionJSON: question,
-    inheritBaseProps: true,
+    answer?.forEach((item: any) => {
+      question.choices.forEach((it: any) => {
+        if (item.code === it.value) {
+          it.text.default = problemStore.country.countryId === '343' ? item.chineseName : item.englishName
+          it.text['zh-cn'] = item.chineseName
+          it.text.en = item.englishName
+          it.text.id = item.otherId
+        }
+      })
+    })
+    return {
+      name,
+      title,
+      questionJSON: question,
+      inheritBaseProps: true,
+    }
+  }
+  else {
+    return {
+      name,
+      title,
+      questionJSON: question,
+      inheritBaseProps: true,
+    }
   }
 }

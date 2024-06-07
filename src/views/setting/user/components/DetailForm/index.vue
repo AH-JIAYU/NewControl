@@ -81,7 +81,9 @@ defineExpose({
       else {
         formRef.value && formRef.value.validate((valid) => {
           if (valid) {
-            apiUser.edit(form.value).then(() => {
+            const { id, account, password, confirmPassword, name, sex, phoneNumber, active } = form.value
+            const params = { id, account, password, confirmPassword, name, sex, phoneNumber, active }
+            apiUser.edit(params).then(() => {
               ElMessage.success({
                 message: '编辑成功',
                 center: true,

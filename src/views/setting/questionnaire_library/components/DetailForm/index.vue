@@ -57,12 +57,22 @@ onBeforeMount(async () => {
     const res = await customComponents()
     res.forEach((component: any) => {
       // 使用Serializer.findClass来检查组件是否已注册
-      if (!Serializer.findClass(component.name)) {
-        ComponentCollection.Instance.add({
-          name: component.name,
-          title: component.title,
-          questionJSON: component.questionJSON,
-        })
+      try {
+        if (component === undefined) {
+          return console.error('')
+        }
+        else {
+          if (!Serializer.findClass(component.name)) {
+            ComponentCollection.Instance.add({
+              name: component.name,
+              title: component.title,
+              questionJSON: component.questionJSON,
+            })
+          }
+        }
+      }
+      catch (error) {
+        console.error('有一个处理数据为空')
       }
     })
     loading.value = false
