@@ -93,10 +93,10 @@ async function questionFun(
     colCount,
     inputType,
   }
-  // 如果请求接口返回当前问题为空数组,那就让他比对对于请求的id
-  const problemType: any = problemStore.country.countryId === '343' ? zhID : enID
+  // 如果请求接口返回当前问题为空数组,那就让他比对对应请求的id
+  const problemId: any = problemStore.country.countryId === '343' ? zhID : enID
   //  根据字典的答案查询对应的问题
-  const row: any = problem.find((item: any) => item.id === data?.records[0]?.catalogueId || item.id === problemType)
+  const row: any = problem.find((item: any) => item.id === data?.records[0]?.catalogueId || item.id === problemId)
   question.title.default = problemStore.country.countryId === '343' ? row.chineseName : row.englishName
   question.title['zh-cn'] = row.chineseName
   question.title.en = row.englishName

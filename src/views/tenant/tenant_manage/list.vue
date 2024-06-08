@@ -97,7 +97,7 @@ function queryData() {
   data.value.loading = true
   api.list(data.value.search).then((res: any) => {
     data.value.loading = false
-    data.value.dataList = res.data
+    data.value.dataList = res.data.result
     pagination.value.total = Number.parseInt(res.data.total)
   })
 }
@@ -120,6 +120,7 @@ function sizeChange(size: number) {
 function currentChange(page = 1) {
   onCurrentChange(page).then(() => getDataList())
 }
+
 // 导出
 async function onExport() {
   try {
@@ -230,7 +231,17 @@ function onResetPassword(row: any) {
             </ElFormItem>
             <ElFormItem>
               <el-select v-model="data.search.version" placeholder="请选择版本">
-                <el-option v-for="item in version" :key="item.id" :label="item.name" :value="item.code" />
+                <el-option v-for="item in version" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+            </ElFormItem>
+            <ElFormItem v-show="fold">
+              <el-select v-model="data.search.version" placeholder="租户来源">
+                <el-option v-for="item in version" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+            </ElFormItem>
+            <ElFormItem v-show="fold">
+              <el-select v-model="data.search.version" placeholder="账户类型">
+                <el-option v-for="item in version" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </ElFormItem>
             <ElFormItem>
@@ -246,7 +257,7 @@ function onResetPassword(row: any) {
                 </template>
                 重置
               </ElButton>
-              <ElButton disabled link @click="toggle">
+              <ElButton link @click="toggle">
                 <template #icon>
                   <SvgIcon :name="fold ? 'i-ep:caret-bottom' : 'i-ep:caret-top'" />
                 </template>
