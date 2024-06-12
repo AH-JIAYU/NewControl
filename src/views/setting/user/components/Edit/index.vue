@@ -76,7 +76,7 @@ function onCancel() {
       >
         <ElFormItem label="角色" prop="role">
           <el-select v-model="form.role" placeholder="请选择角色">
-            <el-option v-for="item in munulevs" :key="item.id" :label="item.role" :value="item.role" />
+            <el-option v-for="item in munulevs" :key="item.id" :label="item.roleName" :value="item.roleName" />
           </el-select>
         </ElFormItem>
       </ElForm>

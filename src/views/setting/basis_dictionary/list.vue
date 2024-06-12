@@ -37,7 +37,7 @@ const dictionary = ref({
   loading: false,
 })
 // 分页
-const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
+const { pagination, getParams, onSizeChange, onCurrentChange, onSortChange } = usePagination()
 pagination.value.size = 20
 pagination.value.sizes = [20, 50, 100]
 const dictionaryItemRef = ref()
@@ -124,7 +124,11 @@ watch(() => dictionaryItem.value.search.dictionaryId, () => {
 // 获取字典项
 function getDictionaryItemList() {
   dictionaryItem.value.loading = true
-  apiDictionary.itemList({ page: 1, limit: 10, id: dictionaryItem.value.search.dictionaryId }).then((res: any) => {
+  const params = {
+    ...getParams(),
+    id: dictionaryItem.value.search.dictionaryId,
+  }
+  apiDictionary.itemList(params).then((res: any) => {
     dictionaryItem.value.loading = false
     dictionaryItem.value.dataList = res.data.records
     dictionaryItem.value.dataList.forEach((item: any) => {
