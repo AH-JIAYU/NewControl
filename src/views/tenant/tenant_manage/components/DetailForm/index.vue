@@ -133,7 +133,7 @@ defineExpose({
       </ElFormItem>
       <ElFormItem label="国家" prop="country">
         <el-select v-model="form.country" :disabled="type.id" value-key="" placeholder="请选择国家" clearable filterable>
-          <el-option v-for="item in country.records" :key="item.id" :label="item.chineseName" :value="item.code" />
+          <el-option v-for="item in country" :key="item.id" :label="item.chineseName" :value="item.code" />
         </el-select>
       </ElFormItem>
       <ElFormItem v-if="form.companyType === '2'" label="公司名称" prop="name">

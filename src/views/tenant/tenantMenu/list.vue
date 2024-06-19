@@ -68,7 +68,9 @@ function onEdit(row: any) {
 // 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.meta.title}」吗？`, '确认信息').then(() => {
+    data.value.loading = true
     apiMenu.delete({ id: row.id }).then((res: any) => {
+      data.value.loading = false
       getDataList()
       ElMessage[res.status === 1 ? 'success' : 'error']({
         message: res.status === 1 ? '删除成功' : '请求失败',

@@ -10,7 +10,7 @@ const useCountryStore = defineStore(
         return country.value
       }
       const { data } = await api.itemList({ page: 1, limit: -1, id: 32 })
-      return data
+      return data.records
     })
     return {
       country,

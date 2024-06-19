@@ -229,7 +229,9 @@ defineExpose({
           if (valid) {
             // 菜单等级自增一
             form.value.menuLevel = Number(form.value.menuLevel) + 1
+            loading.value = true
             apiMenu.create(form.value).then(() => {
+              loading.value = false
               ElMessage.success({
                 message: '新增成功',
                 center: true,
@@ -242,7 +244,9 @@ defineExpose({
       else {
         formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
+            loading.value = true
             apiMenu.edit(form.value).then(() => {
+              loading.value = false
               ElMessage.success({
                 message: '编辑成功',
                 center: true,

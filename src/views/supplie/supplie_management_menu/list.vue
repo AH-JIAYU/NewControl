@@ -1,21 +1,23 @@
 <route lang="yaml">
-meta:
-  enabled: false
-</route>
+  meta:
+    enabled: false
+  </route>
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import FormMode from './components/FormMode/index.vue'
-import apiMenu from '@/api/modules/menu'
-import useRouteStore from '@/store/modules/route'
+import apiMenu from '@/api/modules/supplie_supplieManagement'
+import usetenantMenuStore from '@/store/modules/supplieMenu'
 
 defineOptions({
-  name: 'SettingMenuList',
+  name: 'SupplieMenuList',
 })
-
-const routeStore = useRouteStore()
+// 租户路由 store
+const supplieMenuStore = usetenantMenuStore()
+// 定义数据
 const data = ref<any>({
+  // 加载
   loading: false,
   // 表格是否自适应高度
   tableAutoHeight: true,
@@ -37,11 +39,12 @@ function getDataList() {
   data.value.loading = true
   apiMenu.list({ type: 'normal' }).then((res: any) => {
     // 更新store
-    routeStore.routesRaw = res.data
+    supplieMenuStore.supplieMenu = res.data
     data.value.loading = false
     data.value.dataList = res.data
   })
 }
+
 // 添加id赋值给parentId
 function onCreate(row?: any) {
   // 添加时不应有id 组件里 prop为只读 通过父置空id

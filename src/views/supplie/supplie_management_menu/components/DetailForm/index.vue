@@ -7,8 +7,8 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
-import apiMenu from '@/api/modules/tenant_tenantMenu'
-import usetenantMenuStore from '@/store/modules/tenantMenu'
+import apiMenu from '@/api/modules/supplie_supplieManagement'
+import usesupplieMenuStore from '@/store/modules/supplieMenu'
 
 defineOptions({
   name: 'PagesExampleMenuDetail',
@@ -16,7 +16,7 @@ defineOptions({
 // 获取父级数据
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
 // 租户路由 store
-const tenantMenuStore = usetenantMenuStore()
+const supplieMenuStore = usesupplieMenuStore()
 // 加载
 const loading = ref(false)
 // form ref
@@ -151,7 +151,7 @@ function selectparentid(menuLevel: any) {
 
 onMounted(async () => {
   // 从store获取原始路由
-  list.value = await tenantMenuStore.gettenantMenu
+  list.value = await supplieMenuStore.getsupplieMenu
   // 根据路由等级 筛选路由
   choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel)
   // 第一次进入时id和parentid都为空时 显示父级导航
@@ -229,7 +229,9 @@ defineExpose({
           if (valid) {
             // 菜单等级自增一
             form.value.menuLevel = Number(form.value.menuLevel) + 1
+            loading.value = true
             apiMenu.create(form.value).then(() => {
+              loading.value = false
               ElMessage.success({
                 message: '新增成功',
                 center: true,
@@ -242,7 +244,9 @@ defineExpose({
       else {
         formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
+            loading.value = true
             apiMenu.edit(form.value).then(() => {
+              loading.value = false
               ElMessage.success({
                 message: '编辑成功',
                 center: true,

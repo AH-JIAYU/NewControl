@@ -7,18 +7,19 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
-import apiMenu from '@/api/modules/menu'
-import useRouteStore from '@/store/modules/route'
+import apiMenu from '@/api/modules/tenant_vip_menu'
+import usevipMenuStore from '@/store/modules/tenant_vip_menu'
 
 defineOptions({
   name: 'PagesExampleMenuDetail',
 })
-// 传递父级数据
+// 获取父级数据
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
-// 路由 store
-const routeStore = useRouteStore()
+// 租户路由 store
+const vipMenuStore = usevipMenuStore()
 // 加载
 const loading = ref(false)
+// form ref
 const formRef = ref<FormInstance>()
 // 是否显示父级id
 const showParent = ref<any>(false)
@@ -47,7 +48,7 @@ const munulevs = ref([
 const inputTag = ref('')
 // tag新增输入框显隐
 const inputVisible = ref(false)
-// 定义表单
+// 定义数据
 const form = ref<any>({
   id: props.id ?? '',
   parentId: props.parentId ?? '',
@@ -79,6 +80,7 @@ const form = ref<any>({
     paddingBottom: '0px',
   },
 })
+
 // tag 添加输入框ref
 const InputRef = ref<any>()
 // tag
@@ -147,9 +149,9 @@ function selectparentid(menuLevel: any) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   // 从store获取原始路由
-  list.value = routeStore.routesRaw
+  list.value = await vipMenuStore.getvipMenu
   // 根据路由等级 筛选路由
   choiceMenuData.value = findItemsByLevel(list.value, form.value.menuLevel)
   // 第一次进入时id和parentid都为空时 显示父级导航
@@ -158,7 +160,7 @@ onMounted(() => {
     getInfo()
   }
 })
-
+// 获取数据
 function getInfo() {
   loading.value = true
   // id存在为编辑 不存为添加
@@ -605,3 +607,5 @@ defineExpose({
   }
 }
 </style>
+@/store/modules/tenant_vipMenu
+@/api/modules/tenant_vip_menu

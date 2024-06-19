@@ -7,14 +7,14 @@
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import FormMode from './components/FormMode/index.vue'
-import apiMenu from '@/api/modules/tenant_tenantMenu'
-import usetenantMenuStore from '@/store/modules/tenantMenu'
+import apiMenu from '@/api/modules/tenant_vip_menu'
+import usevipMenuStore from '@/store/modules/tenant_vip_menu'
 
 defineOptions({
-  name: 'TenantMenuList',
+  name: 'VipMenuList',
 })
 // 租户路由 store
-const tenantMenuStore = usetenantMenuStore()
+const vipMenuStore = usevipMenuStore()
 // 定义数据
 const data = ref<any>({
   // 加载
@@ -39,7 +39,7 @@ function getDataList() {
   data.value.loading = true
   apiMenu.list({ type: 'normal' }).then((res: any) => {
     // 更新store
-    tenantMenuStore.tenantMenu = res.data
+    vipMenuStore.vipMenu = res.data
     data.value.loading = false
     data.value.dataList = res.data
   })
@@ -68,7 +68,9 @@ function onEdit(row: any) {
 // 删除
 function onDel(row: any) {
   ElMessageBox.confirm(`确认删除「${row.meta.title}」吗？`, '确认信息').then(() => {
+    data.value.loading = true
     apiMenu.delete({ id: row.id }).then((res: any) => {
+      data.value.loading = false
       getDataList()
       ElMessage[res.status === 1 ? 'success' : 'error']({
         message: res.status === 1 ? '删除成功' : '请求失败',
@@ -186,3 +188,5 @@ function onDel(row: any) {
   @include text-overflow;
 }
 </style>
+@/store/modules/tenant_vipMenu
+@/api/modules/tenant_vip_menu
