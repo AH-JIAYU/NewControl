@@ -292,9 +292,9 @@ function onResetPassword(row: any) {
       >
         <el-table-column align="center" prop="a" show-overflow-tooltip type="selection" />
         <ElTableColumn show-overflow-tooltip align="center" prop="id" width="80" label="租户ID" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="companyType" label="账户类型">
+        <ElTableColumn show-overflow-tooltip align="center" prop="type" label="账户类型">
           <template #default="{ row }">
-            {{ row.companyType ? row.companyType : '暂无数据' }}
+            {{ row.type === 'personal' ? '个人' : '公司' }}
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip align="center" prop="name" label="用户名">

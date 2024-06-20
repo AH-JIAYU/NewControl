@@ -17,7 +17,7 @@ const form = ref<any>({
   name: '',
   // 密码
   password: '',
-  // 密码
+  // 确认密码
   confirmPassword: '',
   // 手机号
   phoneNumber: null,

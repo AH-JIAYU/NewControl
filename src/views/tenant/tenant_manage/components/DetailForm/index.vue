@@ -19,8 +19,16 @@ const form = ref({
   id: props.id,
   // 用户名
   name: '',
+  // 密码
+  password: '123456',
   // 国家
   country: '',
+  // 公司名称
+  companyName: '',
+  // 税号
+  taxID: '',
+  // 法人姓名
+  legalPersonName: '',
   // 手机号码
   phone: '',
   // 邮箱
@@ -32,7 +40,7 @@ const form = ref({
   // 注册方式
   registerType: 'phone',
   // 账户类型 1个人，2公司
-  companyType: '1',
+  type: 'personal',
 })
 // 编辑判断禁用
 const type = JSON.parse(props.row)
@@ -57,7 +65,7 @@ const formRules = ref<FormRules>({
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
   ],
-  companyType: [
+  type: [
     { required: true, message: '请选择账户类型', trigger: 'blur' },
   ],
 })
@@ -82,12 +90,15 @@ defineExpose({
         formRef.value && formRef.value.validate((valid) => {
           if (valid) {
             loading.value = true
-            api.create(form.value).then(() => {
-              loading.value = false
-              ElMessage.success({
-                message: '新增成功',
+            delete form.value.id
+            api.create(form.value).then((res) => {
+              const { status, error }:any = res
+              ElMessage({
+                type: status === 1 ? 'success' : 'warning',
+                message: status === 1 ? '新增成功' : error,
                 center: true,
               })
+              loading.value = false
               resolve()
             })
           }
@@ -99,12 +110,14 @@ defineExpose({
         formRef.value && formRef.value.validate((valid) => {
           if (valid) {
             loading.value = true
-            api.edit(params).then(() => {
-              loading.value = false
-              ElMessage.success({
-                message: '编辑成功',
+            api.edit(params).then((res) => {
+              const { status, error }:any = res
+              ElMessage({
+                type: status === 1 ? 'success' : 'warning',
+                message: status === 1 ? '编辑成功' : error,
                 center: true,
               })
+              loading.value = false
               resolve()
             })
           }
@@ -118,12 +131,12 @@ defineExpose({
 <template>
   <div v-loading="loading">
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
-      <ElFormItem label="账户类型" prop="companyType">
-        <el-radio-group v-model="form.companyType" class="ml-4">
-          <el-radio value="1">
+      <ElFormItem label="账户类型" prop="type">
+        <el-radio-group v-model="form.type" class="ml-4">
+          <el-radio value="personal">
             个人
           </el-radio>
-          <el-radio value="2">
+          <el-radio value="company">
             公司
           </el-radio>
         </el-radio-group>
@@ -136,14 +149,14 @@ defineExpose({
           <el-option v-for="item in country" :key="item.id" :label="item.chineseName" :value="item.code" />
         </el-select>
       </ElFormItem>
-      <ElFormItem v-if="form.companyType === '2'" label="公司名称" prop="name">
-        <ElInput v-model="form.name" :disabled="type.id" placeholder="请输入公司名称" />
+      <ElFormItem v-if="form.type === 'company'" label="公司名称" prop="name">
+        <ElInput v-model="form.companyName" :disabled="type.id" placeholder="请输入公司名称" />
       </ElFormItem>
-      <ElFormItem v-if="form.companyType === '2'" label="公司税号" prop="name">
-        <ElInput v-model="form.name" :disabled="type.id" placeholder="请输入公司税号" />
+      <ElFormItem v-if="form.type === 'company'" label="公司税号" prop="name">
+        <ElInput v-model="form.taxID" :disabled="type.id" placeholder="请输入公司税号" />
       </ElFormItem>
-      <ElFormItem v-if="form.companyType === '2'" label="法人姓名" prop="name">
-        <ElInput v-model="form.name" :disabled="type.id" placeholder="请输入法人姓名" />
+      <ElFormItem v-if="form.type === 'company'" label="法人姓名" prop="name">
+        <ElInput v-model="form.legalPersonName" :disabled="type.id" placeholder="请输入法人姓名" />
       </ElFormItem>
       <ElFormItem v-if="form.country === 'CN'" label="手机号码" prop="phone">
         <ElInput v-model="form.phone" placeholder="请输入手机号码" />
@@ -160,10 +173,8 @@ defineExpose({
         </el-select>
       </ElFormItem>
       <ElFormItem label="租户状态" prop="active">
-        <el-switch
-          v-model="form.active" inline-prompt active-text="开启" inactive-text="关闭" :active-value="1"
-          :inactive-value="2"
-        />
+        <el-switch v-model="form.active" inline-prompt active-text="开启" inactive-text="关闭" :active-value="1"
+          :inactive-value="2" />
       </ElFormItem>
     </ElForm>
   </div>
