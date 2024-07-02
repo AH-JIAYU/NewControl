@@ -130,14 +130,14 @@ async function onExport() {
     let data = new Blob([content], {
     type: "application/vnd.ms-excel;charset=utf-8"
   });
-  let downloadUrl = window.URL.createObjectURL(data);
-  let anchor:any = document.createElement("a");
-  anchor.href = downloadUrl;
-  // 表格名称.文件类型
-  anchor.download = "租户员工.xlsx";
-  anchor.click();
-   // 消除请求接口返回的数据
-  window.URL.revokeObjectURL(anchor);
+    let downloadUrl = window.URL.createObjectURL(data);
+    let anchor:any = document.createElement("a");
+    anchor.href = downloadUrl;
+    // 表格名称.文件类型
+    anchor.download = "租户员工.xlsx";
+    anchor.click();
+    // 消除请求接口返回的数据
+    window.URL.revokeObjectURL(anchor);
   }
   catch (error) {
     console.error('导出失败', error)
