@@ -5,9 +5,11 @@
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
+import * as XLSX from 'xlsx';
 import { onMounted, ref } from 'vue'
 import FormMode from './components/FormMode/index.vue'
 import api from '@/api/modules/tenant_tenantManage'
+import {userTable} from '@/api/modules/tenant_tenantManage'
 import useSettingsStore from '@/store/modules/settings'
 import useVersionStore from '@/store/modules/version'
 
@@ -124,17 +126,20 @@ function currentChange(page = 1) {
 // 导出
 async function onExport() {
   try {
-    const { data } = await api.export({ page: 1, limit: 10, id: '', name: '', versionId: '' })
+    const list = await api.export({ page: 1, limit: 10, id: '', name: '', versionId: '' })
+    let content:any = list;
     // 将数据转换为 Blob 对象
-    const blob = new Blob([data], { type: 'application/octet-stream' })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = '租户管理.xlsx'
-    // 模拟点击下载
-    a.click()
-    // 清理工作
-    window.URL.revokeObjectURL(url)
+    let data = new Blob([content], {
+    type: "application/vnd.ms-excel;charset=utf-8"
+  });
+  let downloadUrl = window.URL.createObjectURL(data);
+  let anchor:any = document.createElement("a");
+  anchor.href = downloadUrl;
+  // 表格名称.文件类型
+  anchor.download = "租户员工.xlsx";
+  anchor.click();
+   // 消除请求接口返回的数据
+  window.URL.revokeObjectURL(anchor);
   }
   catch (error) {
     console.error('导出失败', error)
