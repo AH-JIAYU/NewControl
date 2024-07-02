@@ -5,11 +5,9 @@
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
-import * as XLSX from 'xlsx';
 import { onMounted, ref } from 'vue'
 import FormMode from './components/FormMode/index.vue'
 import api from '@/api/modules/tenant_tenantManage'
-import {userTable} from '@/api/modules/tenant_tenantManage'
 import useSettingsStore from '@/store/modules/settings'
 import useVersionStore from '@/store/modules/version'
 
