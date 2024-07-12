@@ -193,6 +193,20 @@ const useRouteStore = defineStore(
         tabbarStore.initPermanentTab()
       }
     }
+    // 路由排序
+    function recursiveSort(array: any) {
+      // 首先对当前层级的数组进行排序
+      array.sort((a: any, b: any) => a.sort - b.sort);
+      // 遍历当前层级的每个对象
+      array.forEach((item: any) => {
+        // 如果当前对象包含 children 属性且 children 是一个数组
+        if (item.children && Array.isArray(item.children)) {
+          // 递归调用函数对 children 进行排序和处理
+          item.children = recursiveSort(item.children);
+        }
+      });
+      return array;
+    }
     // 格式化后端路由数据
     function formatBackRoutes(routes: any, views = import.meta.glob('../../views/**/*.vue')): Route.recordMainRaw[] {
       return routes.map((route: any) => {
@@ -218,7 +232,9 @@ const useRouteStore = defineStore(
     async function generateRoutesAtBack() {
       await apiApp.routeList({ type: 'normal' }).then((res) => {
         // 设置 routes 数据
-        routesRaw.value = converDeprecatedAttribute(convertSingleRoutes(formatBackRoutes(res.data) as any))
+        const dataList = converDeprecatedAttribute(convertSingleRoutes(formatBackRoutes(res.data) as any))
+        // 将路由数据放入递归函数中排序
+        routesRaw.value = recursiveSort(dataList)
         isGenerate.value = true
         // 初始化常驻标签页
         if (settingsStore.settings.tabbar.enable) {
