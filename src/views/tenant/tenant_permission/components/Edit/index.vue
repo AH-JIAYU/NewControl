@@ -3,6 +3,8 @@ import { ElForm, ElMessage } from 'element-plus'
 import api from '@/api/modules/tenant_tenantPermission'
 import usetenantMenuStore from '@/store/modules/tenantMenu'
 
+// loading
+const loading = ref(false)
 // 路由 store
 const props = defineProps(['id', 'path', 'keys', 'row', 'menulev'])
 // 更新数据
@@ -102,6 +104,7 @@ function onSubmit() {
   if (!form.value.queryForm.id) {
     formRef.value.validate((valid: any) => {
       if (valid) {
+        loading.value = true
         api.create(form.value.queryForm).then(() => {
           ElMessage.success({
             message: '新增成功',
@@ -110,6 +113,7 @@ function onSubmit() {
           // 新增时 是通过list.value 打开的直接调用父传子的方法
           emits('success')
           onCancel()
+          loading.value = false
         })
       }
     })
@@ -155,6 +159,7 @@ function onCancel() {
     <ElDialog
       v-model="visible" :title="title" width="60%" :close-on-click-modal="false" append-to-body
       destroy-on-close
+      v-loading="loading"
     >
       <ElForm
         ref="formRef" :inline="true" :rules="formRules" :model="form.queryForm" label-width="120px"

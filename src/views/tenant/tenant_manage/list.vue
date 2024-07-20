@@ -1,42 +1,44 @@
 <route lang="yaml">
-  meta:
-    title: 列表页
-  </route>
+meta:
+  title: 列表页
+</route>
 
 <script setup lang="ts">
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { onMounted, ref } from 'vue'
-import FormMode from './components/FormMode/index.vue'
-import api from '@/api/modules/tenant_tenantManage'
-import useSettingsStore from '@/store/modules/settings'
-import useVersionStore from '@/store/modules/version'
+import { ElMessage, ElMessageBox } from "element-plus";
+import { onMounted, ref } from "vue";
+import FormMode from "./components/FormMode/index.vue";
+import api from "@/api/modules/tenant_tenantManage";
+import fileExport from "@/utils/file_export";
+import useSettingsStore from "@/store/modules/settings";
+import useVersionStore from "@/store/modules/version";
 
 defineOptions({
-  name: 'SurveyBillManagementList',
-})
+  name: "SurveyBillManagementList",
+});
 // 路由
-const router = useRouter()
+const router = useRouter();
 // 版本
-const versionStore = useVersionStore()
+const versionStore = useVersionStore();
 // 查询版本
-const version = ref()
+const version = ref();
 // 分页配置
-const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()
-const tabbar = useTabbar()
-const settingsStore = useSettingsStore()
+const { pagination, onSizeChange, onCurrentChange, onSortChange } =
+  usePagination();
+const tabbar = useTabbar();
+const settingsStore = useSettingsStore();
 // 表格控件-展示列
 const columns = ref([
   // 表格控件-展示列
   {
-    label: '等级名称',
-    prop: 'a',
+    label: "等级名称",
+    prop: "a",
     sortable: true,
     // 不可更改
     disableCheck: false,
     // 默认展示
     checked: true,
   },
-])
+]);
 // 定义数据
 const data = ref<any>({
   loading: false,
@@ -47,7 +49,7 @@ const data = ref<any>({
   // 表格控件-是否展示斑马条
   stripe: false,
   // 表格控件-控制表格大小
-  lineHeight: 'default',
+  lineHeight: "default",
   checkList: [],
   /**
    * 详情展示模式
@@ -55,20 +57,20 @@ const data = ref<any>({
    * dialog 对话框
    * drawer 抽屉
    */
-  formMode: 'drawer' as 'router' | 'dialog' | 'drawer',
+  formMode: "drawer" as "router" | "dialog" | "drawer",
   // 详情
   formModeProps: {
     visible: false,
-    id: '',
-    row: '',
+    id: "",
+    row: "",
   },
   // 搜索
   search: {
     page: 1,
     limit: 10,
-    version: '',
-    name: '',
-    id: '',
+    version: "",
+    name: "",
+    id: "",
   },
   // 批量操作
   batch: {
@@ -77,103 +79,105 @@ const data = ref<any>({
   },
   // 列表数据
   dataList: [],
-})
+});
 
 onMounted(() => {
-  getDataList()
-})
+  getDataList();
+});
 // 获取数据
 async function getDataList() {
-  data.value.loading = true
-  version.value = await versionStore.getVersion
+  data.value.loading = true;
+  version.value = await versionStore.getVersion;
   api.list({ page: 1, limit: 10 }).then((res: any) => {
-    data.value.loading = false
-    data.value.dataList = res.data.result
-    pagination.value.total = Number.parseInt(res.data.total)
-  })
+    data.value.loading = false;
+    data.value.dataList = res.data.result;
+    pagination.value.total = Number.parseInt(res.data.total);
+  });
 }
 // 查询
 function queryData() {
-  data.value.loading = true
+  data.value.loading = true;
   api.list(data.value.search).then((res: any) => {
-    data.value.loading = false
-    data.value.dataList = res.data.result
-    pagination.value.total = Number.parseInt(res.data.total)
-  })
+    data.value.loading = false;
+    data.value.dataList = res.data.result;
+    pagination.value.total = Number.parseInt(res.data.total);
+  });
 }
 // 重置筛选数据
 function onReset() {
   Object.assign(data.value.search, {
     page: 1,
     limit: 10,
-    version: '',
-    name: '',
-    id: '',
-  })
-  getDataList()
+    version: "",
+    name: "",
+    id: "",
+  });
+  getDataList();
 }
 // 每页数量切换
 function sizeChange(size: number) {
-  onSizeChange(size).then(() => getDataList())
+  onSizeChange(size).then(() => getDataList());
 }
 // 当前页码切换（翻页）
 function currentChange(page = 1) {
-  onCurrentChange(page).then(() => getDataList())
+  onCurrentChange(page).then(() => getDataList());
 }
 
 // 导出
 async function onExport() {
   try {
-    const list = await api.export({ page: 1, limit: 10, id: '', name: '', versionId: '' })
-    let content:any = list;
-    // 将数据转换为 Blob 对象
-    let data = new Blob([content], {
-    type: "application/vnd.ms-excel;charset=utf-8"
-  });
-    let downloadUrl = window.URL.createObjectURL(data);
-    let anchor:any = document.createElement("a");
-    anchor.href = downloadUrl;
-    // 表格名称.文件类型
-    anchor.download = "租户员工.xlsx";
-    anchor.click();
-    // 消除请求接口返回的数据
-    window.URL.revokeObjectURL(anchor);
-  }
-  catch (error) {
-    console.error('导出失败', error)
+    const list = await api.export({
+      page: 1,
+      limit: 10,
+      id: "",
+      name: "",
+      versionId: "",
+    });
+    const name = "租户员工.xlsx";
+    await fileExport(list, name);
+  } catch (error) {
+    console.error("导出失败", error);
   }
 }
 // 修改状态
 async function changeStatus(row: any) {
-  ElMessageBox.confirm(`确认将状态修改成「${row.active === 1 ? '启用' : '禁用'}」吗？`, '确认信息')
+  ElMessageBox.confirm(
+    `确认将状态修改成「${row.active === 1 ? "启用" : "禁用"}」吗？`,
+    "确认信息"
+  )
     .then(async () => {
-      const { status } = await api.edit({ id: row.id, active: row.active, phone: row.phone, email: row.email })
-      status === 1
-      && ElMessage.success({
-        message: '修改「状态」成功',
-        center: true,
-      })
-      getDataList()
+      const { status } = await api.edit({
+        id: row.id,
+        active: row.active,
+        phone: row.phone,
+        email: row.email,
+      });
+      status === 1 &&
+        ElMessage.success({
+          message: "修改「状态」成功",
+          center: true,
+        });
+      getDataList();
     })
     .catch(() => {
-      getDataList()
-    })
+      getDataList();
+    });
 }
 // 新增
 function onCreate() {
-  data.value.formModeProps.id = ''
-  data.value.formModeProps.visible = true
-  data.value.formModeProps.row = JSON.stringify({})
+  data.value.formModeProps.id = "";
+  data.value.formModeProps.visible = true;
+  data.value.formModeProps.row = JSON.stringify({});
 }
 // 修改
 function onEdit(row: any) {
-  if (data.value.formMode === 'router') {
+  if (data.value.formMode === "router") {
     if (
-      settingsStore.settings.tabbar.enable
-      && settingsStore.settings.tabbar.mergeTabsBy !== 'activeMenu'
+      settingsStore.settings.tabbar.enable &&
+      settingsStore.settings.tabbar.mergeTabsBy !== "activeMenu"
     ) {
       tabbar.open({
-        name: 'multilevel_menu_examplePermissionsEdit',
+        name: "multilevel_menu_examplePermissionsEdit",
         params: {
           id: row.id,
           // 回显菜单等级
@@ -183,11 +187,10 @@ function onEdit(row: any) {
           // 回显权限
           auths: JSON.stringify(row.auths),
         },
-      })
-    }
-    else {
+      });
+    } else {
       router.push({
-        name: 'multilevel_menu_examplePermissionsEdit',
+        name: "multilevel_menu_examplePermissionsEdit",
         params: {
           id: row.id,
           // 回显菜单等级
@@ -197,26 +200,30 @@ function onEdit(row: any) {
           // 回显权限
           auths: JSON.stringify(row.auths),
         },
-      })
+      });
     }
-  }
-  else {
-    data.value.formModeProps.id = row.id
-    data.value.formModeProps.row = JSON.stringify(row)
-    data.value.formModeProps.visible = true
+  } else {
+    data.value.formModeProps.id = row.id;
+    data.value.formModeProps.row = JSON.stringify(row);
+    data.value.formModeProps.visible = true;
   }
 }
 // 重置密码
 function onResetPassword(row: any) {
-  ElMessageBox.confirm(`确认将「${row.name}」的密码重置为 “123456” 吗？`, '确认信息').then(() => {
-    api.reset({ id: row.id }).then(() => {
-      ElMessage.success({
-        message: '重置成功',
-        center: true,
-      })
-      getDataList()
+  ElMessageBox.confirm(
+    `确认将「${row.name}」的密码重置为 “123456” 吗？`,
+    "确认信息"
+  )
+    .then(() => {
+      api.reset({ id: row.id }).then(() => {
+        ElMessage.success({
+          message: "重置成功",
+          center: true,
+        });
+        getDataList();
+      });
     })
-  }).catch(() => {})
+    .catch(() => {});
 }
 </script>
 
@@ -225,26 +232,56 @@ function onResetPassword(row: any) {
     <PageMain>
       <SearchBar :show-toggle="false">
         <template #default="{ fold, toggle }">
-          <ElForm :model="data.search" size="default" label-width="100px" inline-message inline class="search-form">
+          <ElForm
+            :model="data.search"
+            size="default"
+            label-width="100px"
+            inline-message
+            inline
+            class="search-form"
+          >
             <ElFormItem>
-              <ElInput v-model="data.search.id" placeholder="租户ID" clearable />
+              <ElInput
+                v-model="data.search.id"
+                placeholder="租户ID"
+                clearable
+              />
             </ElFormItem>
             <ElFormItem>
-              <ElInput v-model="data.search.name" placeholder="租户名称" clearable />
+              <ElInput
+                v-model="data.search.name"
+                placeholder="租户名称"
+                clearable
+              />
             </ElFormItem>
             <ElFormItem>
               <el-select v-model="data.search.version" placeholder="请选择版本">
-                <el-option v-for="item in version" :key="item.id" :label="item.name" :value="item.id" />
+                <el-option
+                  v-for="item in version"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
               </el-select>
             </ElFormItem>
             <ElFormItem v-show="fold">
               <el-select v-model="data.search.version" placeholder="租户来源">
-                <el-option v-for="item in version" :key="item.id" :label="item.name" :value="item.id" />
+                <el-option
+                  v-for="item in version"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
               </el-select>
             </ElFormItem>
             <ElFormItem v-show="fold">
               <el-select v-model="data.search.version" placeholder="账户类型">
-                <el-option v-for="item in version" :key="item.id" :label="item.name" :value="item.id" />
+                <el-option
+                  v-for="item in version"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
               </el-select>
             </ElFormItem>
             <ElFormItem>
@@ -262,9 +299,11 @@ function onResetPassword(row: any) {
               </ElButton>
               <ElButton link @click="toggle">
                 <template #icon>
-                  <SvgIcon :name="fold ? 'i-ep:caret-bottom' : 'i-ep:caret-top'" />
+                  <SvgIcon
+                    :name="fold ? 'i-ep:caret-bottom' : 'i-ep:caret-top'"
+                  />
                 </template>
-                {{ fold ? '展开' : '收起' }}
+                {{ fold ? "展开" : "收起" }}
               </ElButton>
             </ElFormItem>
           </ElForm>
@@ -278,68 +317,154 @@ function onResetPassword(row: any) {
           </el-button>
         </FormLeftPanel>
         <FormRightPanel>
-          <el-button size="default" @click="onExport">
-            导出
-          </el-button>
+          <el-button size="default" @click="onExport"> 导出 </el-button>
           <TabelControl
-            v-model:border="data.border" v-model:tableAutoHeight="data.tableAutoHeight"
-            v-model:checkList="data.checkList" v-model:columns="columns" v-model:line-height="data.lineHeight"
-            v-model:stripe="data.stripe" style="margin-left: 12px;" @query-data="getDataList"
+            v-model:border="data.border"
+            v-model:tableAutoHeight="data.tableAutoHeight"
+            v-model:checkList="data.checkList"
+            v-model:columns="columns"
+            v-model:line-height="data.lineHeight"
+            v-model:stripe="data.stripe"
+            style="margin-left: 12px"
+            @query-data="getDataList"
           />
         </FormRightPanel>
       </el-row>
       <ElTable
-        v-loading="data.loading" :border="data.border" :size="data.lineHeight" :stripe="data.stripe" class="my-4"
-        :data="data.dataList" highlight-current-row height="100%" @sort-change="onSortChange"
+        v-loading="data.loading"
+        :border="data.border"
+        :size="data.lineHeight"
+        :stripe="data.stripe"
+        class="my-4"
+        :data="data.dataList"
+        highlight-current-row
+        height="100%"
+        @sort-change="onSortChange"
         @selection-change="data.batch.selectionDataList = $event"
       >
-        <el-table-column align="center" prop="a" show-overflow-tooltip type="selection" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="id" width="80" label="租户ID" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="type" label="账户类型">
+        <el-table-column
+          align="center"
+          prop="a"
+          show-overflow-tooltip
+          type="selection"
+        />
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="id"
+          width="80"
+          label="租户ID"
+        />
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="type"
+          label="账户类型"
+        >
           <template #default="{ row }">
-            {{ row.type === 'personal' ? '个人' : '公司' }}
+            {{ row.type === "personal" ? "个人" : "公司" }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip align="center" prop="name" label="用户名">
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="name"
+          label="用户名"
+        >
           <template #default="{ row }">
-            {{ row.name ? row.name : '暂无数据' }}
+            {{ row.name ? row.name : "暂无数据" }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip align="center" prop="companyName" label="公司名称">
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="companyName"
+          label="公司名称"
+        >
           <template #default="{ row }">
-            {{ row.companyName ? row.companyName : '暂无数据' }}
+            {{ row.companyName ? row.companyName : "暂无数据" }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip align="center" prop="version" label="版本" />
-        <ElTableColumn show-overflow-tooltip align="center" prop="countryName" label="国家">
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="version"
+          label="版本"
+        />
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="countryName"
+          label="国家"
+        >
           <template #default="{ row }">
-            {{ row.countryName ? row.countryName : '暂无数据' }}
+            {{ row.countryName ? row.countryName : "暂无数据" }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip align="center" prop="email" label="邮箱">
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="email"
+          label="邮箱"
+        >
           <template #default="{ row }">
-            {{ row.email ? row.email : '暂无数据' }}
+            {{ row.email ? row.email : "暂无数据" }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip align="center" prop="phone" label="手机号码">
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="phone"
+          label="手机号码"
+        >
           <template #default="{ row }">
-            {{ row.phone ? row.phone : '暂无数据' }}
+            {{ row.phone ? row.phone : "暂无数据" }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip align="center" prop="date" label="期限" />
-        <ElTableColumn align="center" show-overflow-tooltip prop="active" label="状态">
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="date"
+          label="期限"
+        />
+        <ElTableColumn
+          align="center"
+          show-overflow-tooltip
+          prop="active"
+          label="状态"
+        >
           <template #default="{ row }">
             <ElSwitch
-              v-model="row.active" inline-prompt active-text="开启" inactive-text="关闭" :active-value="1"
+              v-model="row.active"
+              inline-prompt
+              active-text="开启"
+              inactive-text="关闭"
+              :active-value="1"
               :inactive-value="2"
               @change="changeStatus(row)"
             />
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip align="center" prop="registerFrom" label="租户来源" />
-        <el-table-column align="center" prop="i" label="操作" show-overflow-tooltip width="180">
+        <ElTableColumn
+          show-overflow-tooltip
+          align="center"
+          prop="registerFrom"
+          label="租户来源"
+        />
+        <el-table-column
+          align="center"
+          prop="i"
+          label="操作"
+          show-overflow-tooltip
+          width="180"
+        >
           <template #default="{ row }">
-            <el-button size="small" plain type="primary" @click="onResetPassword(row)">
+            <el-button
+              size="small"
+              plain
+              type="primary"
+              @click="onResetPassword(row)"
+            >
               重置密码
             </el-button>
             <el-button size="small" plain type="primary" @click="onEdit(row)">
@@ -349,14 +474,25 @@ function onResetPassword(row: any) {
         </el-table-column>
       </ElTable>
       <ElPagination
-        :current-page="pagination.page" :total="pagination.total" :page-size="pagination.size"
-        :page-sizes="pagination.sizes" :layout="pagination.layout" :hide-on-single-page="false" class="pagination"
-        background @size-change="sizeChange" @current-change="currentChange"
+        :current-page="pagination.page"
+        :total="pagination.total"
+        :page-size="pagination.size"
+        :page-sizes="pagination.sizes"
+        :layout="pagination.layout"
+        :hide-on-single-page="false"
+        class="pagination"
+        background
+        @size-change="sizeChange"
+        @current-change="currentChange"
       />
     </PageMain>
     <FormMode
-      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'" :id="data.formModeProps.id"
-      v-model="data.formModeProps.visible" :row="data.formModeProps.row" :mode="data.formMode" @success="getDataList"
+      v-if="data.formMode === 'dialog' || data.formMode === 'drawer'"
+      :id="data.formModeProps.id"
+      v-model="data.formModeProps.visible"
+      :row="data.formModeProps.row"
+      :mode="data.formMode"
+      @success="getDataList"
     />
   </div>
 </template>

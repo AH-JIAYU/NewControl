@@ -3,6 +3,7 @@ import FormMode from './components/FormMode/index.vue'
 import Edit from './components/Edit/index.vue'
 import eventBus from '@/utils/eventBus'
 import api from '@/api/modules/tenant_tenantPermission'
+import apiMenu from '@/api/modules/tenant_tenantMenu'
 import usetenantMenuStore from '@/store/modules/tenantMenu'
 import useSettingsStore from '@/store/modules/settings'
 import useTenantButtonPermissionStore from '@/store/modules/tenantButtonPermission'
@@ -85,12 +86,14 @@ function recursion(menus: any[], permissions: any[]) {
 }
 // 获取数据
 async function getDataList() {
+  data.value.formModeProps.visible = false
   data.value.loading = true
   const permissions = await api.list()
   // 存store
   buttonPer.tenantPermissions = permissions.data
-  // 从store获取原始路由
-  const menus: any = await tenantMenuStore.gettenantMenu
+  // 获取原始路由
+  const res = await apiMenu.list({ type: 'normal' })
+  const menus: any = res.data
   // 处理数据 将权限里的menu和路由里的name相同的数据添加到路由的permissions里
   recursion(menus, permissions.data)
   data.value.dataList = menus
