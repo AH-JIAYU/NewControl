@@ -27,7 +27,7 @@ export async function customComponents() {
       2,
     ),
     await questionFun('age', '出生日期', 'text', 'placeholder', '14', '19', 1, 'date'),
-    await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20'),
+    await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20',1),
     await questionFun('AHI', '家庭收入', 'radiogroup', 'placeholder', '4', '25', 2),
     // await questionFun('education', '教育程度', 'radiogroup', 'placeholder', '2', '23'),
     // await questionFun('marriage', '婚姻状况', 'radiogroup', 'placeholder', '3', '24'),
