@@ -34,7 +34,6 @@ const onSubmit = () => {
         :rules="rules"
         label-width="80px"
         :inline="false"
-        size="normal"
       >
         <el-row :gutter="20">
           <el-col :span="3">
