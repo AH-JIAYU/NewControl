@@ -6,7 +6,8 @@
 <script setup lang="ts">
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import { onMounted, ref, watch } from 'vue'
-import apiDictionary from '@/api/modules/setting_tenantDictionary'
+// import apiDictionary from '@/api/modules/setting_tenantDictionary'
+import api from '@/api/modules/tenant_tenantDictionary'
 
 defineOptions({
   name: 'tenant_dictionary',
@@ -312,3 +313,4 @@ function sortChange({ prop, order }: { prop: string, order: string }) {
   }
 }
 </style>
+@/api/modules/tenant_tenantHomepageSetting
