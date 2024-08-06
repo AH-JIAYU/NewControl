@@ -7,7 +7,7 @@ export default {
   //   data,
   // }),
   // 后端接口路由
-  routeList: (data: any) => api.post('menu/get/getMenuList', data),
+  routeList: (data: any) => api.post('menu/getMenuList', data),
   // routeList: (data?: any) => api.get('menu/list', {
   //   baseURL: '/mock/',
   //   data,

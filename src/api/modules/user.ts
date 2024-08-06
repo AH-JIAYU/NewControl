@@ -21,7 +21,7 @@ export default {
   //   baseURL: '/mock/',
   // }),
   // 获取权限
-  permission: () => api.get('role/get/getRoleButton'),
+  permission: () => api.get('role/getRoleButton'),
 
   // 修改密码
   passwordEdit: (data: {

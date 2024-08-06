@@ -9,7 +9,7 @@ export default {
   //   params: data,
   //   baseURL: '/mock/',
   // }),
-  list: () => api.get('role/get/getRole'),
+  list: () => api.get('role/getRole'),
 
   detail: (id: number | string) => api.get('setting/role/detail', {
     params: {
@@ -22,17 +22,17 @@ export default {
   //   baseURL: '/mock/',
   // }),
 
-  create: (data: any) => api.post('role/insert/insertRole', data),
+  create: (data: any) => api.post('role/insertRole', data),
 
   // edit: (data: any) => api.post('setting/role/edit', data, {
   //   baseURL: '/mock/',
   // }),
-  edit: (data: any) => api.post('role/update/updateRole', data),
+  edit: (data: any) => api.post('role/updateRole', data),
 
   // delete: (id: number | string) => api.post('setting/role/delete', {
   //   id,
   // }, {
   //   baseURL: '/mock/',
   // }),
-  delete: (id: any) => api.post(`role/delete/deleteRole`, { id }),
+  delete: (id: any) => api.post(`role/deleteRole`, { id }),
 }

@@ -2,15 +2,15 @@ import api from '../index'
 
 export default {
   // 获取
-  list: () => api.get('user/get/getUser'),
+  list: () => api.get('user/getUser'),
   // 新增
   create: (data: any) => api.post('user/register', data),
   // 修改
-  edit: (data: any) => api.post('user/update/updateUser', data),
+  edit: (data: any) => api.post('user/updateUser', data),
   // 赋予角色信息
-  setUserRole: (data: any) => api.post('user/update/setUserRole', data),
+  setUserRole: (data: any) => api.post('user/setUserRole', data),
   // 删除
-  delete: (data: any) => api.post('/user/delete/deleteUser', data),
+  delete: (data: any) => api.post('/user/deleteUser', data),
 
   passwordReset: (id: number | string) => api.post('setting/user/password/reset', {
     id,
