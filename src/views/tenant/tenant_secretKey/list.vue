@@ -5,7 +5,7 @@ import api from "@/api/modules/tenant_tenantSecretKey";
 import useSettingsStore from "@/store/modules/settings";
 
 defineOptions({
-  name: "TenantTenantSecretKeyList",
+  name: "tenant_secretKey",
 });
 
 const data = ref<any>({
@@ -34,7 +34,6 @@ const onSubmit = () => {
         :rules="rules"
         label-width="80px"
         :inline="false"
-        size="normal"
       >
         <el-row :gutter="20">
           <el-col :span="3">

@@ -7,7 +7,7 @@ import eventBus from '@/utils/eventBus'
 import api from '@/api/modules/tenant_tenantTemplate'
 
 defineOptions({
-  name: 'TenantTenantTemplateList',
+  name: 'tenant_template',
 })
 // 分页配置
 const { pagination, getParams, onSizeChange, onCurrentChange, onSortChange } = usePagination()

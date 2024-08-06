@@ -6,7 +6,7 @@ import tenantCommission from './components/tenantCommission.vue'
 import tenantCompleted from './components/tenantCompleted.vue'
 
 defineOptions({
-  name: 'HomeIndexIndex',
+  name: 'homeIndex',
 })
 </script>
 

@@ -11,7 +11,7 @@ import apiMenu from '@/api/modules/tenant_vip_menu'
 import usevipMenuStore from '@/store/modules/tenant_vip_menu'
 
 defineOptions({
-  name: 'VipMenuList',
+  name: 'tenant_vip_menu',
 })
 // 租户路由 store
 const vipMenuStore = usevipMenuStore()

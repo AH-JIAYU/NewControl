@@ -11,7 +11,7 @@ import apiMenu from '@/api/modules/menu'
 import useRouteStore from '@/store/modules/route'
 
 defineOptions({
-  name: 'SettingMenuList',
+  name: 'multilevel_menu_exampleMenu',
 })
 
 const routeStore = useRouteStore()

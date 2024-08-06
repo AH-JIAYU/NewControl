@@ -12,7 +12,7 @@ import DictionaryItemDia from './components/dictionaryItemDialog/index.vue'
 import apiDictionary from '@/api/modules/setting_basisDictionary'
 
 defineOptions({
-  name: 'SettingBasisDictionaryList',
+  name: 'basis_dictionary',
 })
 
 interface Dict {

@@ -8,7 +8,7 @@ import useSettingsStore from '@/store/modules/settings'
 import userButtonPer from '@/store/modules/buttonPermission'
 
 defineOptions({
-  name: 'SettingPermissionsList',
+  name: 'multilevel_menu_examplePermissions',
 })
 // 按钮store
 const buttonPer = userButtonPer()

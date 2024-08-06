@@ -5,7 +5,7 @@ import { ref } from 'vue'
 // import api from '@/api/modules/setting_siteSetting'
 
 defineOptions({
-  name: 'SettingSiteSettingList',
+  name: 'site_setting',
 })
 
 const form = ref({

@@ -9,7 +9,7 @@ import useSettingsStore from '@/store/modules/settings'
 import useTenantButtonPermissionStore from '@/store/modules/tenantButtonPermission'
 
 defineOptions({
-  name: 'TenantTenantPermissionList',
+  name: 'tenant_permission',
 })
 // 按钮store
 const buttonPer = useTenantButtonPermissionStore()

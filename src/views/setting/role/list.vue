@@ -6,7 +6,7 @@ import api from '@/api/modules/setting_role'
 import useSettingsStore from '@/store/modules/settings'
 
 defineOptions({
-  name: 'SettingRoleList',
+  name: 'multilevel_menu_exampleRole',
 })
 // 路由
 const router = useRouter()

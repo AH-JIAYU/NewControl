@@ -7,7 +7,7 @@ import 'echarts/extension/bmap/bmap'
 import 'echarts/map/js/world'
 
 defineOptions({
-  name: 'HomeIndexWord',
+  name: 'HomeIndexVersionDistribution',
 })
 const versionRef = ref<any>()
 let chart1: any

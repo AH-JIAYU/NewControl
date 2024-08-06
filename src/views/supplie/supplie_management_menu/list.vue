@@ -11,7 +11,7 @@ import apiMenu from '@/api/modules/supplie_supplieManagement'
 import usetenantMenuStore from '@/store/modules/supplieMenu'
 
 defineOptions({
-  name: 'SupplieMenuList',
+  name: 'supplie_management_menu',
 })
 // 租户路由 store
 const supplieMenuStore = usetenantMenuStore()
