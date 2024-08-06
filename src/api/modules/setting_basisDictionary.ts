@@ -2,23 +2,23 @@ import api from '../index'
 
 export default {
   // 获取字典
-  list: () => api.get('dict/get/getDict'),
+  list: () => api.get('dict/getDict'),
   // 新增字典
-  create: (data: any) => api.post('/dict/insert/insertDict', data),
+  create: (data: any) => api.post('/dict/insertDict', data),
   // 修改字典
-  edit: (data: any) => api.post('/dict/update/updateDict', data),
+  edit: (data: any) => api.post('/dict/updateDict', data),
   // 删除字典
-  delete: (id: number | string) => api.post('/dict/delete/deleteDict', {
+  delete: (id: number | string) => api.post('/dict/deleteDict', {
     id,
   }),
   // 获取字典项
-  itemList: (data: any) => api.post(`/dict/get/getDictDataSourceByDictId`, data),
+  itemList: (data: any) => api.post(`/dict/getDictDataSourceByDictId`, data),
   // 新增字典项
-  itemCreate: (data: any) => api.post('/dict/insert/insertDictDataSource', data),
+  itemCreate: (data: any) => api.post('/dict/insertDictDataSource', data),
   // 修改字典项
-  itemEdit: (data: any) => api.post('/dict/update/updateDataSourceById', data),
+  itemEdit: (data: any) => api.post('/dict/updateDataSourceById', data),
   // 删除字典项
-  itemDelete: (id: number | number[] | string | string[]) => api.delete(`/dict/delete/deleteDataSourceById/${id}`),
+  itemDelete: (id: number | number[] | string | string[]) => api.delete(`/dict/deleteDataSourceById/${id}`),
 
   get: (code: string) => api.get('dictionary/get', {
     params: {

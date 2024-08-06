@@ -2,19 +2,19 @@ import api from '../index'
 
 export default {
   list: (data?: any) =>
-    api.post('category/get/getCategory', data),
+    api.post('category/getCategory', data),
 
   create: (data: any) =>
-    api.post('category/insert/insertCategory', data),
+    api.post('category/insertCategory', data),
 
   edit: (data: any) =>
-    api.post('category/update/updateCategory', data),
+    api.post('category/updateCategory', data),
 
   delete: (data: any) =>
-    api.post('category/delete/deleteCategory', data),
+    api.post('category/deleteCategory', data),
   // 设计问卷
-  setSurvey: (data: any) => api.post('/problem/insert/insertOrUpdateOrDeleteProblem', data),
+  setSurvey: (data: any) => api.post('/problem/insertOrUpdateOrDeleteProblem', data),
   // 获取问卷
   getSurvey: (data: any) =>
-    api.post('/problem/insert/insertOrUpdateOrDeleteProblem', data),
+    api.post('/problem/insertOrUpdateOrDeleteProblem', data),
 }

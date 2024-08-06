@@ -1,7 +1,7 @@
 import api from '../index'
 
 export default {
-  list: () => api.get('/version/get/getVersionList'),
+  list: () => api.get('/version/getVersionList'),
   // list: (data?: any) => api.get('setting/version_management/list', {
   //   baseURL: '/mock/',
   //   data,
@@ -13,9 +13,9 @@ export default {
     baseURL: '/mock/',
   }),
 
-  create: (data: any) => api.post('version/insert/insertVersion', data),
+  create: (data: any) => api.post('version/insertVersion', data),
 
-  edit: (data: any) => api.post('version/update/updateVersion', data),
+  edit: (data: any) => api.post('version/updateVersion', data),
 
-  delete: (id: number | string) => api.delete(`version/delete/deleteVersion/${id}`),
+  delete: (id: number | string) => api.delete(`version/deleteVersion/${id}`),
 }
