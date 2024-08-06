@@ -12,7 +12,7 @@ import eventBus from '@/utils/eventBus'
 import apiUser from '@/api/modules/setting_user'
 
 defineOptions({
-  name: 'SettingUserList',
+  name: 'multilevel_menu_exampleUser',
 })
 // 分页
 const { pagination, onSizeChange, onCurrentChange, onSortChange } = usePagination()

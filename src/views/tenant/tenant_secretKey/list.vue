@@ -5,7 +5,7 @@ import api from "@/api/modules/tenant_tenantSecretKey";
 import useSettingsStore from "@/store/modules/settings";
 
 defineOptions({
-  name: "TenantTenantSecretKeyList",
+  name: "tenant_secretKey",
 });
 
 const data = ref<any>({

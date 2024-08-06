@@ -7,7 +7,7 @@ import 'echarts/extension/bmap/bmap'
 import 'echarts/map/js/world'
 
 defineOptions({
-  name: 'HomeIndexWord',
+  name: 'HomeIndexVersionRevenue',
 })
 const radio2 = ref('month')
 const versionRef = ref<any>()

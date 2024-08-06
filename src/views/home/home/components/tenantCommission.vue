@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineOptions({
-  name: 'HomeIndexWord',
+  name: 'HomeIndexTenantCommission',
 })
 
 const data = [

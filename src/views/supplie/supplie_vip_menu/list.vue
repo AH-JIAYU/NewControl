@@ -11,7 +11,7 @@ import apiMenu from '@/api/modules/supplie_vip_menu'
 import usesupplieVipMenuStore from '@/store/modules/supplie_vip_menu'
 
 defineOptions({
-  name: 'VipMenuList',
+  name: 'supplie_vip_menu',
 })
 // 租户路由 store
 const supplieVipMenuStore = usesupplieVipMenuStore()

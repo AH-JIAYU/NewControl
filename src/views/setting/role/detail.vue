@@ -4,7 +4,7 @@ import eventBus from '@/utils/eventBus'
 import useSettingsStore from '@/store/modules/settings'
 
 defineOptions({
-  name: 'SettingRoleDetail',
+  name: 'multilevel_menu_exampleRoleDetail',
 })
 // 路由
 const route = useRoute()

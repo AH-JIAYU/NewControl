@@ -11,7 +11,7 @@ import apiMenu from '@/api/modules/tenant_tenantMenu'
 import usetenantMenuStore from '@/store/modules/tenantMenu'
 
 defineOptions({
-  name: 'TenantMenuList',
+  name: 'tenantMenu',
 })
 // 租户路由 store
 const tenantMenuStore = usetenantMenuStore()

@@ -13,7 +13,7 @@ import useSettingsStore from "@/store/modules/settings";
 import useVersionStore from "@/store/modules/version";
 
 defineOptions({
-  name: "SurveyBillManagementList",
+  name: "tenant_manage",
 });
 // 路由
 const router = useRouter();

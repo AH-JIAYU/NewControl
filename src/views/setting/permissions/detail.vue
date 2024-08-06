@@ -4,7 +4,7 @@ import eventBus from '@/utils/eventBus'
 import useSettingsStore from '@/store/modules/settings'
 
 defineOptions({
-  name: 'SettingPermissionsDetail',
+  name: 'multilevel_menu_examplePermissionsDetail',
 })
 
 const route = useRoute()

@@ -7,7 +7,7 @@ import api from '@/api/modules/setting_versionManagement'
 import useSettingsStore from '@/store/modules/settings'
 
 defineOptions({
-  name: 'VersionVersionManagementList',
+  name: 'version_management',
 })
 // 路由
 const router = useRouter()

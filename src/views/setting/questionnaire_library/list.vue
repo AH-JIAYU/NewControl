@@ -8,7 +8,7 @@ import useSettingsStore from '@/store/modules/settings'
 import useProblemStore from '@/store/modules/problem.ts'
 
 defineOptions({
-  name: 'SettingQuestionnaireLibraryList',
+  name: 'questionnaire_library',
 })
 // 问题
 const problemStore = useProblemStore()
