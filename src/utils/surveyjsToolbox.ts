@@ -26,8 +26,8 @@ export async function customComponents() {
       '22',
       2,
     ),
-    await questionFun('age', '出生日期', 'text', 'placeholder', '14', '', 1, 'date'),
-    await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20'),
+    await questionFun('age', '出生日期', 'text', 'placeholder', '14', '19', 1, 'date'),
+    await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20',1),
     await questionFun('AHI', '家庭收入', 'radiogroup', 'placeholder', '4', '25', 2),
     // await questionFun('education', '教育程度', 'radiogroup', 'placeholder', '2', '23'),
     // await questionFun('marriage', '婚姻状况', 'radiogroup', 'placeholder', '3', '24'),
@@ -65,7 +65,7 @@ async function questionFun(
   colCount = 1, // 单选框 列数
   inputType = null || '', // 输入框类型(当工具为输入框时)
 ) {
-  const countryType = problemStore.country.countryId === '343'
+  const countryType = problemStore?.country.countryId === '343'
     ? {
         page: 1,
         limit: 10,
@@ -81,9 +81,9 @@ async function questionFun(
   // 答案
   const answer: any = data?.records
   // 请求的问题
-  const res = await problemStore.getProblem
+  const res = await problemStore?.getProblem
   // 问题 对应国家下的问题
-  const problem: any = res[0].children[problemStore.country.countryId === '343' ? 0 : 1].children
+  const problem: any = res[0].children[problemStore?.country.countryId === '343' ? 0 : 1].children
   // 定义需要的数据格式
   const question: any = {
     title: {},
@@ -94,15 +94,15 @@ async function questionFun(
     inputType,
   }
   // 如果请求接口返回当前问题为空数组,那就让他比对对应请求的id
-  const problemId: any = problemStore.country.countryId === '343' ? zhID : enID
+  const problemId: any = problemStore?.country.countryId === '343' ? zhID : enID
   //  根据字典的答案查询对应的问题
   const row: any = problem.find((item: any) => item.id === data?.records[0]?.catalogueId || item.id === problemId)
-  question.title.default = problemStore.country.countryId === '343' ? row.chineseName : row.englishName
+  question.title.default = problemStore?.country.countryId === '343' ? row?.chineseName : row?.englishName
   question.title['zh-cn'] = row.chineseName
   question.title.en = row.englishName
   question.id = row.otherId
   // 左侧块(问题模板)的标题
-  title = problemStore.country.countryId === '343' ? title : row.englishName
+  title = problemStore?.country.countryId === '343' ? title : row.englishName
   if (answer.length > 0) {
     answer?.forEach((item: any, index: number) => {
       if (question.choices.length < answer?.length) {
@@ -113,7 +113,7 @@ async function questionFun(
     answer?.forEach((item: any) => {
       question.choices.forEach((it: any) => {
         if (item.code === it.value) {
-          it.text.default = problemStore.country.countryId === '343' ? item.chineseName : item.englishName
+          it.text.default = problemStore?.country.countryId === '343' ? item.chineseName : item.englishName
           it.text['zh-cn'] = item.chineseName
           it.text.en = item.englishName
           it.text.id = item.otherId

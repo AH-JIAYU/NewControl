@@ -11,6 +11,8 @@ const emits = defineEmits<{
 }>()
 // 国家
 const countryStore = useCountryStore()
+// loading
+const loading = ref(false)
 // 关闭弹框
 const visible = defineModel<boolean>({
   default: false,
@@ -30,8 +32,10 @@ const formRules = ref<any>({
   countryId: [{ required: true, message: '请选择国家', trigger: 'blur' }],
 })
 onMounted(async () => {
+  loading.value = true
   // 获取国家数据
   country.value = await countryStore.getCountry
+  loading.value = false
 })
 const title = computed(() => {
   // 默认form为空
@@ -51,12 +55,14 @@ async function onSubmit() {
     // 新增
     formRef.value && formRef.value.validate(async (valid: any) => {
       if (valid) {
+        loading.value = true
         const { status } = await api.create(form.value)
         status === 1
         && ElMessage.success({
           message: '新增成功',
           center: true,
         })
+        loading.value = false
         onCancel()
         emits('success')
       }
@@ -66,12 +72,14 @@ async function onSubmit() {
     // 编辑
     formRef.value && formRef.value.validate(async (valid: any) => {
       if (valid) {
+        loading.value = true
         const { status } = await api.edit(form.value)
         status === 1
         && ElMessage.success({
           message: '编辑成功',
           center: true,
         })
+        loading.value = false
         onCancel()
         emits('success')
       }
@@ -85,7 +93,7 @@ function onCancel() {
 </script>
 
 <template>
-  <div>
+  <div v-loading="loading">
     <ElDialog
       v-model="visible"
       :title="title"
@@ -107,7 +115,7 @@ function onCancel() {
         <ElFormItem label="国家" prop="countryId">
           <el-select v-model="form.countryId" value-key="" placeholder="请选择国家" clearable filterable>
             <el-option
-              v-for="item in country.records"
+              v-for="item in country"
               :key="item.id"
               :label="item.chineseName"
               :value="item.id"
