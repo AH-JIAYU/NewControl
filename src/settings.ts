@@ -20,6 +20,7 @@ const globalSettings: Settings.all = {
      * dot 圆点
      */
     menuActiveStyle: '',
+    switchMainMenuAndPageJump: true,
   },
   tabbar: {
     enable: true,
