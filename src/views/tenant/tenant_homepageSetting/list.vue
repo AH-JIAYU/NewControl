@@ -124,7 +124,6 @@ function onDel(row: any) {
 
 <template>
   <div :class="{ 'absolute-container': data.tableAutoHeight }">
-    <PageHeader title="首页设置管理" />
     <PageMain>
       <SearchBar :show-toggle="false">
         <template #default="{ fold, toggle }">
@@ -262,7 +261,7 @@ function onDel(row: any) {
       :mode="data.formMode"
       @success="getDataList"
     />
-    <homePageEdit ref="homePageRef"></homePageEdit>
+    <homePageEdit ref="homePageRef"  @fetch-data="getDataList"></homePageEdit>
   </div>
 </template>
 
