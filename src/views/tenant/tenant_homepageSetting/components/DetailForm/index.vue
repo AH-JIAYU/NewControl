@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FormInstance, FormRules } from "element-plus";
+import type { FormRules } from "element-plus";
 import { ElMessage } from "element-plus";
 import type { DetailFormProps } from "../../types";
 import api from "@/api/modules/tenant_tenantHomepageSetting";
@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<DetailFormProps>(), {
 });
 
 const loading = ref(false);
-const formRef = ref<FormInstance>();
+const formRef = ref<any>();
 const form = ref({
   id: props.id,
   title: "",
@@ -31,7 +31,7 @@ onMounted(() => {
 defineExpose({
   submit() {
     return new Promise<void>((resolve) => {
-      formRef.value.validate((valid) => {
+      formRef.value.validate((valid: any) => {
         if (valid) {
           if (form.value.id === "") {
             const { id, ...params } = form.value;
@@ -43,7 +43,7 @@ defineExpose({
                 });
             });
           } else {
-            api.edit(form.value).then(() => {
+            api.edit(form.value).then((res: any) => {
               res.status === 1 &&
                 ElMessage.success({
                   message: "编辑成功",

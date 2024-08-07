@@ -5,7 +5,7 @@ import DetailForm from "../DetailForm/index.vue";
 const props = defineProps<
   {
     mode: "dialog" | "drawer";
-    row;
+    row: any;
   } & DetailFormProps
 >();
 

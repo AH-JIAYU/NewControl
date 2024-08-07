@@ -20,25 +20,26 @@ import { ElMessage } from "element-plus";
 import grapesjs from "grapesjs";
 import plugin from "grapesjs-preset-webpage";
 import basic from "grapesjs-blocks-basic";
+// @ts-ignore
 import advance from "grapesjs-advance-components";
 import parserPostCSS from "grapesjs-parser-postcss";
 import "grapesjs/dist/css/grapes.min.css";
 import "grapesjs/dist/grapes.min.js";
+// @ts-ignore
 import zh from "grapesjs/locale/zh";
 import api from "@/api/modules/tenant_tenantHomepageSetting";
 const emits = defineEmits(["fetch-data"]);
 
-// const $baseMessage = inject("$baseMessage");
-const state = reactive({
+const state = reactive<any>({
   title: "",
   dialogFormVisible: false,
   form: {},
 });
 
-const editorRef = ref(null);
-const formRef = ref(null);
+const editorRef = ref<any>(null);
+const formRef = ref<any>(null);
 
-const showEdit = (row) => {
+const showEdit = (row: any) => {
   state.title = "编辑";
   state.form = row;
   state.dialogFormVisible = true;
@@ -91,7 +92,7 @@ const save = async () => {
       message: "编辑成功",
       center: true,
     });
-  emit("fetch-data");
+  emits("fetch-data");
   close();
 };
 
