@@ -6,8 +6,8 @@
 <script setup lang="ts">
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import { onMounted, ref, watch } from 'vue'
-// import apiDictionary from '@/api/modules/setting_tenantDictionary'
-import api from '@/api/modules/tenant_tenantDictionary'
+import apiDictionary from '@/api/modules/setting_tenantDictionary'
+// import api from '@/api/modules/tenant_tenantDictionary'
 
 defineOptions({
   name: 'tenant_dictionary',
@@ -60,7 +60,7 @@ const dictionaryItem = ref({
 function getDictionaryList() {
   dictionary.value.loading = true
   dictionaryItem.value.search.dictionaryId = ''
-  apiDictionary.list().then((res) => {
+  apiDictionary.list().then((res:any) => {
     dictionary.value.tree = res.data
     dictionary.value.loading = false
   })
