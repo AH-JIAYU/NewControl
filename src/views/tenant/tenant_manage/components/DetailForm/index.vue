@@ -173,8 +173,8 @@ defineExpose({
         </el-select>
       </ElFormItem>
       <ElFormItem label="租户状态" prop="active">
-        <el-switch v-model="form.active" inline-prompt active-text="开启" inactive-text="关闭" :active-value="1"
-          :inactive-value="2" />
+        <el-switch v-model="form.active" inline-prompt active-text="开启" inactive-text="关闭" :active-value="2"
+          :inactive-value="1" />
       </ElFormItem>
     </ElForm>
   </div>
