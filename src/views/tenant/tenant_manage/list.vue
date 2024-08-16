@@ -142,7 +142,7 @@ async function onExport() {
 // 修改状态
 async function changeStatus(row: any) {
   ElMessageBox.confirm(
-    `确认将状态修改成「${row.active === 1 ? "启用" : "禁用"}」吗？`,
+    `确认将状态修改成「${row.active === 2 ? "启用" : "禁用"}」吗？`,
     "确认信息"
   )
     .then(async () => {
@@ -439,8 +439,8 @@ function onResetPassword(row: any) {
               inline-prompt
               active-text="开启"
               inactive-text="关闭"
-              :active-value="1"
-              :inactive-value="2"
+              :active-value="2"
+              :inactive-value="1"
               @change="changeStatus(row)"
             />
           </template>
