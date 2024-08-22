@@ -22,7 +22,7 @@ const versionStore = useVersionStore();
 // 查询版本
 const version = ref();
 // 分页配置
-const { pagination, onSizeChange, onCurrentChange, onSortChange } =
+const { pagination, onSizeChange, onCurrentChange, onSortChange, getParams } =
   usePagination();
 const tabbar = useTabbar();
 const settingsStore = useSettingsStore();
@@ -66,8 +66,6 @@ const data = ref<any>({
   },
   // 搜索
   search: {
-    page: 1,
-    limit: 10,
     version: "",
     name: "",
     id: "",
@@ -88,7 +86,7 @@ onMounted(() => {
 async function getDataList() {
   data.value.loading = true;
   version.value = await versionStore.getVersion;
-  api.list({ page: 1, limit: 10 }).then((res: any) => {
+  api.list({ ...getParams(),...data.value.search}).then((res: any) => {
     data.value.loading = false;
     data.value.dataList = res.data.result;
     pagination.value.total = Number.parseInt(res.data.total);
@@ -106,8 +104,6 @@ function queryData() {
 // 重置筛选数据
 function onReset() {
   Object.assign(data.value.search, {
-    page: 1,
-    limit: 10,
     version: "",
     name: "",
     id: "",
@@ -116,6 +112,7 @@ function onReset() {
 }
 // 每页数量切换
 function sizeChange(size: number) {
+  console.log()
   onSizeChange(size).then(() => getDataList());
 }
 // 当前页码切换（翻页）
@@ -127,8 +124,7 @@ function currentChange(page = 1) {
 async function onExport() {
   try {
     const list = await api.export({
-      page: 1,
-      limit: 10,
+      ...getParams(),
       id: "",
       name: "",
       versionId: "",
@@ -147,7 +143,7 @@ async function changeStatus(row: any) {
   )
     .then(async () => {
       const { status } = await api.edit({
-        id: row.id,
+        id: row.tenantId,
         active: row.active,
         phone: row.phone,
         email: row.email,
