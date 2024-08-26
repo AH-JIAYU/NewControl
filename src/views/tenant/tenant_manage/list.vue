@@ -145,8 +145,8 @@ async function changeStatus(row: any) {
       const { status } = await api.edit({
         id: row.tenantId,
         active: row.active,
-        phone: row.phone,
-        email: row.email,
+        //phone: row.phone,
+        //email: row.email,
       });
       status === 1 &&
         ElMessage.success({
