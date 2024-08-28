@@ -213,12 +213,20 @@ defineExpose({
     border-left: 1px solid #f1f1f1;
   }
 
-  .buttonId {
+  .permission {
     display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: space-around;
-    height: 80px;
+    align-items: center;
+    justify-content: start;
+    .buttonId{
+      padding:1rem 0;
+    :deep(.el-checkbox-group){
+      display: flex;
+    flex-wrap: wrap;
+    }
+    :deep(.el-checkbox__label){
+      min-width:150px;
+    }
+  }
   }
 }
 </style>
