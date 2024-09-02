@@ -34,9 +34,14 @@ surveyLocalization.supportedLocales = ['en', 'fr', 'zh-cn']
 setLicenseKey(
   'ZjU4MjI0NjMtN2YzYi00ZDMyLWEyYmEtOTliMmVhZmEyODc5OzE9MjAyNS0wMi0yNA==',
 )
-// 添加属性id
-Serializer.addProperty('question', { name: 'id' })
-Serializer.addProperty('itemvalue', { name: 'id' })
+// // 添加属性id
+// Serializer.addProperty('question', { name: 'id' })
+// Serializer.addProperty('itemvalue', { name: 'id' })
+// 新增属性id type 不能直接使用id 会冲突 报错
+Serializer.addProperty("question", { name: "surveyId" });
+// Serializer.addProperty("question", { name: "surveyType" });
+Serializer.addProperty("itemvalue", { name: "surveyId" });
+// Serializer.addProperty("itemvalue", { name: "surveyType" });
 let creator: any
 const cClassArray: any = []
 const problemStore = useProblemStore()
@@ -119,6 +124,18 @@ onBeforeMount(async () => {
           options.callback(error, 'error')
         })
     })
+    // 新增问题事件 新增id
+    creator.onQuestionAdded.add(async function (sender: any, options: any) {
+      // var q = options.question;
+      // q.surveyId = q.customQuestion.json.questionJSON.id
+    });
+    // 新增答案事件 新增id
+    creator.onItemValueAdded.add(async function (sender: any, options: any) {
+      // const res = await obtainLoading(api.getId({}));
+      // var q = options.newItem;
+      // q.surveyType = 1; //1:表示前端生成(新增操作) 2:表示后端返回(修改操作)
+      // q.surveyId = res.data.id;
+    });
     creator.saveSurveyFunc = (saveNo: number, callback: any) => {
       callback(saveNo, true)
       emits('onSubmit')
@@ -134,7 +151,7 @@ defineExpose({
         const toolboxJSON = ComponentCollection.Instance
         const toolbox = creator.JSON
         // 处理数据
-        proces(toolbox, toolboxJSON)
+        proces(toolbox, toolboxJSON) 
         // 赋值JSON
         form.value.projectJson = JSON.stringify(toolbox)
         const locale = creator.JSON.locale || editorLocalization.currentLocale
@@ -192,7 +209,7 @@ function convertData(originalData: any, locale: any) {
     return item.elements.map((element: any) => {
       const questionType = typeMap[element.type] || 0
       let question = element.name
-      const id = element.id || ''
+      const id = element.surveyId || ''
       if (element.title) {
         question = element?.title.default || element?.title[locale] || element.name
       }
@@ -209,7 +226,7 @@ function convertData(originalData: any, locale: any) {
             if (typeof choice.text === 'object') {
               // 默认为default 如果default不存在说明他一开始就切换了语言
               anotherName = choice.text.default || choice.text[locale]
-              id = choice.text.id || ''
+              id = choice.text.surveyId || ''
             }
             else {
               anotherName = choice.text

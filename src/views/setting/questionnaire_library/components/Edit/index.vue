@@ -26,6 +26,7 @@ const form = ref<any>({
   countryId: null,
   status: 2,
 })
+
 // 校验
 const formRules = ref<any>({
   categoryName: [{ required: true, message: '请输入问卷名称', trigger: 'blur' }],
@@ -58,10 +59,10 @@ async function onSubmit() {
         loading.value = true
         const { status } = await api.create(form.value)
         status === 1
-        && ElMessage.success({
-          message: '新增成功',
-          center: true,
-        })
+          && ElMessage.success({
+            message: '新增成功',
+            center: true,
+          })
         loading.value = false
         onCancel()
         emits('success')
@@ -75,10 +76,10 @@ async function onSubmit() {
         loading.value = true
         const { status } = await api.edit(form.value)
         status === 1
-        && ElMessage.success({
-          message: '编辑成功',
-          center: true,
-        })
+          && ElMessage.success({
+            message: '编辑成功',
+            center: true,
+          })
         loading.value = false
         onCancel()
         emits('success')
@@ -94,44 +95,20 @@ function onCancel() {
 
 <template>
   <div v-loading="loading">
-    <ElDialog
-      v-model="visible"
-      :title="title"
-      width="50%"
-      :close-on-click-modal="false"
-      append-to-body
-      destroy-on-close
-    >
-      <ElForm
-        ref="formRef"
-        :model="form"
-        :rules="formRules"
-        label-width="120px"
-        label-suffix="："
-      >
+    <ElDialog v-model="visible" :title="title" width="50%" :close-on-click-modal="false" append-to-body
+      destroy-on-close>
+      <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
         <ElFormItem label="名称" prop="categoryName">
           <ElInput v-model="form.categoryName" placeholder="请输入名称" />
         </ElFormItem>
         <ElFormItem label="国家" prop="countryId">
           <el-select v-model="form.countryId" value-key="" placeholder="请选择国家" clearable filterable>
-            <el-option
-              v-for="item in country"
-              :key="item.id"
-              :label="item.chineseName"
-              :value="item.id"
-            />
+            <el-option v-for="item in country" :key="item.id" :label="item.chineseName" :value="item.id" />
           </el-select>
         </ElFormItem>
         <ElFormItem label="状态">
-          <ElSwitch
-            v-model="form.status"
-            :active-value="1"
-            :inactive-value="2"
-            inline-prompt
-            active-text="开启"
-            inactive-text="禁用"
-            placeholder="请输入状态"
-          />
+          <ElSwitch v-model="form.status" :active-value="1" :inactive-value="2" inline-prompt active-text="开启"
+            inactive-text="禁用" placeholder="请输入状态" />
         </ElFormItem>
       </ElForm>
       <template #footer>
