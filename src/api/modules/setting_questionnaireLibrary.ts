@@ -17,4 +17,6 @@ export default {
   // 获取问卷
   getSurvey: (data: any) =>
     api.post('/problem/insertOrUpdateOrDeleteProblem', data),
+  // 获取ID
+  getId: () => api.get("/generate/generateId"),
 }

@@ -128,6 +128,44 @@ onBeforeMount(async () => {
     creator.onQuestionAdded.add(async function (sender: any, options: any) {
       // var q = options.question;
       // q.surveyId = q.customQuestion.json.questionJSON.id
+      // console.log('options.question.contentQuestion',options.question.contentQuestion);
+
+      if (!options.question.contentQuestion) {
+        var q = options.question;
+        console.log('q',q);
+
+        q.choices = [];
+        const res = await api.getId()
+        q.surveyType = 1; //1:表示前端生成(新增操作) 2:表示后端返回(修改操作)
+        q.surveyId = res.data.id;
+      } else {
+        //  #region  判重  模板的问题重复， id也会重复 后端会报错
+        const toolboxJSON = ComponentCollection.Instance;
+        const toolbox = creator.JSON;
+        proces(toolbox, toolboxJSON);
+        let findData: any = [];
+        toolbox.pages.forEach((item: any) => {
+          item.elements.forEach((ite: any) => {
+            if (
+              ite.surveyId ===
+              options.question.customQuestion.json.questionJSON.surveyId
+            ) {
+              findData.push(ite);
+              return;
+            }
+          });
+        });
+        // #endregion
+        if (findData.length > 1) {
+          // 删除当前问题
+          sender.deleteElement(sender.selectedElement);
+          ElMessage.warning({
+            message: "已有该问题,不可重复设置",
+            center: true,
+          });
+          return;
+        }
+      }
     });
     // 新增答案事件 新增id
     creator.onItemValueAdded.add(async function (sender: any, options: any) {
@@ -135,6 +173,10 @@ onBeforeMount(async () => {
       // var q = options.newItem;
       // q.surveyType = 1; //1:表示前端生成(新增操作) 2:表示后端返回(修改操作)
       // q.surveyId = res.data.id;
+      const res = await api.getId()
+      var q = options.newItem;
+      q.surveyType = 1; //1:表示前端生成(新增操作) 2:表示后端返回(修改操作)
+      q.surveyId = res.data.id;
     });
     creator.saveSurveyFunc = (saveNo: number, callback: any) => {
       callback(saveNo, true)
@@ -151,7 +193,7 @@ defineExpose({
         const toolboxJSON = ComponentCollection.Instance
         const toolbox = creator.JSON
         // 处理数据
-        proces(toolbox, toolboxJSON) 
+        proces(toolbox, toolboxJSON)
         // 赋值JSON
         form.value.projectJson = JSON.stringify(toolbox)
         const locale = creator.JSON.locale || editorLocalization.currentLocale
@@ -160,6 +202,8 @@ defineExpose({
           toolbox.pages,
           locale,
         )
+        console.log('form.value',form.value);
+        return
         // 请求接口
         api.setSurvey(form.value).then(() => {
           ElMessage.success({
@@ -226,7 +270,7 @@ function convertData(originalData: any, locale: any) {
             if (typeof choice.text === 'object') {
               // 默认为default 如果default不存在说明他一开始就切换了语言
               anotherName = choice.text.default || choice.text[locale]
-              id = choice.text.surveyId || ''
+              id = choice.surveyId || ''
             }
             else {
               anotherName = choice.text

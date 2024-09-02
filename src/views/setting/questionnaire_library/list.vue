@@ -172,7 +172,7 @@ function onDelProject(row: any) {
   ElMessageBox.confirm(`确认删除「${row.categoryName}」吗？`, '确认信息')
     .then(() => {
       api
-        .delete({ id: row.projectProblemCategoryId })
+        .delete({ id: row.id,countryId:row.countryId })
         .then(() => {
           getDataList()
           ElMessage.success({
