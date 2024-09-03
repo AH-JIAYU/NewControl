@@ -27,16 +27,16 @@ export async function customComponents() {
       2,
     ),
     await questionFun('age', '出生日期', 'text', 'placeholder', '14', '19', 1, 'date'),
-    await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20',1),
+    await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20', 1),
     await questionFun('AHI', '家庭收入', 'radiogroup', 'placeholder', '4', '25', 2),
-    // await questionFun('education', '教育程度', 'radiogroup', 'placeholder', '2', '23'),
-    // await questionFun('marriage', '婚姻状况', 'radiogroup', 'placeholder', '3', '24'),
-    // await questionFun('industry', '行业', 'radiogroup', 'placeholder', '5', '26', 2),
-    // await questionFun('department', '部门', 'radiogroup', 'placeholder', '6', '27'),
-    // await questionFun('title', '职位', 'radiogroup', 'placeholder', '8', '28'),
+    await questionFun('education', '教育程度', 'radiogroup', 'placeholder', '2', '23'),
+    await questionFun('marriage', '婚姻状况', 'radiogroup', 'placeholder', '3', '24'),
+    await questionFun('industry', '行业', 'radiogroup', 'placeholder', '5', '26', 2),
+    await questionFun('department', '部门', 'radiogroup', 'placeholder', '6', '27'),
+    await questionFun('title', '职位', 'radiogroup', 'placeholder', '8', '28'),
     // await questionFun('race', '种族', 'radiogroup', 'placeholder', '28', '21'),
-    // await questionFun('size', '公司人数', 'radiogroup', 'placeholder', '9', '29', 2),
-    // await questionFun('revenue', '公司年收入', 'radiogroup', 'placeholder', '10', '30'),
+    await questionFun('size', '公司人数', 'radiogroup', 'placeholder', '9', '29', 2),
+    await questionFun('revenue', '公司年收入', 'radiogroup', 'placeholder', '10', '30'),
   ]
 }
 export const toolType = 'c类'
@@ -67,15 +67,15 @@ async function questionFun(
 ) {
   const countryType = problemStore?.country.countryId === '343'
     ? {
-        page: 1,
-        limit: 10,
-        id: zhID,
-      }
+      page: 1,
+      limit: 10,
+      id: zhID,
+    }
     : {
-        page: 1,
-        limit: 10,
-        id: enID,
-      }
+      page: 1,
+      limit: 10,
+      id: enID,
+    }
   // 答案  根据当前row的国家id请求字典数据
   const { data } = await apiDictionary.itemList(countryType)
   // 答案
@@ -96,9 +96,9 @@ async function questionFun(
   // 如果请求接口返回当前问题为空数组,那就让他比对对应请求的id
   const problemId: any = problemStore?.country.countryId === '343' ? zhID : enID
   //  根据字典的答案查询对应的问题
-  const row: any = problem.find((item: any) => item.id === data?.records[0]?.catalogueId || item.id === problemId) 
+  const row: any = problem.find((item: any) => item.id === data?.records[0]?.catalogueId || item.id === problemId)
   question.title.default = problemStore?.country.countryId === '343' ? row?.chineseName : row?.englishName
-  question.title['zh-cn'] = row.chineseName
+  question.title['zh-cn'] = row.chineseName || ''
   question.title.en = row.englishName
   question.surveyId = row.otherId
   // 左侧块(问题模板)的标题
@@ -116,7 +116,7 @@ async function questionFun(
           it.text.default = problemStore?.country.countryId === '343' ? item.chineseName : item.englishName
           it.text['zh-cn'] = item.chineseName
           it.text.en = item.englishName
-          it.text.surveyId = item.otherId
+          it.surveyId = item.otherId
         }
       })
     })

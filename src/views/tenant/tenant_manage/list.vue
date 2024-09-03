@@ -112,7 +112,6 @@ function onReset() {
 }
 // 每页数量切换
 function sizeChange(size: number) {
-  console.log()
   onSizeChange(size).then(() => getDataList());
 }
 // 当前页码切换（翻页）
