@@ -1,9 +1,0 @@
-
-/**
- * 由 Fantastic-admin 提供技术支持
- * Powered by Fantastic-admin
- * Gitee  https://fantastic-admin.gitee.io
- * Github https://fantastic-admin.github.io
- */
-
-import{_ as o}from"./index.vue_vue_type_script_setup_true_lang-Ca3E5-dO.js";import"./HKbd-C7_EheQ0.js";import"./index-DNIrU4FX.js";import"./HTabList.vue_vue_type_script_setup_true_lang-fxtdGYEA.js";import"./use-resolve-button-type-B0FMmCtM.js";import"./index-D7M5UfqJ.js";import"./item.vue_vue_type_script_setup_true_lang-Cc7tNd4h.js";export{o as default};
