@@ -126,18 +126,12 @@ onBeforeMount(async () => {
     })
     // 新增问题事件 新增id
     creator.onQuestionAdded.add(async function (sender: any, options: any) {
-      // var q = options.question;
-      // q.surveyId = q.customQuestion.json.questionJSON.id
-      // console.log('options.question.contentQuestion',options.question.contentQuestion);
-
       if (!options.question.contentQuestion) {
         var q = options.question;
-        console.log('q',q);
-
         q.choices = [];
         const res = await api.getId()
         q.surveyType = 1; //1:表示前端生成(新增操作) 2:表示后端返回(修改操作)
-        q.surveyId = res.data.id;
+        q.surveyId = res.data;
       } else {
         //  #region  判重  模板的问题重复， id也会重复 后端会报错
         const toolboxJSON = ComponentCollection.Instance;
@@ -169,14 +163,10 @@ onBeforeMount(async () => {
     });
     // 新增答案事件 新增id
     creator.onItemValueAdded.add(async function (sender: any, options: any) {
-      // const res = await obtainLoading(api.getId({}));
-      // var q = options.newItem;
-      // q.surveyType = 1; //1:表示前端生成(新增操作) 2:表示后端返回(修改操作)
-      // q.surveyId = res.data.id;
       const res = await api.getId()
       var q = options.newItem;
       q.surveyType = 1; //1:表示前端生成(新增操作) 2:表示后端返回(修改操作)
-      q.surveyId = res.data.id;
+      q.surveyId = res.data;
     });
     creator.saveSurveyFunc = (saveNo: number, callback: any) => {
       callback(saveNo, true)
@@ -202,8 +192,6 @@ defineExpose({
           toolbox.pages,
           locale,
         )
-        console.log('form.value',form.value);
-        return
         // 请求接口
         api.setSurvey(form.value).then(() => {
           ElMessage.success({
