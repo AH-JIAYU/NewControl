@@ -55,6 +55,8 @@ const form = ref({
 })
 onBeforeMount(async () => {
   if (props.id) {
+    // 清空自定义问题
+    ComponentCollection.Instance.clear();
     problemStore.country = JSON.parse(props.row)
     // 接受传递的数据
     const problem = JSON.parse(props.row)
@@ -72,6 +74,14 @@ onBeforeMount(async () => {
               name: component.name,
               title: component.title,
               questionJSON: component.questionJSON,
+              onInit() {
+                Serializer.addProperty("shippingaddress", {
+                  name: component.name,
+                  visible: true,
+                  readOnly: true, // 模板问题不能修改
+                  // default: "hidden",
+                });
+              },
             })
           }
         }
@@ -124,6 +134,7 @@ onBeforeMount(async () => {
           options.callback(error, 'error')
         })
     })
+
     // 新增问题事件 新增id
     creator.onQuestionAdded.add(async function (sender: any, options: any) {
       if (!options.question.contentQuestion) {
