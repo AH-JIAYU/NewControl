@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus'
 import api from '@/api/modules/setting_versionManagement'
 import usetenantMenuStore from '@/store/modules/tenantMenu'
 import useTenantButtonPermissionStore from '@/store/modules/tenantButtonPermission'
+import cloneDeep from "lodash-es/cloneDeep";
 
 // 父级传递数据
 const props = defineProps(['id', 'row'])
@@ -97,15 +98,16 @@ function rowPermission(permissionID: any) {
 defineExpose({
   // 提交
   submit() {
+    const params=cloneDeep(form.value)
     // 同步选中的路由id
-    form.value.versionMenuId = treeRef.value!.getCheckedKeys(false)
+    params.versionMenuId = treeRef.value!.getCheckedKeys(false)
     return new Promise<void>((resolve) => {
-      if (form.value.id === '') {
-        delete form.value.id
+      if (params.id === '') {
+        delete params.id
         formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
             loading.value = true
-            api.create(form.value).then(() => {
+            api.create(params).then(() => {
               ElMessage.success({
                 message: '新增成功',
                 center: true,
@@ -120,7 +122,7 @@ defineExpose({
         formRef.value && formRef.value.validate((valid: any) => {
           if (valid) {
             loading.value = true
-            api.edit(form.value).then(() => {
+            api.edit(params).then(() => {
               ElMessage.success({
                 message: '编辑成功',
                 center: true,
@@ -153,7 +155,7 @@ defineExpose({
       </ElFormItem>
       <ElFormItem label="权限">
         <el-tree
-          ref="treeRef" :data="menuData" style="width: 100%;" :default-checked-keys="form.versionMenuId"
+          ref="treeRef" v-if="form.versionMenuId" :data="menuData" style="width: 100%;" :default-checked-keys="form.versionMenuId"
           :default-expanded-keys="[]" node-key="id" show-checkbox default-expand-all highlight-current border
         >
           <template #default="{ data }">
