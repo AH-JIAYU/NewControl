@@ -34,7 +34,7 @@ export async function customComponents() {
     await questionFun('industry', '行业', 'radiogroup', 'placeholder', '5', '26', 2),
     await questionFun('department', '部门', 'radiogroup', 'placeholder', '6', '27'),
     await questionFun('title', '职位', 'radiogroup', 'placeholder', '8', '28'),
-    // await questionFun('race', '种族', 'radiogroup', 'placeholder', '28', '21'),
+    await questionFun('race', '种族', 'radiogroup', 'placeholder', '28', '21'),
     await questionFun('size', '公司人数', 'radiogroup', 'placeholder', '9', '29', 2),
     await questionFun('revenue', '公司年收入', 'radiogroup', 'placeholder', '10', '30'),
   ]
@@ -97,12 +97,14 @@ async function questionFun(
   const problemId: any = problemStore?.country.countryId === '343' ? zhID : enID
   //  根据字典的答案查询对应的问题
   const row: any = problem.find((item: any) => item.id === data?.records[0]?.catalogueId || item.id === problemId)
-  question.title.default = problemStore?.country.countryId === '343' ? row?.chineseName : row?.englishName
-  question.title['zh-cn'] = row.chineseName || ''
-  question.title.en = row.englishName
-  question.surveyId = row.otherId
+  if(row){
+    question.title.default = row?.chineseName
+    question.title['zh-cn'] = row.chineseName || ''
+    question.title.en = row?.englishName
+    question.surveyId = row?.otherId
+  }
   // 左侧块(问题模板)的标题
-  title = problemStore?.country.countryId === '343' ? title : row.englishName
+  title = problemStore?.country.countryId === '343' ? title : row?.englishName
   if (answer.length > 0) {
     answer?.forEach((item: any, index: number) => {
       if (question.choices.length < answer?.length) {
@@ -136,8 +138,6 @@ async function questionFun(
     }
   }
 }
-
-
 
 
 const typeMap: any = {
