@@ -39,8 +39,8 @@ const form = ref({
   active: 1,
   // 注册方式
   registerType: 'phone',
-  // 账户类型 1个人，2公司
-  type: 'personal',
+  // 账户类型
+  type: 'company',
 })
 // 编辑判断禁用
 const type = JSON.parse(props.row)
@@ -73,10 +73,12 @@ const formRules = ref<FormRules>({
 onMounted(async () => {
   loading.value = true
   country.value = await countryStore.getCountry
-  version.value = await versionStore.getVersion
+  version.value = await versionStore.getVersion 
   if (props.id) {
     form.value = JSON.parse(props.row)
   }
+  // 账号类型全部是公司了，后面没给字段，产品说保留这个字段以防再出问题
+  form.value.type="company"
   loading.value = false
 })
 function selectChange() {
@@ -92,7 +94,7 @@ defineExpose({
             loading.value = true
             delete form.value.id
             api.create(form.value).then((res) => {
-              const { status, error }:any = res
+              const { status, error }: any = res
               ElMessage({
                 type: status === 1 ? 'success' : 'warning',
                 message: status === 1 ? '新增成功' : error,
@@ -111,7 +113,7 @@ defineExpose({
           if (valid) {
             loading.value = true
             api.edit(params).then((res) => {
-              const { status, error }:any = res
+              const { status, error }: any = res
               ElMessage({
                 type: status === 1 ? 'success' : 'warning',
                 message: status === 1 ? '编辑成功' : error,
@@ -181,5 +183,4 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
-// scss
-</style>
+// scss</style>

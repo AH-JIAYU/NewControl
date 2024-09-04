@@ -198,7 +198,7 @@ function onEdit(row: any) {
       });
     }
   } else {
-    data.value.formModeProps.id = row.id;
+    data.value.formModeProps.id = row.tenantId;
     data.value.formModeProps.row = JSON.stringify(row);
     data.value.formModeProps.visible = true;
   }
@@ -346,8 +346,8 @@ function onResetPassword(row: any) {
         <ElTableColumn
           show-overflow-tooltip
           align="center"
-          prop="id"
-          width="80"
+          prop="tenantId"
+          width="200"
           label="租户ID"
         />
         <ElTableColumn
@@ -374,6 +374,7 @@ function onResetPassword(row: any) {
           show-overflow-tooltip
           align="center"
           prop="companyName"
+          width="100"
           label="公司名称"
         >
           <template #default="{ row }">
