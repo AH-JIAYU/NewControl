@@ -2,47 +2,96 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref } from 'vue'
-// import api from '@/api/modules/setting_siteSetting'
+import api from '@/api/modules/setting_siteSetting'
 
 defineOptions({
   name: 'site_setting',
 })
-
-const form = ref({
-  register: true,
+// formRef
+const formRef = ref<any>()
+// loading
+const loading = ref<any>(false)
+// 表单数据
+const form = ref<any>({
+  // 注册开关
+  register: false,
+  // 注册审核
   registerExamine: false,
-  supplierURL: '',
+  // 租户网址
+  tenantUrl: '',
 })
-// const rules = ref([])
-// onMounted(() => {
-//   getDataList()
-//   if (data.value.formMode === 'router') {
-//     eventBus.on('get-data-list', () => {
-//       getDataList()
-//     })
-//   }
-// })
 
-// onBeforeUnmount(() => {
-//   if (data.value.formMode === 'router') {
-//     eventBus.off('get-data-list')
-//   }
-// })
+const rules = ref([])
 
-// function getDataList() {
-//   data.value.loading = true
-//   const params = {
-//     ...getParams(),
-//     ...(data.value.search.title && { title: data.value.search.title }),
-//   }
-//   api.list(params).then((res: any) => {
-//     data.value.loading = false
-//     data.value.dataList = res.data.list
-//     pagination.value.total = res.data.total
-//   })
-// }
+onMounted(() => {
+  getDataList()
+})
+
+async function getDataList() {
+  try {
+    loading.value = true
+    const { data } = await api.getList()
+    form.value = data
+    loading.value = false
+  } catch (error) {
+
+  } finally {
+    loading.value = false;
+  }
+}
 
 function onSubmit() {
+  // 新增
+  if (!form.value.id) {
+    // 校验
+    formRef.value &&
+      formRef.value.validate((valid: any) => {
+        if (valid) {
+          try {
+            loading.value = true;
+            api.create(form.value).then(() => {
+              loading.value = false;
+              getDataList();
+              ElMessage.success({
+                message: "新增成功",
+                center: true,
+              });
+            });
+          } catch (error) {
+
+          } finally {
+            loading.value = false;
+          }
+        }
+      });
+  } else {
+    // 修改
+    formRef.value &&
+      formRef.value.validate((valid: any) => {
+        if (valid) {
+          try {
+            const params = {
+              ...form.value
+            };
+            loading.value = true;
+            api.edit(params).then((res: any) => {
+              loading.value = false;
+              if (res.status === 1) {
+                getDataList();
+                ElMessage.success({
+                  message: "修改成功",
+                  center: true,
+                });
+              }
+            });
+          } catch (error) {
+
+          } finally {
+            loading.value = false;
+          }
+        }
+      });
+  }
 }
 </script>
 
@@ -50,21 +99,23 @@ function onSubmit() {
   <div>
     <PageHeader title="站点设置管理" />
     <PageMain>
-      <el-form ref="form" :model="form" label-width="100px" :inline="false">
+      <el-form ref="formRef" :model="form" label-width="100px" :inline="false">
         <el-row :gutter="20">
           <el-col :span="3">
             <el-form-item label="注册开关">
-              <el-switch v-model="form.register" :active-value="1" :inactive-value="2" />
+              <el-switch v-model="form.register" :active-value="true" :inactive-value="false" active-text="开启"
+                inline-prompt inactive-text="关闭" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="注册审核">
-              <el-switch v-model="form.registerExamine" :active-value="1" :inactive-value="2" />
+              <el-switch v-model="form.registerExamine" :active-value="true" :inactive-value="false" active-text="开启"
+                inline-prompt inactive-text="关闭" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="租户网址">
-          <el-input v-model="form.supplierURL" style="width: 18rem;" />
+          <el-input v-model="form.tenantUrl" style="width: 18rem;" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">

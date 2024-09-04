@@ -1,33 +1,13 @@
 import api from '../index'
 
 export default {
-  list: (data: {
-    title?: string
-    from: number
-    limit: number
-  }) => api.get('setting/site_setting/list', {
-    params: data,
-    baseURL: '/mock/',
-  }),
 
-  detail: (id: number | string) => api.get('setting/site_setting/detail', {
-    params: {
-      id,
-    },
-    baseURL: '/mock/',
-  }),
+  // 获取租户配置
+  getList: () => api.post('tenant-control/getTenantConfig'),
 
-  create: (data: any) => api.post('setting/site_setting/create', data, {
-    baseURL: '/mock/',
-  }),
+  // 新增租户配置
+  create: (data: any) => api.post('tenant-control/insertTenantConfig', data),
 
-  edit: (data: any) => api.post('setting/site_setting/edit', data, {
-    baseURL: '/mock/',
-  }),
-
-  delete: (id: number | string) => api.post('setting/site_setting/delete', {
-    id,
-  }, {
-    baseURL: '/mock/',
-  }),
+  // 修改租户配置
+  edit: (data: any) => api.post('tenant-control/updateTenantConfig', data),
 }
