@@ -367,7 +367,7 @@ function onResetPassword(row: any) {
           label="用户名"
         >
           <template #default="{ row }">
-            {{ row.name ? row.name : "暂无数据" }}
+            {{ row.name ? row.name : "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -378,7 +378,7 @@ function onResetPassword(row: any) {
           label="公司名称"
         >
           <template #default="{ row }">
-            {{ row.companyName ? row.companyName : "暂无数据" }}
+            {{ row.companyName ? row.companyName : "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -394,7 +394,7 @@ function onResetPassword(row: any) {
           label="国家"
         >
           <template #default="{ row }">
-            {{ row.countryName ? row.countryName : "暂无数据" }}
+            {{ row.countryName ? row.countryName : "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -404,7 +404,7 @@ function onResetPassword(row: any) {
           label="邮箱"
         >
           <template #default="{ row }">
-            {{ row.email ? row.email : "暂无数据" }}
+            {{ row.email ? row.email : "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -414,7 +414,7 @@ function onResetPassword(row: any) {
           label="手机号码"
         >
           <template #default="{ row }">
-            {{ row.phone ? row.phone : "暂无数据" }}
+            {{ row.phone ? row.phone : "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn

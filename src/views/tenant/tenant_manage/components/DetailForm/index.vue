@@ -53,14 +53,14 @@ const formRules = ref<FormRules>({
   name: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
   ],
+  companyName: [
+    { required: true, message: '请输入公司名称', trigger: 'blur' },
+  ],
   country: [
     { required: true, message: '请选择国家', trigger: 'blur' },
   ],
   phone: [
     { required: true, message: '请输入手机号', trigger: 'blur' },
-  ],
-  registerType: [
-    { required: true, message: '请选择注册方式', trigger: 'blur' },
   ],
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
@@ -73,7 +73,7 @@ const formRules = ref<FormRules>({
 onMounted(async () => {
   loading.value = true
   country.value = await countryStore.getCountry
-  version.value = await versionStore.getVersion 
+  version.value = await versionStore.getVersion
   if (props.id) {
     form.value = JSON.parse(props.row)
   }
@@ -133,15 +133,16 @@ defineExpose({
 <template>
   <div v-loading="loading">
     <ElForm ref="formRef" :model="form" :rules="formRules" label-width="120px" label-suffix="：">
-      <ElFormItem label="账户类型" prop="type">
-        <el-radio-group v-model="form.type" class="ml-4">
+      <ElFormItem label="账户类型" prop="">
+        <el-text>公司</el-text>
+        <!-- <el-radio-group v-model="form.type" class="ml-4">
           <el-radio value="personal">
             个人
           </el-radio>
           <el-radio value="company">
             公司
           </el-radio>
-        </el-radio-group>
+        </el-radio-group> -->
       </ElFormItem>
       <ElFormItem label="用户名" prop="name">
         <ElInput v-model="form.name" :disabled="type.id" placeholder="请输入用户名" />
@@ -151,13 +152,13 @@ defineExpose({
           <el-option v-for="item in country" :key="item.id" :label="item.chineseName" :value="item.code" />
         </el-select>
       </ElFormItem>
-      <ElFormItem v-if="form.type === 'company'" label="公司名称" prop="name">
+      <ElFormItem v-if="form.type === 'company'" label="公司名称" prop="companyName">
         <ElInput v-model="form.companyName" :disabled="type.id" placeholder="请输入公司名称" />
       </ElFormItem>
-      <ElFormItem v-if="form.type === 'company'" label="公司税号" prop="name">
+      <ElFormItem v-if="form.type === 'company'" label="公司税号" >
         <ElInput v-model="form.taxID" :disabled="type.id" placeholder="请输入公司税号" />
       </ElFormItem>
-      <ElFormItem v-if="form.type === 'company'" label="法人姓名" prop="name">
+      <ElFormItem v-if="form.type === 'company'" label="法人姓名" >
         <ElInput v-model="form.legalPersonName" :disabled="type.id" placeholder="请输入法人姓名" />
       </ElFormItem>
       <ElFormItem v-if="form.country === 'CN'" label="手机号码" prop="phone">
