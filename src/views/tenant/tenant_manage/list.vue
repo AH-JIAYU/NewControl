@@ -66,6 +66,8 @@ const data = ref<any>({
   },
   // 搜索
   search: {
+    page: 1,
+    limit: 10,
     version: "",
     name: "",
     id: "",
@@ -86,10 +88,10 @@ onMounted(() => {
 async function getDataList() {
   data.value.loading = true;
   version.value = await versionStore.getVersion;
-  api.list({ ...getParams(),...data.value.search}).then((res: any) => {
+  api.list({...data.value.search}).then((res: any) => {
     data.value.loading = false;
     data.value.dataList = res.data.result;
-    pagination.value.total = Number.parseInt(res.data.total);
+    pagination.value.total = +res.data.total
   });
 }
 // 查询
@@ -112,11 +114,17 @@ function onReset() {
 }
 // 每页数量切换
 function sizeChange(size: number) {
-  onSizeChange(size).then(() => getDataList());
+  onSizeChange(size).then(() => {
+    data.value.search.limit = size
+    getDataList()
+  });
 }
 // 当前页码切换（翻页）
 function currentChange(page = 1) {
-  onCurrentChange(page).then(() => getDataList());
+  onCurrentChange(page).then(() => {
+    data.value.search.page = page
+    getDataList()
+  });
 }
 
 // 导出
@@ -136,6 +144,8 @@ async function onExport() {
 }
 // 修改状态
 async function changeStatus(row: any) {
+  console.log('row',row);
+
   ElMessageBox.confirm(
     `确认将状态修改成「${row.active === 2 ? "启用" : "禁用"}」吗？`,
     "确认信息"
