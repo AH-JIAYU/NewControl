@@ -28,6 +28,7 @@ import "grapesjs/dist/grapes.min.js";
 // @ts-ignore
 import zh from "grapesjs/locale/zh";
 import api from "@/api/modules/tenant_tenantHomepageSetting";
+import { updataText, customBlock, htmlJsList } from "@/utils/homePage";
 const emits = defineEmits(["fetch-data"]);
 
 const state = reactive<any>({
@@ -49,7 +50,7 @@ const onDialogOpened = async () => {
   await nextTick();
   editorRef.value = grapesjs.init({
     container: formRef.value,
-    height: "900px",
+    height: "100vh",
     width: "100%",
     plugins: [plugin, basic, advance, parserPostCSS],
     i18n: {
@@ -79,6 +80,19 @@ const onDialogOpened = async () => {
       ],
     },
   });
+
+  // 通过事件改变框架的文本内容为中文
+  editorRef.value.on("block:custom", (props: any) => {
+    updataText(props.blocks);
+  });
+  // // // 批量添加自定义块
+  customBlock.forEach((item: any) => {
+    editorRef.value.Blocks.add(item.id, item);
+  })
+
+
+
+
 };
 
 const save = async () => {
