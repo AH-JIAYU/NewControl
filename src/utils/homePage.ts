@@ -678,7 +678,9 @@ const BCHtml1 = `<body>
 
     margin-top: 1rem;
 }
-
+.text-click {
+  cursor: pointer;
+}
 
 
 .text_38 {
@@ -696,7 +698,6 @@ const BCHtml1 = `<body>
     width: 128px;
     padding: 10px;
     text-align: center;
-
 }
 
 .image_11 {
@@ -715,7 +716,7 @@ const BCHtml1 = `<body>
             <span class="text_36">有偿问卷在家远程办公也能轻松赚钱</span>
             <span class="text_37">做完问卷即得奖励</span>
 
-              <span class="text_38">申请免费试用</span>
+              <span class="text_38 text-click">申请免费试用</span>
 
           </div>
          <img
@@ -908,7 +909,7 @@ const BCHtml2 = `<body>
           </span>
 
         </div>
-        <div class="text-wrapper_2 text_11">
+        <div class="text-wrapper_2 text_11 text-click">
           马上注册
         </div>
       </div>
@@ -1242,7 +1243,7 @@ align-items: center;
   <div class="box_4 flex-col">
     <span class="text_5">立即注册并体验功能</span>
     <div class="text-wrapper_1 flex-col">
-      <span class="text_6">注册</span>
+      <span class="text_6 text-click">注册</span>
     </div>
   </div>
 

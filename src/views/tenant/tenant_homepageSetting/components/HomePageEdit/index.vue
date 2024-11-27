@@ -79,7 +79,7 @@ const onDialogOpened = async () => {
         },
       ],
     },
-        //自定义上传图片
+    //自定义上传图片
     // assetManager: {
     //   uploadFile: async (e: any) => {
     //     const file = e.target.files[0];
@@ -108,7 +108,6 @@ const onDialogOpened = async () => {
   //   console.log(file,'fff')
   //   formData.append('file', file);
 
-
   //   fetch("https://example.com/uploadFiles", {
   //     method: "post",
   //     body: formData,
@@ -126,11 +125,7 @@ const onDialogOpened = async () => {
   // // // 批量添加自定义块
   customBlock.forEach((item: any) => {
     editorRef.value.Blocks.add(item.id, item);
-  })
-
-
-
-
+  });
 };
 
 const save = async () => {
