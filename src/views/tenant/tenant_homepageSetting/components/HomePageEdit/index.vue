@@ -28,6 +28,7 @@ import "grapesjs/dist/grapes.min.js";
 // @ts-ignore
 import zh from "grapesjs/locale/zh";
 import api from "@/api/modules/tenant_tenantHomepageSetting";
+import { updataText, customBlock, htmlJsList } from "@/utils/homePage";
 const emits = defineEmits(["fetch-data"]);
 
 const state = reactive<any>({
@@ -49,7 +50,7 @@ const onDialogOpened = async () => {
   await nextTick();
   editorRef.value = grapesjs.init({
     container: formRef.value,
-    height: "900px",
+    height: "100vh",
     width: "100%",
     plugins: [plugin, basic, advance, parserPostCSS],
     i18n: {
@@ -78,6 +79,52 @@ const onDialogOpened = async () => {
         },
       ],
     },
+    //自定义上传图片
+    // assetManager: {
+    //   uploadFile: async (e: any) => {
+    //     const file = e.target.files[0];
+    //     if (file) {
+    //       try {
+    //         // 调用自定义接口上传图片
+    //         const url = await uploadImage(file);
+    //         // console.log(url,'rrrr')
+    //         // 将上传后的图片添加到 Grapes.js 的资源管理器中
+    //         editorRef.value.AssetManager.add(url);
+    //       } catch (error) {
+    //         console.error("Image upload failed", error);
+    //       }
+    //     }
+    //   },
+    // },
+  });
+  // 请求头
+  // const token = userStore.token;
+  // const headers = ref({ Token: token });
+  // 接口地址
+  // const Url = import.meta.env.VITE_APP_API_BASEURL + "/api/user/uploadAvatar";
+  // 模拟上传图片的函数
+  // const uploadImage = async (file: any) => {
+  //   const formData = new FormData();
+  //   console.log(file,'fff')
+  //   formData.append('file', file);
+
+  //   fetch("https://example.com/uploadFiles", {
+  //     method: "post",
+  //     body: formData,
+  //   })
+  //     .then((response) => response.json())
+  //     .then((result) => {
+  //       return result;  // 返回图片的 URL 字符串
+  //     })
+  //     .catch((error) => {});
+  // };
+  // 通过事件改变框架的文本内容为中文
+  editorRef.value.on("block:custom", (props: any) => {
+    updataText(props.blocks);
+  });
+  // // // 批量添加自定义块
+  customBlock.forEach((item: any) => {
+    editorRef.value.Blocks.add(item.id, item);
   });
 };
 
