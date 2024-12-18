@@ -39,6 +39,7 @@ const form = ref<any>({
   versionMenuId: [],
   // 按钮id
   versionButtonId: [],
+
 })
 // 校验
 const formRules = ref<FormRules>({
@@ -99,6 +100,7 @@ defineExpose({
   // 提交
   submit() {
     const params=cloneDeep(form.value)
+    params.type =1 ; //完整版
     // 同步选中的路由id
     params.versionMenuId = treeRef.value!.getCheckedKeys(false)
     return new Promise<void>((resolve) => {
