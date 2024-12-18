@@ -7,14 +7,14 @@
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import FormMode from './components/FormMode/index.vue'
-import apiMenu from '@/api/modules/tenant_tenantMenu'
-import usetenantMenuStore from '@/store/modules/tenantMenu'
+import apiMenu from '@/api/modules/clientsTenant_tenantMenu'
+import useClientstenantMenuStore from '@/store/modules/clientsTenantMenu'
 
 defineOptions({
   name: 'tenantMenu',
 })
 // 租户路由 store
-const tenantMenuStore = usetenantMenuStore()
+const tenantMenuStore = useClientstenantMenuStore()
 // 定义数据
 const data = ref<any>({
   // 加载

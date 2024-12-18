@@ -7,8 +7,8 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
-import apiMenu from '@/api/modules/tenant_tenantMenu'
-import usetenantMenuStore from '@/store/modules/tenantMenu'
+import apiMenu from '@/api/modules/clientsTenant_tenantMenu'
+import useClientstenantMenuStore from '@/store/modules/clientsTenantMenu'
 
 defineOptions({
   name: 'PagesExampleMenuDetail',
@@ -16,7 +16,7 @@ defineOptions({
 // 获取父级数据
 const props = defineProps(['id', 'parentId', 'row', 'menuLevel'])
 // 租户路由 store
-const tenantMenuStore = usetenantMenuStore()
+const tenantMenuStore = useClientstenantMenuStore()
 // 加载
 const loading = ref(false)
 // form ref
