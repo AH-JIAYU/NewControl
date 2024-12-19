@@ -80,22 +80,37 @@ const onDialogOpened = async () => {
       ],
     },
     //自定义上传图片
-    // assetManager: {
-    //   uploadFile: async (e: any) => {
-    //     const file = e.target.files[0];
-    //     if (file) {
-    //       try {
-    //         // 调用自定义接口上传图片
-    //         const url = await uploadImage(file);
-    //         // console.log(url,'rrrr')
-    //         // 将上传后的图片添加到 Grapes.js 的资源管理器中
-    //         editorRef.value.AssetManager.add(url);
-    //       } catch (error) {
-    //         console.error("Image upload failed", error);
-    //       }
-    //     }
-    //   },
-    // },
+    assetManager: {
+      uploadFile: async (e: any) => {
+        const file = e.target.files[0];
+        if (file) {
+          try {
+            // 判断文件大小，单位是字节，250KB = 250 * 1024 字节
+            const maxSize = 250 * 1024; // 250KB
+            console.log(maxSize,'maxSize')
+            console.log(file,'file')
+            console.log(Number(file.size),'Number(file.size)')
+            if (Number(file.size) > Number(maxSize)) {
+              ElMessage.warning({
+                message: "文件大小不能超过 250KB",
+                center: true,
+              });
+              return;
+            } else {
+              // 调用自定义接口上传图片
+              const formData = new FormData();
+              formData.append("file", file);
+              formData.append("id", state.form.id);
+              api.uploadHomePageTemplateImage(formData).then((res: any) => {
+                editorRef.value.AssetManager.add(res.data);
+              });
+            }
+          } catch (error) {
+            console.error("Image upload failed", error);
+          }
+        }
+      },
+    },
   });
   // 请求头
   // const token = userStore.token;
@@ -125,6 +140,23 @@ const onDialogOpened = async () => {
   // // // 批量添加自定义块
   customBlock.forEach((item: any) => {
     editorRef.value.Blocks.add(item.id, item);
+  });
+    // 监听图片删除事件
+    editorRef.value.on("asset:remove", (asset: any) => {
+    // 先从 Asset Manager 中移除图片
+    const asset1 = editorRef.value.AssetManager.getAll().find(
+      (a: any) => a.get("src") === asset.id
+    );
+
+    if (asset1) {
+      // 从 Asset Manager 中删除图片
+      editorRef.value.AssetManager.remove(asset);
+
+      // 然后从静态网页的服务器上删除图片
+      // deleteImageFromServer(src);
+    } else {
+      // console.log("未找到图片:", src);
+    }
   });
 };
 
