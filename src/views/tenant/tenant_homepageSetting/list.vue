@@ -219,7 +219,7 @@ function onDel(row: any) {
               plain
               @click="onEdit(scope.row)"
             >
-              编辑
+            编辑标题
             </ElButton>
             <ElButton
               type="primary"
@@ -227,7 +227,7 @@ function onDel(row: any) {
               plain
               @click="homePage(scope.row)"
             >
-              设计主页
+            设计模版
             </ElButton>
             <ElButton
               type="danger"
