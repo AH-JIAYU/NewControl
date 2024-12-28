@@ -8,7 +8,7 @@ import api from "@/api/modules/tenant_tenantHomepageSetting";
 import useSettingsStore from "@/store/modules/settings";
 
 defineOptions({
-  name: "TenantTenantHomepageSettingList",
+  name: "clientsTenantHomepageSettingList",
 });
 
 const router = useRouter();

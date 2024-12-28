@@ -10,7 +10,7 @@ import apiDictionary from '@/api/modules/setting_tenantDictionary'
 // import api from '@/api/modules/tenant_tenantDictionary'
 
 defineOptions({
-  name: 'tenant_dictionary',
+  name: 'clientsTenant_dictionary',
 })
 
 interface Dict {

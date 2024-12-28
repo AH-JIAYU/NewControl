@@ -13,7 +13,7 @@ import useSettingsStore from "@/store/modules/settings";
 import useVersionStore from "@/store/modules/version";
 
 defineOptions({
-  name: "tenant_manage",
+  name: "clientsTenant_manage",
 });
 // 路由
 const router = useRouter();
