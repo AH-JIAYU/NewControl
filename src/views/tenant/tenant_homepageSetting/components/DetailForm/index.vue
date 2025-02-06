@@ -17,9 +17,17 @@ const form = ref({
   css: "",
   html: "",
   rawData: "",
+  templateType: "",
 });
 const formRules = ref<FormRules>({
   title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+  templateType: [{ required: true, message: "请选择类型", trigger: "change" }],
+});
+
+// 类型
+const templateType = ref({
+  1: "B2B",
+  2: "B2C",
 });
 
 onMounted(() => {
@@ -71,6 +79,25 @@ defineExpose({
     >
       <ElFormItem label="标题" prop="title">
         <ElInput v-model="form.title" placeholder="请输入标题" />
+      </ElFormItem>
+
+      <ElFormItem label="类型" prop="templateType">
+        <el-select
+          v-model="form.templateType"
+          value-key=""
+          placeholder="请选择类型"
+          clearable
+          filterable
+          @change=""
+        >
+          <el-option
+            v-for="(label, value) in templateType"
+            :key="value"
+            :label="label"
+            :value="value"
+          >
+          </el-option>
+        </el-select>
       </ElFormItem>
     </ElForm>
   </div>

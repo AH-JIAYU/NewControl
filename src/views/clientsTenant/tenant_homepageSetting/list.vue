@@ -37,6 +37,7 @@ const data = ref({
   // 搜索
   search: {
     title: "",
+    templateType: "",
   },
   // 批量操作
   batch: {
@@ -66,7 +67,10 @@ function getDataList() {
   data.value.loading = true;
   const params = {
     ...getParams(),
-    ...(data.value.search.title && { title: data.value.search.title }),
+    ...(data.value.search.title && {
+      title: data.value.search.title,
+      templateType: data.value.search.templateType,
+    }),
   };
   api.list(params).then((res: any) => {
     data.value.loading = false;
@@ -261,7 +265,7 @@ function onDel(row: any) {
       :mode="data.formMode"
       @success="getDataList"
     />
-    <homePageEdit ref="homePageRef"  @fetch-data="getDataList"></homePageEdit>
+    <homePageEdit ref="homePageRef" @fetch-data="getDataList"></homePageEdit>
   </div>
 </template>
 
