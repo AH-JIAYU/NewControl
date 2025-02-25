@@ -365,6 +365,7 @@ defineExpose({
             </ElCol>
             <ElCol :xl="12" :lg="24">
               <ElFormItem label="默认图标" prop="meta.icon">
+                <!-- <ElInput v-model="form.meta.icon" clearable  /> -->
                 <IconPicker v-model="form.meta.icon" />
               </ElFormItem>
             </ElCol>
