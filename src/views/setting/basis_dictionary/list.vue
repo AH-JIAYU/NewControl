@@ -125,12 +125,12 @@ watch(() => dictionaryItem.value.search.dictionaryId, () => {
 function getDictionaryItemList() {
   dictionaryItem.value.loading = true
   const params = {
-    ...getParams(),
+
     id: dictionaryItem.value.search.dictionaryId,
   }
   apiDictionary.itemList(params).then((res: any) => {
     dictionaryItem.value.loading = false
-    dictionaryItem.value.dataList = res.data.records
+    dictionaryItem.value.dataList = res.data
     dictionaryItem.value.dataList.forEach((item: any) => {
       item.enableLoading = false
     })

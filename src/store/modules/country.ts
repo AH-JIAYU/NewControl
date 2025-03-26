@@ -9,8 +9,8 @@ const useCountryStore = defineStore(
       if (country.value.length) {
         return country.value
       }
-      const { data } = await api.itemList({ page: 1, limit: -1, id: 32 })
-      return data.records
+      const { data } = await api.itemList({  id: 32 })
+      return data
     })
     return {
       country,

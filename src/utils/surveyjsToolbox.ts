@@ -67,21 +67,20 @@ async function questionFun(
 ) {
   const countryType = problemStore?.country.countryId === '343'
     ? {
-      page: 1,
-      limit: 10,
+
       id: zhID,
     }
     : {
-      page: 1,
-      limit: 10,
+
       id: enID,
     }
   // 答案  根据当前row的国家id请求字典数据
   const { data } = await apiDictionary.itemList(countryType)
   // 答案
-  const answer: any = data?.records
+  const answer: any = data
   // 请求的问题
   const res = await problemStore?.getProblem
+
   // 问题 对应国家下的问题
   const problem: any = res[0].children[problemStore?.country.countryId === '343' ? 0 : 1].children
   // 定义需要的数据格式
@@ -95,8 +94,9 @@ async function questionFun(
   }
   // 如果请求接口返回当前问题为空数组,那就让他比对对应请求的id
   const problemId: any = problemStore?.country.countryId === '343' ? zhID : enID
+
   //  根据字典的答案查询对应的问题
-  const row: any = problem.find((item: any) => item.id === data?.records[0]?.catalogueId || item.id === problemId)
+  const row: any = problem.find((item: any) => item.id === answer[0]?.catalogueId || item.id === problemId)
   if(row){
     question.title.default = row?.chineseName
     question.title['zh-cn'] = row.chineseName || ''
