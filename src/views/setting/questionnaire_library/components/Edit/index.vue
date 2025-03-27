@@ -110,6 +110,10 @@ function onCancel() {
           <ElSwitch v-model="form.status" :active-value="1" :inactive-value="2" inline-prompt active-text="开启"
             inactive-text="禁用" placeholder="请输入状态" />
         </ElFormItem>
+        <ElFormItem label="B2C">
+          <ElSwitch v-model="form.problemCategory" :active-value="2" :inactive-value="1" inline-prompt active-text="B2C"
+            inactive-text="B2B" />
+        </ElFormItem>
       </ElForm>
       <template #footer>
         <ElButton size="large" @click="onCancel">

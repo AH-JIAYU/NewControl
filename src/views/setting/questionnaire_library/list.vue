@@ -243,6 +243,12 @@ function onDelProject(row: any) {
                     />
                   </template>
                 </ElTableColumn>
+                <ElTableColumn prop="problemCategory" label="B2C">
+                  <template #default="scope">
+                    <ElSwitch v-model="scope.row.problemCategory" :active-value="2" :inactive-value="1" inline-prompt active-text="B2C"
+            inactive-text="B2B" disabled />
+                  </template>
+                </ElTableColumn>
                 <el-table-column prop="createTime" label="创建时间" />
                 <ElTableColumn width="250" align="center" label="操作" fixed="right">
                   <template #default="scope">
