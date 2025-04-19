@@ -90,7 +90,6 @@ onMounted(async () => {
   ComponentCollection.Instance.clear();
   // #region 模板
   const res = await customComponents();
-  console.log(res, "res");
   res.forEach((component: any) => {
     // 使用 Serializer.findClass来检查组件是否已注册
     try {
@@ -285,29 +284,24 @@ defineExpose({
       // 删除问题和答案
       if (delList.value.length) {
         form.value.deleteProjectProblemInfoList = delList.value;
-        //在这边进行过滤，deleteProjectProblemInfoList和 problemInfoList，如果两个里面id相同，就去掉，并且把problemInfoList里面type改为2
+        // 创建一个索引对象，用于快速查找 b 数组中的对象
+const bIndex = form.value.problemInfoList.reduce((index:any, item:any) => {
+  index[item.id] = item; // 将 b 中的对象按 id 索引
+  return index;
+}, {});
 
-        form.value.problemInfoList.forEach((item1: any) => {});
+// 遍历 a 数组，查找对应的 id
+form.value.deleteProjectProblemInfoList = form.value.deleteProjectProblemInfoList.filter((aObj:any) => {
+  const bObj = bIndex[aObj.id]; // 在 bIndex 中查找对应的对象
 
-        form.value.problemInfoList.forEach((aObj: any, index: any) => {
-          // 检查 b 数组中是否存在相同 id 的对象
-          const bObj = form.value.deleteProjectProblemInfoList.find(
-            (bItem: any) => bItem.id === aObj.id
-          );
+  if (bObj) {
+    // 找到相同 id 的对象，修改 b 中的 type 为 2
+    bObj.type = 2;
+    return false; // 从 a 数组中删除该对象
+  }
 
-          if (bObj) {
-            aObj.type = 2;
-
-            // 从 a 数组中删除该对象
-            form.value.deleteProjectProblemInfoList.splice(index, 1);
-          }
-        });
-
-        // await submitLoading(
-        //   api.deleteProjectProblem({
-        //     deleteProjectProblemInfoList: delList.value,
-        //   })
-        // );
+  return true; // 保留不匹配的对象
+});
       }
 
       // 编辑
