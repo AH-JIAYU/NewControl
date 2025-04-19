@@ -90,6 +90,7 @@ onMounted(async () => {
   ComponentCollection.Instance.clear();
   // #region 模板
   const res = await customComponents();
+  console.log(res, "res");
   res.forEach((component: any) => {
     // 使用 Serializer.findClass来检查组件是否已注册
     try {
@@ -284,12 +285,31 @@ defineExpose({
       // 删除问题和答案
       if (delList.value.length) {
         form.value.deleteProjectProblemInfoList = delList.value;
+        //在这边进行过滤，deleteProjectProblemInfoList和 problemInfoList，如果两个里面id相同，就去掉，并且把problemInfoList里面type改为2
+
+        form.value.problemInfoList.forEach((item1: any) => {});
+
+        form.value.problemInfoList.forEach((aObj: any, index: any) => {
+          // 检查 b 数组中是否存在相同 id 的对象
+          const bObj = form.value.deleteProjectProblemInfoList.find(
+            (bItem: any) => bItem.id === aObj.id
+          );
+
+          if (bObj) {
+            aObj.type = 2;
+
+            // 从 a 数组中删除该对象
+            form.value.deleteProjectProblemInfoList.splice(index, 1);
+          }
+        });
+
         // await submitLoading(
         //   api.deleteProjectProblem({
         //     deleteProjectProblemInfoList: delList.value,
         //   })
         // );
       }
+
       // 编辑
       const { status } = await api.setSurvey(form.value);
       status === 1 &&
