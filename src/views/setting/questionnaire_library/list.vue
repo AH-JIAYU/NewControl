@@ -35,6 +35,8 @@ const data = ref({
     visible: false,
     id: '',
     row: '',
+    title:'',
+    details: "",
   },
   // 新增
   editProps: {
@@ -150,6 +152,8 @@ function EditSurvey(row: any) {
     data.value.formModeProps.id = row.id
     data.value.formModeProps.row = JSON.stringify(row)
     problemStore.country = row
+    data.value.formModeProps.title = row.categoryName;
+    data.value.formModeProps.details = JSON.stringify(row);
     data.value.formModeProps.visible = true
   }
 }

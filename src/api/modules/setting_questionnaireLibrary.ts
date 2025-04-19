@@ -15,8 +15,10 @@ export default {
   // 设计问卷
   setSurvey: (data: any) => api.post('/problem/insertOrUpdateOrDeleteProblem', data),
   // 获取问卷
-  getSurvey: (data: any) =>
-    api.post('/problem/insertOrUpdateOrDeleteProblem', data),
+  getSurvey: (projectProblemCategoryId: any) =>
+    api.post("projectProblem/getProjectProblem", {
+      projectProblemCategoryId,
+    }),
   // 获取ID
   getId: () => api.get("/generate/generateId"),
 }

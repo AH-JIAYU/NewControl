@@ -17,6 +17,7 @@ export async function customComponents() {
     //   },
     //   inheritBaseProps: true,
     // },
+
     await questionFun(
       'employment',
       '工作情况',
@@ -102,6 +103,7 @@ async function questionFun(
     question.title['zh-cn'] = row.chineseName || ''
     question.title.en = row?.englishName
     question.surveyId = row?.otherId
+    question.surveyType = 1
   }
   // 左侧块(问题模板)的标题
   title = problemStore?.country.countryId === '343' ? title : row?.englishName
@@ -119,9 +121,11 @@ async function questionFun(
           it.text['zh-cn'] = item.chineseName
           it.text.en = item.englishName
           it.surveyId = item.otherId
+          it.surveyType = 1
         }
       })
     })
+
     return {
       name,
       title,
@@ -148,6 +152,7 @@ const typeMap: any = {
 };
 // 提交时 获取问题答案list
 export function convertData(originalData: any, locale: any) {
+  // console.log(originalData,'originalData')
   const transformedData = originalData.flatMap((item: any) => {
     // 问题
     return item.elements.map((element: any) => {
@@ -162,10 +167,10 @@ export function convertData(originalData: any, locale: any) {
             : element?.title.default || element?.title[locale] || element.name;
       }
       // 新增一个问题，默认标题为name 改变标题后 字段在title里
-      let addProjectAnswerInfoList = [];
+      let answerInfoList = [];
       if (Array.isArray(element.choices)) {
         // 答案
-        addProjectAnswerInfoList = element.choices.map((choice: any) => {
+        answerInfoList = element.choices.map((choice: any) => {
           let answerValue = choice.value || choice;
           const id = choice.surveyId;
           const type = choice.surveyType;
@@ -193,7 +198,7 @@ export function convertData(originalData: any, locale: any) {
         type,
         question: question,
         questionType: questionType,
-        addProjectAnswerInfoList,
+        answerInfoList,
       };
     });
   });
@@ -202,6 +207,10 @@ export function convertData(originalData: any, locale: any) {
 
 // 提交时 获取type对应的json
 export function proces(toolbox: any, toolboxJSON: any) {
+  if(!toolbox.pages){
+    return
+  }
+
   toolbox.pages.forEach((item: any) => {
     item.elements.forEach((value: any) => {
       const data = toolboxJSON.customQuestionValues.find((ite: any) => ite.name === value.type)
