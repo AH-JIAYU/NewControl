@@ -1,9 +1,0 @@
-
-/**
- * 由 Fantastic-admin 提供技术支持
- * Powered by Fantastic-admin
- * Gitee  https://fantastic-admin.gitee.io
- * Github https://fantastic-admin.github.io
- */
-
-import{a as g}from"./tenant_tenantHomepageSetting-C-RQKcYN.js";import{d as I,r as o,t as T,ak as v,a as s,ai as h,aj as C,i as l,o as d,b,f as r,w as i,Y as D,Z as R,e as q,I as M}from"./index-Cgn_EQxF.js";const N=I({__name:"index",props:{id:{default:""},row:{default:""}},setup(y,{expose:w}){const c=y,x=o(!1),f=o(),e=o({id:c.id,title:"",css:"",html:"",rawData:"",templateType:""}),E=o({title:[{required:!0,message:"请输入标题",trigger:"blur"}],templateType:[{required:!0,message:"请选择类型",trigger:"change"}]}),k=o({1:"B2B",2:"B2C"});return T(()=>{e.value.id!==""&&(e.value=JSON.parse(c.row))}),w({submit(){return new Promise(m=>{f.value.validate(t=>{if(t)if(e.value.id===""){const{id:n,...u}=e.value;g.create(u).then(p=>{p.status===1&&v.success({message:"新增成功",center:!0}),m()})}else g.edit(e.value).then(n=>{n.status===1&&v.success({message:"编辑成功",center:!0}),m()})})})}}),(m,t)=>{const n=s("ElInput"),u=s("ElFormItem"),p=s("el-option"),V=s("el-select"),B=s("ElForm"),F=h("loading");return C((d(),b("div",null,[r(B,{ref_key:"formRef",ref:f,model:l(e),rules:l(E),"label-width":"120px","label-suffix":"："},{default:i(()=>[r(u,{label:"标题",prop:"title"},{default:i(()=>[r(n,{modelValue:l(e).title,"onUpdate:modelValue":t[0]||(t[0]=a=>l(e).title=a),placeholder:"请输入标题"},null,8,["modelValue"])]),_:1}),r(u,{label:"类型",prop:"templateType"},{default:i(()=>[r(V,{modelValue:l(e).templateType,"onUpdate:modelValue":t[1]||(t[1]=a=>l(e).templateType=a),"value-key":"",placeholder:"请选择类型",clearable:"",filterable:"",onChange:t[2]||(t[2]=()=>{})},{default:i(()=>[(d(!0),b(D,null,R(l(k),(a,_)=>(d(),q(p,{key:_,label:a,value:_},null,8,["label","value"]))),128))]),_:1},8,["modelValue"])]),_:1})]),_:1},8,["model","rules"])])),[[F,l(x)]])}}}),J=M(N,[["__scopeId","data-v-ccb289a4"]]);export{J as default};
