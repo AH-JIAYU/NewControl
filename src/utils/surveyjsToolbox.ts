@@ -27,7 +27,8 @@ export async function customComponents() {
       '22',
       2,
     ),
-    await questionFun('age', '出生日期', 'text', 'placeholder', '14', '19', 1, 'date'),
+    await questionFun('age', '出生日期', 'text', 'placeholder', '14', '19', 1, ''),
+    await questionFun('postcode', '邮政编码', 'text', 'placeholder', '47', '46'),
     await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20', 1),
     await questionFun('AHI', '家庭收入', 'radiogroup', 'placeholder', '4', '25', 2),
     await questionFun('education', '教育程度', 'radiogroup', 'placeholder', '2', '23'),
@@ -38,11 +39,13 @@ export async function customComponents() {
     await questionFun('race', '种族', 'radiogroup', 'placeholder', '28', '21'),
     await questionFun('size', '公司人数', 'radiogroup', 'placeholder', '9', '29', 2),
     await questionFun('revenue', '公司年收入', 'radiogroup', 'placeholder', '10', '30'),
+
   ]
 }
 export const toolType = 'c类'
 export const tooltoxcategory = [
   { name: 'age', category: toolType },
+  { name: 'postcode', category: toolType },
   { name: 'country', category: toolType },
   { name: 'gender', category: toolType },
   { name: 'race', category: toolType },
