@@ -28,7 +28,7 @@ export async function customComponents() {
       2,
     ),
     await questionFun('age', '出生日期', 'text', 'placeholder', '14', '19', 1, ''),
-    await questionFun('postcode', '邮政编码', 'text', 'placeholder', '47', '46'),
+    await questionFun('postcode', '邮箱', 'text', 'placeholder', '45', '46'),
     await questionFun('gender', '性别', 'radiogroup', 'placeholder', '15', '20', 1),
     await questionFun('AHI', '家庭收入', 'radiogroup', 'placeholder', '4', '25', 2),
     await questionFun('education', '教育程度', 'radiogroup', 'placeholder', '2', '23'),
@@ -84,6 +84,7 @@ async function questionFun(
   const answer: any = data
   // 请求的问题
   const res = await problemStore?.getProblem
+  // const res =  await apiDictionary.list()
 
   // 问题 对应国家下的问题
   const problem: any = res[0].children[problemStore?.country.countryId === '343' ? 0 : 1].children
@@ -98,9 +99,9 @@ async function questionFun(
   }
   // 如果请求接口返回当前问题为空数组,那就让他比对对应请求的id
   const problemId: any = problemStore?.country.countryId === '343' ? zhID : enID
-
   //  根据字典的答案查询对应的问题
   const row: any = problem.find((item: any) => item.id === answer[0]?.catalogueId || item.id === problemId)
+  // console.log(row,'rrr')
   if(row){
     question.title.default = row?.chineseName
     question.title['zh-cn'] = row.chineseName || ''
