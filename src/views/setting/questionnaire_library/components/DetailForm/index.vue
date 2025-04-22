@@ -175,7 +175,7 @@ onMounted(async () => {
       q.choices = [];
       const res = await api.getId();
       q.surveyType = 1; //1:表示前端生成(新增操作) 2:表示后端返回(修改操作)
-      q.surveyId = res.data.id;
+      q.surveyId = res.data;
     } else {
       //  #region  判重  模板的问题重复， id也会重复 后端会报错
       const toolboxJSON = ComponentCollection.Instance;
@@ -283,25 +283,30 @@ defineExpose({
       }
       // 删除问题和答案
       if (delList.value.length) {
-        form.value.deleteProjectProblemInfoList = delList.value;
+        form.value.deleteProjectProblemInfoList = delList.value.filter((item:any) => item.id);
         // 创建一个索引对象，用于快速查找 b 数组中的对象
-const bIndex = form.value.problemInfoList.reduce((index:any, item:any) => {
-  index[item.id] = item; // 将 b 中的对象按 id 索引
-  return index;
-}, {});
+        const bIndex = form.value.problemInfoList.reduce(
+          (index: any, item: any) => {
+            index[item.id] = item; // 将 b 中的对象按 id 索引
+            return index;
+          },
+          {}
+        );
 
-// 遍历 a 数组，查找对应的 id
-form.value.deleteProjectProblemInfoList = form.value.deleteProjectProblemInfoList.filter((aObj:any) => {
-  const bObj = bIndex[aObj.id]; // 在 bIndex 中查找对应的对象
+        // 遍历 a 数组，查找对应的 id
+        form.value.deleteProjectProblemInfoList =
+          form.value.deleteProjectProblemInfoList.filter((aObj: any) => {
+            const bObj = bIndex[aObj.id]; // 在 bIndex 中查找对应的对象
 
-  if (bObj) {
-    // 找到相同 id 的对象，修改 b 中的 type 为 2
-    bObj.type = 2;
-    return false; // 从 a 数组中删除该对象
-  }
+            if (bObj) {
+              // 找到相同 id 的对象，修改 b 中的 type 为 2
+              bObj.type = 2;
+              return false; // 从 a 数组中删除该对象
+            }
 
-  return true; // 保留不匹配的对象
-});
+            return true; // 保留不匹配的对象
+          });
+
       }
 
       // 编辑
